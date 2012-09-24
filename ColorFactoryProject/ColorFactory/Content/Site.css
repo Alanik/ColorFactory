@@ -101,6 +101,7 @@ h5, h6 {
 #body {
     background-color: #454545;
     padding: 40px;
+
 }
 
     .main-content {
@@ -759,7 +760,7 @@ tr.pager td {
 #mapContainer {
 border: 1px solid #555;
 background: rgba(40, 40, 40, 0.2);
-padding: 16px 16px 16px 16px;
+
 overflow: hidden;
 height: 500px;
 width: 500px;
@@ -768,4 +769,15 @@ width: 500px;
 -ms-box-shadow: inset 0 3px 10px rgba(0,0,0,0.3);
 -o-box-shadow: inset 0 3px 10px rgba(0,0,0,0.3);
 box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.3);
+
+  
 }
+
+#leftSideContainer {
+    height: 500px;
+    width: 500px;
+    margin-right: 60px;
+    border: 1px white solid;
+    float: left;
+}
+
