@@ -762,8 +762,8 @@ border: 1px solid #555;
 background: rgba(40, 40, 40, 0.2);
 
 overflow: hidden;
-height: 500px;
-width: 500px;
+height: 501px;
+width: 501px;
 -webkit-box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.3);
 -moz-box-shadow: inset 0 3px 10px rgba(0,0,0,0.3);
 -ms-box-shadow: inset 0 3px 10px rgba(0,0,0,0.3);
