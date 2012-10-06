@@ -1,48 +1,50 @@
 ﻿<RecentFiles>
   <RecentFiles>
     <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Controllers/f:AccountController.cs" caret="98" fromTop="4" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Models/f:AccountModels.cs" caret="0" fromTop="0" />
     <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:About.cshtml" caret="257" fromTop="15" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:App_Start/f:AuthConfig.cs" caret="0" fromTop="0" />
     <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:App_Start/f:BundleConfig.cs" caret="0" fromTop="0" />
     <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/f:_ViewStart.cshtml" caret="0" fromTop="0" />
     <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:_references.js" caret="0" fromTop="0" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Contact.cshtml" caret="135" fromTop="7" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="214" fromTop="9" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Shared/f:_Layout.cshtml" caret="1490" fromTop="20" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Content/f:Site.css" caret="14516" fromTop="25" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="1646" fromTop="14" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Contact.cshtml" caret="0" fromTop="0" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Shared/f:_Layout.cshtml" caret="0" fromTop="0" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Account/f:Manage.cshtml" caret="317" fromTop="13" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:App_Start/f:AuthConfig.cs" caret="0" fromTop="0" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:App_Start/f:FilterConfig.cs" caret="0" fromTop="0" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Content/f:Site.css" caret="14533" fromTop="25" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Models/f:AccountModels.cs" caret="746" fromTop="27" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="1317" fromTop="18" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="1601" fromTop="18" />
   </RecentFiles>
   <RecentEdits>
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Shared/f:_Layout.cshtml" caret="1113" fromTop="6" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Shared/f:_Layout.cshtml" caret="334" fromTop="7" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="320" fromTop="13" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="320" fromTop="21" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="320" fromTop="11" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Shared/f:_Layout.cshtml" caret="1490" fromTop="20" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Shared/f:_Layout.cshtml" caret="1490" fromTop="20" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="320" fromTop="22" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="295" fromTop="33" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="275" fromTop="15" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="301" fromTop="29" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="273" fromTop="8" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="275" fromTop="18" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="172" fromTop="30" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="172" fromTop="20" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Content/f:Site.css" caret="14440" fromTop="20" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Content/f:Site.css" caret="14370" fromTop="14" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Contact.cshtml" caret="135" fromTop="7" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Content/f:Site.css" caret="14520" fromTop="26" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="117" fromTop="6" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Content/f:Site.css" caret="0" fromTop="0" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Content/f:Site.css" caret="13917" fromTop="34" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="170" fromTop="5" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="94" fromTop="1" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="2019" fromTop="22" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="371" fromTop="16" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="1620" fromTop="6" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="1934" fromTop="17" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="214" fromTop="9" />
-    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Content/f:Site.css" caret="14104" fromTop="9" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="4270" fromTop="18" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="4270" fromTop="10" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="4270" fromTop="11" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="4270" fromTop="24" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="4270" fromTop="22" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="4270" fromTop="17" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="4270" fromTop="16" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="4270" fromTop="17" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="0" fromTop="0" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="744" fromTop="15" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="744" fromTop="9" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="1501" fromTop="18" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="433" fromTop="0" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="4270" fromTop="21" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="1499" fromTop="23" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="215" fromTop="10" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="600" fromTop="19" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="4270" fromTop="86" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="4270" fromTop="11" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="4270" fromTop="19" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="4270" fromTop="28" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="4270" fromTop="23" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="328" fromTop="13" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="4270" fromTop="14" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="1602" fromTop="16" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Views/d:Home/f:Index.cshtml" caret="1239" fromTop="19" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="843" fromTop="11" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="879" fromTop="16" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="830" fromTop="4" />
+    <File id="34CDB03F-97BC-47F9-B67C-353EF79F5B9D/d:Scripts/f:functions.js" caret="1601" fromTop="18" />
   </RecentEdits>
 </RecentFiles>

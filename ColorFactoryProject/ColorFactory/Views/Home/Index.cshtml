@@ -4,17 +4,50 @@
 
 <div style="overflow:hidden;">
     <div id="leftSideContainer">
-        
+       <div id="textDiv" style="color:white;"></div>
     </div>
     <div id="mapContainer">
-        <canvas id="mapCanvas" width="501" height="501">
+        <canvas id="mapCanvas" width="501" height="501" />
     </div>
 </div>
 
 <script type="text/javascript">
+    ///////////////////////////////////////
+    //global variables
+    ///////////////////////////////////////
     var ctx = document.getElementById("mapCanvas").getContext("2d");
+    ///////////////////////////////////////
 
-  drawMapTiles(ctx, 12, 12, 40); 
+    $(function () {
 
+        initialize();
+    
+        $("#mapCanvas").mouseover(function () {
+            $(this).mousemove(function (e) {
+                getMousePositionInTileMap(e);
+
+                col = Math.floor(mouseX / tileSize);
+                col = Math.floor((mouseX - col) / tileSize);
+
+                row = Math.floor(mouseY / tileSize);
+                row = Math.floor((mouseY - row) / tileSize);
+
+                var point = getTileRectanglePoint(row, col);
+                $("#textDiv").text(point.x + "," + point.y);
+                //$("#textDiv").text(row + "," + col);
+            });
+        });
+
+        $("#mapCanvas").click(function () {
+
+            var point = getTileRectanglePoint(row, col);
+            var center = getTileRectangleCenter(row, col);
+
+            roundRect(ctx, point.x + 5, point.y + 5, tileSize, tileSize, tileRadius, true, true, "rgba(255,243,232,1)");
+                
+
+            //$("#leftSideContainer").text(row + "," + col);
+        });
+    });
 
 </script>
