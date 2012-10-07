@@ -1,56 +1,110 @@
 ﻿
-var mouseX;
-var mouseY;
+var canvasPadding = 5;
 var tileRadius = 5;
-var col;
-var row;
 var tileSize = 40;
+var numberOfTiles = 12;
+
 var tileSheet = new Image();
-tileSheet.src = "/Images/tilesheet/tileSheetPlayer3.png";
+tileSheet.src = "/Images/tilesheet/tileSheetPlayer2.png";
+
 var playerAnimationCounter = 0;
-var centerPointInitialPlayerPosition = getTileRectangleCenter(2, 2);
 
 var player = {
-    "center": { "x": 0, "y": 0 },
-    "currentTile": { "x": 0, "y": 0}
+    "cornerPoint": { "x": 0, "y": 0 },
+    "setCornerPoint": function (x, y) {
+        player.cornerPoint.x = x;
+        player.cornerPoint.y = y;
+    },
+    "currentTile": { "row": 0, "column": 0 },
+    "destinationTile": { "x": 0, "y": 0 }
+};
+
+var cursor = {
+
+    "getRow": function (y) {
+        var row = Math.floor(y / tileSize);
+        row = Math.floor((y - row) / tileSize);
+        return row;
+    },
+    "getColumn": function (x) {
+        var col = Math.floor(x / tileSize);
+        col = Math.floor((x - col) / tileSize);
+        return col;
+    },
+    "getCursorPositionInCanvasX": function (pageX) {
+        var mouseX = pageX - window.mapCanvas.offsetLeft - canvasPadding;
+        return mouseX;
+    },
+    "getCursorPositionInCanvasY": function (pageY) {
+        var mouseY = pageY - window.mapCanvas.offsetTop - canvasPadding;
+        return mouseY;
+    },
+    "clickedTile": { "row": 0, "column": 0,"cornerPointX":0,"cornerPointY":0},
+    "getTileCornerPoint": function (row, col) {
+        var xx = row * tileSize + row;
+        var yy = col * tileSize + col;
+        var tileCornerPoint =
+            {
+                "x": xx,
+                "y": yy
+            };
+        return tileCornerPoint;
+    }
+
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 //FUNCTIONS
 ////////////////////////////////////////////////////////////////////////////////
+
 function initialize() {
+
     tileSheet.addEventListener('load', eventPlayerLoaded, false);
-    drawMapTiles(window.ctx, 12, 12, tileSize);
+    drawMapTiles(window.ctx, numberOfTiles, numberOfTiles, tileSize);
 
     function eventPlayerLoaded() {
         startUp();
     }
 
     function startUp() {
-        setInterval(drawPlayerRunning, 100);
+        player.setCornerPoint(0, 0);
+        drawPlayer();
     }
 }
 
+function playing() {
+    calculateCursorPosition();
+}
+
+function drawPlayer() {
+    window.ctx.drawImage(tileSheet, 0, 0, 48, 48, player.cornerPoint.x, player.cornerPoint.y, 48, 48);
+}
+
 function drawPlayerRunning() {
-
-
-    // Store the current transformation matrix
-    window.ctx.save();
-    // Use the identity matrix while clearing the canvas
-    window.ctx.setTransform(1, 0, 0, 1, 0, 0);
-    // Clear canvas of the previous animation frames
-    window.ctx.clearRect(0, 0, window.mapCanvas.width, window.mapCanvas.height);
-    // Restore the transform
-    window.ctx.restore();
-
-    drawMapTiles(window.ctx, 12, 12, tileSize);
-   
-    window.ctx.drawImage(tileSheet, 0, 48 * playerAnimationCounter, 48, 48, centerPointInitialPlayerPosition.x, centerPointInitialPlayerPosition.y, 48, 48);
-   
-    playerAnimationCounter++;
-    //centerPointInitialPlayerPosition.x += 2;
     
-    centerPointInitialPlayerPosition.y += 3;
+
+
+//    // Store the current transformation matrix
+//    window.ctx.save();
+//    // Use the identity matrix while clearing the canvas
+//    window.ctx.setTransform(1, 0, 0, 1, 0, 0);
+//    // Clear canvas of the previous animation frames
+    window.ctx.clearRect(0, 0, window.mapCanvas.width, window.mapCanvas.height);
+//    // Restore the transform
+//    window.ctx.restore();
+    drawMapTiles(window.ctx, 12, 12, tileSize);
+    window.ctx.drawImage(tileSheet, 0, 48 * playerAnimationCounter, 48, 48, player.cornerPoint.x, player.cornerPoint.y, 48, 48);
+    playerAnimationCounter++;
+
+    //centerPointInitialPlayerPosition.x += 3;
+    if (player.cornerPoint.y <= cursor.clickedTile.cornerPointX) {
+        player.cornerPoint.y += 3;
+        $("#textDiv4").text("player cornerPoint (x,y): " + player.cornerPoint.x + "," + player.cornerPoint.y);
+    } else {
+        playerAnimationCounter = 0;
+        return;
+    }
+
     if (playerAnimationCounter > 3) {
         playerAnimationCounter = 0;
     }
@@ -110,26 +164,39 @@ function drawMapTiles(ctx, numHorizontalTiles, numVerticalTiles, size) {
     }
 }
 
-function getMousePositionInTileMap(e) {
-    mouseX = e.clientX - window.mapCanvas.offsetLeft - 5;
-    mouseY = e.clientY - window.mapCanvas.offsetTop - 5;
+//function getMousePositionInTileMap(e) {
+//    mouseX = e.clientX - window.mapCanvas.offsetLeft - canvasPadding;
+//    mouseY = e.clientY - window.mapCanvas.offsetTop - canvasPadding;
+//}
 
-}
+//function getTileRectanglePoint(row, col) {
+//    var x = col * tileSize + col;
+//    var y = row * tileSize + row;
+//    var tilePoint = { "x": x, "y": y };
+//    return tilePoint;
+//}
 
-function getTileRectanglePoint(row, col) {
-    var x = col * tileSize + col;
-    var y = row * tileSize + row;
-    var tilePoint = { "x": x, "y": y };
-    return tilePoint;
-}
-
-function getTileRectangleCenter(row, col) {
-    var point = getTileRectanglePoint(row, col);
-    var center = { "x": point.x / 2, "y": point.y / 2 };
-    return center;
-}
+//function getTileRectangleCenter(row, col) {
+//    var point = getTileRectanglePoint(row, col);
+//    var center = { "x": point.x, "y": point.y };
+//    return center;
+//}
 
 function movePlayerTo(x, y) {
-    drawPlayerRunning(x,y);
+    cursor.clickedTile.cornerPointX = x;
+    cursor.clickedTile.cornerPointY = y;
+    setInterval(drawPlayerRunning, 100);
+}
 
+function calculateCursorPosition() {
+    $("#mapCanvas").mouseover(function () {
+        $(this).mousemove(function (e) {
+            var x = cursor.getCursorPositionInCanvasX(e.pageX),
+                y = cursor.getCursorPositionInCanvasY(e.pageY),
+                row = cursor.getRow(y),
+                col = cursor.getColumn(x);
+            $("#textDiv").text(row + "," + col);
+            $("#textDiv2").text(x + "," + y);
+        });
+    });
 }

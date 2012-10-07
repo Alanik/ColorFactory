@@ -1,16 +1,22 @@
 ﻿@{
     ViewBag.Title = "Home Page";
 }
-
-<div style="overflow:hidden;">
+<div style="overflow: hidden;">
     <div id="leftSideContainer">
-       <div id="textDiv" style="color:white;"></div>
+        <div id="textDiv" style="color: white;">
+        </div>
+        <div id="textDiv2" style="color: white;">
+        </div>
+        <div id="textDiv3" style="color: yellow;">
+        </div>
+        <div id="textDiv4" style="color: blue;">
+            
+        </div>
     </div>
     <div id="mapContainer">
         <canvas id="mapCanvas" width="501" height="501" />
     </div>
 </div>
-
 <script type="text/javascript">
     ///////////////////////////////////////
     //global variables
@@ -21,32 +27,23 @@
     $(function () {
 
         initialize();
-    
-        $("#mapCanvas").mouseover(function () {
-            $(this).mousemove(function (e) {
-                getMousePositionInTileMap(e);
+        playing();
+        $("#mapCanvas").click(function (e) {
 
-                col = Math.floor(mouseX / tileSize);
-                col = Math.floor((mouseX - col) / tileSize);
+            var x = cursor.getCursorPositionInCanvasX(e.pageX),
+                y = cursor.getCursorPositionInCanvasY(e.pageY);
 
-                row = Math.floor(mouseY / tileSize);
-                row = Math.floor((mouseY - row) / tileSize);
+            cursor.clickedTile.row = cursor.getRow(y);
+            cursor.clickedTile.column = cursor.getColumn(x);
 
-                var point = getTileRectanglePoint(row, col);
-                $("#textDiv").text(point.x + "," + point.y);
-                //$("#textDiv").text(row + "," + col);
-            });
-        });
+            var cornerPoint = cursor.getTileCornerPoint(cursor.clickedTile.row, cursor.clickedTile.column);
 
-        $("#mapCanvas").click(function () {
 
-            var point = getTileRectanglePoint(row, col);
-            var center = getTileRectangleCenter(row, col);
+            //roundRect(ctx, window.point.x + canvasPadding, window.point.y + canvasPadding, tileSize, tileSize, tileRadius, true, true, "rgba(255,243,232,1)");
+            movePlayerTo(cornerPoint.x,cornerPoint.y);
 
-            roundRect(ctx, point.x + 5, point.y + 5, tileSize, tileSize, tileRadius, true, true, "rgba(255,243,232,1)");
-                
-
-            //$("#leftSideContainer").text(row + "," + col);
+            $("#textDiv3").text("clicked tile (x,y): " + cursor.clickedTile.row + "," + cursor.clickedTile.column);
+       
         });
     });
 
