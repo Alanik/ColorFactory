@@ -2,12 +2,14 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>@ViewBag.Title - My ASP.NET MVC Application</title>
+        <title>HTML5 Multiplayer Game</title>
         <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
         <meta name="viewport" content="width=device-width" />
         @Scripts.Render("~/bundles/jquery")
         @Styles.Render("~/Content/css")
         @Scripts.Render("~/bundles/modernizr")
+        <script src="~/Scripts/graph.js"></script>
+        <script src="~/Scripts/astar.js"></script>
         <script src="../../Scripts/functions.js" type="text/javascript"></script>
     </head>
     <body>
@@ -15,6 +17,7 @@
             <div class="content-wrapper">
                 <div class="float-left">
                     <p class="site-title">@Html.ActionLink("your logo here", "Index", "Home")</p>
+
                 </div>
                 <div class="float-right">
                     <section id="login">
@@ -27,7 +30,6 @@
             </div>
         </header>
         <div id="body">
-             
             <section>
                 @RenderBody()
             </section>
@@ -35,7 +37,7 @@
         <footer>
             <div class="content-wrapper">
                 <div class="float-left">
-                    <p>&copy; @DateTime.Now.Year - My ASP.NET MVC Application</p>
+                    <p> &copy;&copy;&copy;&copy;&copy; @DateTime.Now.Year - My ASP.NET MVC Application</p>
                 </div>
             </div>
         </footer>

@@ -3,13 +3,22 @@
 }
 <div style="overflow: hidden;">
     <div id="leftSideContainer">
+
+        <div style="float:right;width:200px;">
+             <span style="color:white;">points: </span>
+             <span id="ammunitionPointsContainer"></span>
+        </div>
+      
         <div id="textDiv" style="color: white;">
         </div>
         <div id="textDiv2" style="color: white;">
         </div>
         <div id="textDiv3" style="color: yellow;">
         </div>
-        <div id="textDiv4" style="color: blue;">
+        <div id="textDiv4" style="color: lightblue;">
+            
+        </div>
+         <div id="textDiv5" style="color: red;">
             
         </div>
     </div>
@@ -22,29 +31,20 @@
     //global variables
     ///////////////////////////////////////
     var ctx = document.getElementById("mapCanvas").getContext("2d");
+    var $mapCanvas = $("#mapCanvas");
     ///////////////////////////////////////
 
     $(function () {
 
         initialize();
         playing();
-        $("#mapCanvas").click(function (e) {
-
-            var x = cursor.getCursorPositionInCanvasX(e.pageX),
-                y = cursor.getCursorPositionInCanvasY(e.pageY);
-
-            cursor.clickedTile.row = cursor.getRow(y);
-            cursor.clickedTile.column = cursor.getColumn(x);
-
-            var cornerPoint = cursor.getTileCornerPoint(cursor.clickedTile.row, cursor.clickedTile.column);
 
 
-            //roundRect(ctx, window.point.x + canvasPadding, window.point.y + canvasPadding, tileSize, tileSize, tileRadius, true, true, "rgba(255,243,232,1)");
-            movePlayerTo(cornerPoint.x,cornerPoint.y);
 
-            $("#textDiv3").text("clicked tile (x,y): " + cursor.clickedTile.row + "," + cursor.clickedTile.column);
-       
-        });
     });
+
+       
+
+        
 
 </script>

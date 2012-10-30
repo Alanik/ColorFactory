@@ -16,6 +16,10 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>false</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -238,7 +242,12 @@
     <Content Include="Global.asax" />
     <Content Include="Images\tilesheet\tileSheetPlayer2.png" />
     <Content Include="Images\tilesheet\tileSheetPlayer3.png" />
+    <Content Include="Images\tilesheet\tileSheetPlayer40.png" />
+    <Content Include="Images\tilesheet\tileSheetPlayer40Black.png" />
+    <Content Include="Images\tilesheet\tileSheetPlayer40Border.png" />
+    <Content Include="Scripts\astar.js" />
     <Content Include="Scripts\functions.js" />
+    <Content Include="Scripts\graph.js" />
     <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
     <Content Include="Scripts\jquery-1.7.1.js" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
