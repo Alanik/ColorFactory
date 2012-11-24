@@ -1,6 +1,5 @@
 Color Factory
 
-multiplayer online game, turn based with realtime
-notification support
+realtime multiplayer online game built using canvas in HTML5
 
 technologies: Html5 + asp.net mvc4 + signalr 
