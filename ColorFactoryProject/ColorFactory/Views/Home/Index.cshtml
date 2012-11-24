@@ -1,50 +1,59 @@
 ﻿@{
     ViewBag.Title = "Home Page";
 }
-<div style="overflow: hidden;">
-    <div id="leftSideContainer">
 
-        <div style="float:right;width:200px;">
-             <span style="color:white;">points: </span>
-             <span id="ammunitionPointsContainer"></span>
-        </div>
-      
-        <div id="textDiv" style="color: white;">
-        </div>
-        <div id="textDiv2" style="color: white;">
-        </div>
-        <div id="textDiv3" style="color: yellow;">
-        </div>
-        <div id="textDiv4" style="color: lightblue;">
-            
-        </div>
-         <div id="textDiv5" style="color: red;">
-            
-        </div>
-    </div>
-    <div id="mapContainer">
-        <canvas id="mapCanvas" width="501" height="501" />
-    </div>
+<div id="mainContainer">
+<div id="leftSideContainer">
+<div style="float: right;">
+<span style="color: white;">points: </span>
+<span id="ammunitionPointsContainer"></span>
 </div>
+
+<div id="textDiv" style="color: white;">
+</div>
+<div id="textDiv2" style="color: white;">
+</div>
+<div id="textDiv3" style="color: yellow;">
+</div>
+<div id="textDiv4" style="color: lightblue;">
+</div>
+<div id="textDiv5" style="color: red;">
+</div>
+<div id="textDiv6" style="color: red;">
+</div>
+<div id="textDiv7" style="color: red;">
+</div>
+<div id="textDiv8" style="color: red;">
+</div>
+</div>
+
+<div id="mapContainer">
+<canvas id="mapCanvas" width="501" height="501" />
+</div>
+<canvas id="effectsCanvas" width="501" height="551" />
+</div>
+
 <script type="text/javascript">
-    ///////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////
     //global variables
-    ///////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
     var ctx = document.getElementById("mapCanvas").getContext("2d");
     var $mapCanvas = $("#mapCanvas");
-    ///////////////////////////////////////
+
+    var effectsCtx = document.getElementById("effectsCanvas").getContext("2d");
+    var $effectsCanvas = $("#effectsCanvas");
+    ///////////////////////////////////////////////////////////////////////////// 
 
     $(function () {
+
+        $(document).dblclick(function (e) {
+            e.preventDefault();
+        })
 
         initialize();
         playing();
 
-
-
     });
-
-       
-
-        
 
 </script>
