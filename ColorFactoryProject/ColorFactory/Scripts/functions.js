@@ -7,14 +7,14 @@ var isPlayerRunningInProgress = false;
 var isAnimationNumbersInProgress = false;
 
 var canvasPadding = 5;
-var tileRadius = 5;
+var tileRadius = 2;
 var tileSize = 40;
 var numberOfTiles = 12;
 var minimumNumOfMines = 10;
 var maximumNumOfMines = 25;
 
 var tileSheet = new Image();
-tileSheet.src = "/Images/tilesheet/tileSheetPlayer40Black.png";
+tileSheet.src = "Images/tilesheet/tileSheetPlayer40Black2.png";
 
 var playerAnimationCounter = 0;
 var nextTilePlayerMovesToCounter = 0;
@@ -106,11 +106,11 @@ var cursor = {
         return col;
     },
     "getCursorPositionInCanvasX": function (pageX) {
-        var mouseX = pageX - mapCanvas.offsetLeft - canvasPadding;
+        var mouseX = pageX - mainContainer.offsetLeft - mapCanvas.offsetLeft - canvasPadding;
         return mouseX;
     },
     "getCursorPositionInCanvasY": function (pageY) {
-        var mouseY = pageY - mapCanvas.offsetTop - canvasPadding;
+        var mouseY = pageY - mainContainer.offsetTop - mapCanvas.offsetTop - canvasPadding;
         return mouseY;
     },
     "clickedTile": { "row": 0, "column": 0, "cornerPointX": 0, "cornerPointY": 0 },
@@ -141,25 +141,29 @@ function initialize() {
     initializePlayer();
     tileSheet.addEventListener('load', eventPlayerLoaded, false);
     drawMapTiles(ctx, numberOfTiles, numberOfTiles, tileSize, player.startingPositionTile);
+
     displayAmmunitionPoints();
 
     function eventPlayerLoaded() {
         drawPlayer();
+
     }
 
     function initializePlayer() {
         var randX = Math.floor(Math.random() * numberOfTiles);
         var randY = Math.floor(Math.random() * numberOfTiles);
         var point = cursor.getTileCornerPoint(randX, randY);
-        player.startingPositionTile = { "row": randY, "column": randX };
 
         if (map[randY][randX] !== 2) {
+            player.startingPositionTile = { "row": randY, "column": randX };
             player.currentTile = clone(player.startingPositionTile);
             player.nextTile = clone(player.currentTile);
 
             player.setCornerPoint(point.x, point.y);
             player.ammunitionPoints = mapNumbers[randY][randX];
 
+            //set playerCanvas position here //////////////////////////////////////////////////////
+            playerCanvas.setAttribute("style", "left:" + point.x + "px; top:" + point.y + "px;");
             map[randY][randX] = 1;
             graph.nodes[randY][randX].type = 1;
 
@@ -229,8 +233,9 @@ function initialize() {
     function initializeEffectsCanvasPosition() {
         var x = mapContainer.offsetLeft;
         var y = mapContainer.offsetTop - 50;
-        $("#effectsCanvas").css({ "left": x, "top": y })
 
+        $effectsCanvas.css({ "left": x, "top": y })
+        $playerCanvasContainer.css({ "left": x, "top": y + 50 })
     }
 
 }
@@ -246,6 +251,7 @@ function onMouseClickFunction() {
     $effectsCanvas.click(function (e) {
         var x = cursor.getCursorPositionInCanvasX(e.pageX),
             y = cursor.getCursorPositionInCanvasY(e.pageY);
+
         cursor.clickedTile.row = cursor.getRow(y);
         cursor.clickedTile.column = cursor.getColumn(x);
         var cornerPoint = cursor.getTileCornerPoint(cursor.clickedTile.row, cursor.clickedTile.column);
@@ -254,9 +260,9 @@ function onMouseClickFunction() {
 
         resetNextTilePlayerMovesToCounter();
 
-        console.log("previous: " + player.previousTile.column, player.previousTile.row);
-        console.log("current: " + player.currentTile.column, player.currentTile.row);
-        console.log("next: " + player.nextTile.column, player.nextTile.row);
+        //console.log("previous: " + player.previousTile.column, player.previousTile.row);
+        //console.log("current: " + player.currentTile.column, player.currentTile.row);
+        //console.log("next: " + player.nextTile.column, player.nextTile.row);
 
         /////////////////////////////////////////////////////////////////////////////////////
         //code responsible for A* algorithm
@@ -268,8 +274,8 @@ function onMouseClickFunction() {
             arrayResult = aStarAlogirthm();
 
             //insert nextTile as first element so player will go fully to the next tile thus he will not run over mines and such
-            var node = {"x":player.nextTile.row, "y":player.nextTile.column};
-            arrayResult.splice(0, 0,node);
+            var node = { "x": player.nextTile.row, "y": player.nextTile.column };
+            arrayResult.splice(0, 0, node);
         }
         else {
             //if player clicks on the currentTile we pop last tile in array so player just goes back to the currentTile
@@ -389,7 +395,8 @@ function checkIfMineIsUncoveredAllAround(row, col) {
 }
 
 function drawPlayer() {
-    ctx.drawImage(tileSheet, 0, 0, 40, 40, player.cornerPoint.x + canvasPadding, player.cornerPoint.y + canvasPadding, 40, 40);
+    //ctx.drawImage(tileSheet, 0, 0, 40, 40, player.cornerPoint.x + canvasPadding, player.cornerPoint.y + canvasPadding, 40, 40);
+    playerCtx.drawImage(tileSheet, 0, 0, 40, 40, canvasPadding, canvasPadding, 40, 40);
 }
 
 function resetNextTilePlayerMovesToCounter() {
@@ -400,7 +407,7 @@ function incrementNextTilePlayerMovesToCounter() {
     nextTilePlayerMovesToCounter++;
 }
 
-function roundRect(ctx, x, y, width, height, radius, fill, stroke, fillStyle) {
+function roundRect(ctx, x, y, width, height, radius, fill, stroke, fillStyle, strokeStyle) {
 
     if (typeof stroke === "undefined") {
         stroke = true;
@@ -421,8 +428,8 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke, fillStyle) {
     ctx.closePath();
 
     if (stroke) {
-        //ctx.strokeStyle = "#0000ff";
-        ctx.stroke();
+        //ctx.strokeStyle = strokeStyle;
+        //ctx.stroke();
     }
     if (fill) {
         //var random = Math.floor((Math.random() * 256));
@@ -447,16 +454,16 @@ function drawMapTiles(ctx, numHorizontalTiles, numVerticalTiles, size, startPoin
             y = j * size + j + 4;
 
             if (num == 0 || num == 2) {
-                roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(255,255,255,.1)");
+                roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(0,0,0,.5)");
             }
             if (num !== 0) {
                 drawNumbers(i, j, mineNumbers);
             }
             if (num == 3) {
-                roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(0,200,255,.8)");
+                roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(238,68,68,.8)");
             }
             if (num == 4) {
-                roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(200,200,255,.5)");
+                roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(10,211,122,.8)");
             }
             if (num == 5) {
                 roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(255,0,0,.1)");
@@ -472,8 +479,8 @@ function drawMapTiles(ctx, numHorizontalTiles, numVerticalTiles, size, startPoin
         var point = cursor.getTileCornerPoint(row, col);
         var posX = tileSize / 2;
         var posY = posX + 14;
-        ctx.fillStyle = "#999999";
-        ctx.font = '20px MonaKo';
+        ctx.fillStyle = "#555";
+        ctx.font = '25px "Victor\'s Pixel Font"';
         if (numOfMines != 0)
             ctx.fillText(numOfMines, point.x + posX, point.y + posY);
     }
@@ -489,12 +496,12 @@ function movePlayerTo() {
     }
 
     isPlayerRunningInProgress = true;
-    playerTimerInterval = setInterval(drawPlayerRunning, 50);
+    playerTimerInterval = setInterval(drawPlayerRunning, 30);
 
     function drawPlayerRunning() {
-        ctx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
-        drawMapTiles(ctx, 12, 12, tileSize);
-        ctx.drawImage(tileSheet, 0, 40 * playerAnimationCounter, 40, 40, player.cornerPoint.x + canvasPadding, player.cornerPoint.y + canvasPadding, 40, 40);
+        playerCtx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+        //drawMapTiles(ctx, 12, 12, tileSize);
+        playerCtx.drawImage(tileSheet, 0, 40 * playerAnimationCounter, 40, 40, canvasPadding, canvasPadding, 40, 40);
         calculatePlayerPosition();
 
         function calculatePlayerPosition() {
@@ -533,6 +540,8 @@ function movePlayerTo() {
                     //velocity Y
                     player.cornerPoint.y += player.pixelDistanceWhileMoving * velocityY;
 
+                    // move playeCanvas
+                    playerCanvas.setAttribute("style", "left:" + player.cornerPoint.x + "px; top:" + player.cornerPoint.y + "px;");
                 }
                 else {
                     ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -553,6 +562,9 @@ function movePlayerTo() {
 
                             animateUncoveredMineNumbers();
                             checkIfMineIsUncoveredAllAround(player.currentTile.row, player.currentTile.column);
+
+                            ctx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+                            drawMapTiles(ctx, 12, 12, tileSize);
                         }
                         else if (currentTile === 2) {
                             map[player.currentTile.row][player.currentTile.column] = 3;
@@ -560,7 +572,7 @@ function movePlayerTo() {
 
                             //moves player to the previous tile location
                             player.cornerPoint = cursor.getTileCornerPoint(player.previousTile.column, player.previousTile.row);
-
+                            playerCanvas.setAttribute("style", "left:" + player.cornerPoint.x + "px; top:" + player.cornerPoint.y + "px;");
                             //reset the resultArray so player wont walk over mines if he clicks too fast
                             arrayResult = [];
 
@@ -570,6 +582,9 @@ function movePlayerTo() {
                             checkIfMineIsUncoveredAllAround(player.previousTile.row, player.previousTile.column);
                             player.ammunitionPoints = 0;
                             displayAmmunitionPoints();
+
+                            ctx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+                            drawMapTiles(ctx, 12, 12, tileSize);
                         }
                     }
 
@@ -581,6 +596,8 @@ function movePlayerTo() {
                     if (nextTilePlayerMovesToCounter == arrayResult.length) {
                         resetNextTilePlayerMovesToCounter();
                         ctx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+                        playerCtx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+
                         drawMapTiles(ctx, 12, 12, tileSize);
                         drawPlayer();
                         isPlayerRunningInProgress = false;
@@ -602,8 +619,8 @@ function movePlayerTo() {
                 isPlayerRunningInProgress = false;
                 resetNextTilePlayerMovesToCounter();
                 clearInterval(playerTimerInterval);
-                ctx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
-                drawMapTiles(ctx, 12, 12, tileSize);
+                playerCtx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+                //drawMapTiles(ctx, 12, 12, tileSize);
                 drawPlayer();
             }
         }
@@ -683,14 +700,14 @@ function animateUncoveredMineNumbers() {
 
     function showUncoveredMineNumbersAnimation() {
 
-        var color = "rgb(0,255,0)";
+        var color = "rgb(100,255,84)";
         var offsetY = counter * 2;
 
         if (counter < 10) {
             counter++;
             effectsCtx.clearRect(0, 0, effectsCanvas.width, effectsCanvas.height);
             effectsCtx.fillStyle = color;
-            effectsCtx.font = '40px MonaKo';
+            effectsCtx.font = '50px "Victor\'s Pixel Font"';
             effectsCtx.fillText(number, tilePointY + 14, tilePointX + 50 - offsetY);
         }
         else {

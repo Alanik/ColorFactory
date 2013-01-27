@@ -2,16 +2,17 @@
     background-color: black;
     margin: 0;
     padding: 0;
+
 }
 
 body {
     background-color: transparent;
     border-top: solid 10px #000;
     color: #333;
-    font-size: .85em;
-    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
+    font-family:Arial,"Segoe UI", Verdana, Helvetica, Sans-Serif;
     margin: 0;
     padding: 0;
+    min-width:1000px;
 }
 
 a {
@@ -99,7 +100,7 @@ h5, h6 {
 }
 
 #body {
-    background-color: #454545;
+    background-color: #1d1d1d;
     padding: 40px;
 }
 
@@ -354,12 +355,6 @@ aside {
         width: 250px;
     }
 
-        #loginForm input[type="checkbox"],
-        #loginForm input[type="submit"],
-        #loginForm input[type="button"],
-        #loginForm button {
-            width: auto;
-        }
 
 #socialLoginForm {
     margin-left: 40px;
@@ -446,27 +441,6 @@ input[type="checkbox"] {
     background: transparent;
     border: inherit;
     width: auto;
-}
-
-input[type="submit"],
-input[type="button"],
-button {
-    background-color: #d3dce0;
-    border: 1px solid #787878;
-    cursor: pointer;
-    font-size: 1.2em;
-    font-weight: 600;
-    padding: 7px;
-    margin-right: 8px;
-    width: auto;
-}
-
-td input[type="submit"],
-td input[type="button"],
-td button {
-    font-size: 1em;
-    padding: 4px;
-    margin-right: 4px;
 }
 
 /* info and errors */
@@ -757,7 +731,7 @@ tr.pager td {
 /* game css --------------------------------------- */
 
 #mapContainer {
-    border: 1px solid #555;
+    border: 1px solid #E44;
     background: rgba(40, 40, 40, 0.2);
     overflow: hidden;
     height: 501px;
@@ -792,6 +766,7 @@ tr.pager td {
 }
 
 #mainContainer {
+position:relative;
     overflow: hidden;
     width: 1000px;
     padding-top: 50px;
@@ -802,10 +777,167 @@ tr.pager td {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+background-color:#1d1d1d;
 }
 
 #effectsCanvas {
     position: absolute;
     top: 0px;
     left: 500px;
+    z-index: 2;
+}
+
+#playerCanvas {
+    position: absolute;
+top:100px;
+left:100px;
+}
+
+#playerCanvasContainer {
+    position: absolute;
+    width: 501px;
+    height: 501px;
+}
+
+#btnEnterLobby {
+
+}
+
+#lobbyContainer {
+position:absolute;
+width:800px;
+min-height:400px;
+background-color:rgba(0, 0, 0, 0.84);
+border:1px solid rgb(255, 102, 102);
+display:none;
+top:20px;
+left:20px;
+z-index:3;
+padding:10px;
+padding-top:20px;
+
+
+}
+
+#roomListContainer {
+border:1px solid rgb(153, 138, 138);
+margin-top:20px;
+margin-bottom:10px;
+background-color:rgba(0, 0, 0, 0.66);
+padding:10px;
+}
+
+#setPlayerNameModalBox {
+position:absolute;
+border:1px solid rgb(255, 102, 102);
+background-color:rgba(0, 0, 0, 0.84);
+height:200px;
+top:200px;
+left:500px;
+z-index:4;
+padding:10px;
+color:white;
+}
+
+#txtPlayerName {
+margin-top:10px;
+
+}
+
+#homePlayersOnlineList {
+border:1px solid white;
+color:#00ff21;
+
+}
+
+#roomList li{
+
+width:400px;
+    background:rgba(10,211,122,1);
+padding:10px;
+margin-bottom:6px;
+border-bottom-right-radius: 15px;
+-moz-border-bottom-right-radius: 15px;
+border-top-left-radius: 15px;
+-moz-border-top-left-radius: 15px;
+display:block;
+
+}
+    #roomList Li:hover {
+/*
+background:#CDCDCD;
+*/
+background:rgb(2, 75, 43);
+cursor:pointer;
+}
+
+.headerTitle {
+font-size:28px;
+position:absolute;
+top:-32px;
+color:#fff;
+text-shadow:white 0em 0em .9em;
+}
+
+.dottedWrapper
+{
+    background: url(/images/point.png) repeat scroll 0 0 transparent;
+    width: 800px;
+    height:800px;
+    position:absolute;
+z-index:-1;
+}
+
+.playerCircle {
+display:inline-block;
+height:18px;
+width:18px;
+margin-right:10px;
+float:right;
+border-radius: 11px;
+border:2px solid white;
+-moz-border-radius: 11px;
+}
+
+.playerCircleInsideRoom span{
+position:relative;
+left:50px;
+}
+
+.circleFull {
+background:rgba(238,68,68,1);
+}
+
+.circleEmpty {
+background:white;
+cursor:pointer;
+}
+
+#roomWrapper {
+display:none;
+
+}
+#lobbyWrapper {
+display:block;
+}
+#btnBackToLobby {
+
+}
+
+.roomInfoContainer {
+border:1px solid rgb(153, 138, 138);
+margin-top:20px;
+margin-bottom:10px;
+background-color:rgba(0, 0, 0, 0.66);
+padding:10px;
+}
+
+.playerCircleInsideRoom {
+display:block;
+height:18px;
+width:18px;
+border-radius: 11px;
+-moz-border-radius: 11px;
+margin-bottom:10px;
+border:2px solid white;
 }

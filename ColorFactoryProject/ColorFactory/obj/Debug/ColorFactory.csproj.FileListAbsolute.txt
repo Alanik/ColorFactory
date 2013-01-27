@@ -70,9 +70,6 @@ C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\Microsoft.Web.Infrastructure.dll
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\Microsoft.Web.WebPages.OAuth.dll
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\Newtonsoft.Json.dll
-C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\SignalR.dll
-C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\SignalR.Hosting.AspNet.dll
-C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\SignalR.Hosting.Common.dll
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Net.Http.dll
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Net.Http.Formatting.dll
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Net.Http.WebRequest.dll
@@ -89,9 +86,6 @@ C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\WebMatrix.Data.dll
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\WebMatrix.WebData.dll
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\Newtonsoft.Json.xml
-C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\SignalR.xml
-C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\SignalR.Hosting.AspNet.xml
-C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\SignalR.Hosting.Common.xml
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\EntityFramework.xml
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Net.Http.xml
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Net.Http.Formatting.xml
@@ -116,3 +110,12 @@ C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\obj\Debug\ColorFactory.csprojResolveAssemblyReference.cache
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\obj\Debug\ColorFactory.dll
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\obj\Debug\ColorFactory.pdb
+C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\Microsoft.AspNet.SignalR.Core.dll
+C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\Microsoft.AspNet.SignalR.Owin.dll
+C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\Microsoft.AspNet.SignalR.SystemWeb.dll
+C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\Microsoft.Owin.Host.SystemWeb.dll
+C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\Owin.dll
+C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\Microsoft.AspNet.SignalR.Core.xml
+C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\Microsoft.AspNet.SignalR.Owin.xml
+C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\Microsoft.AspNet.SignalR.SystemWeb.xml
+C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\Microsoft.Owin.Host.SystemWeb.xml

@@ -1,59 +1,222 @@
 ﻿@{
-    ViewBag.Title = "Home Page";
+	ViewBag.Title = "Home Page";
 }
 
 <div id="mainContainer">
-<div id="leftSideContainer">
-<div style="float: right;">
-<span style="color: white;">points: </span>
-<span id="ammunitionPointsContainer"></span>
-</div>
 
-<div id="textDiv" style="color: white;">
-</div>
-<div id="textDiv2" style="color: white;">
-</div>
-<div id="textDiv3" style="color: yellow;">
-</div>
-<div id="textDiv4" style="color: lightblue;">
-</div>
-<div id="textDiv5" style="color: red;">
-</div>
-<div id="textDiv6" style="color: red;">
-</div>
-<div id="textDiv7" style="color: red;">
-</div>
-<div id="textDiv8" style="color: red;">
-</div>
-</div>
+	<div id="leftSideContainer">
 
-<div id="mapContainer">
-<canvas id="mapCanvas" width="501" height="501" />
-</div>
-<canvas id="effectsCanvas" width="501" height="551" />
+		<div style="float: right;">
+			<span style="color: white;">points: </span>
+			<span id="ammunitionPointsContainer"></span>
+		</div>
+
+		<div style="margin-top: 40px;">
+			<button id="btnEnterLobby" style="margin-bottom: 20px;">Lobby</button>
+			<div id="textDiv" style="color: white;">
+				<span>players online: </span><span id="spanPlayersOnline"></span>
+			</div>
+			<ul id="homePlayersOnlineList"></ul>
+		</div>
+
+	</div>
+
+	<div id="playerCanvasContainer" style="position: absolute;">
+		<canvas id="playerCanvas" width="50" height="50" />
+	</div>
+
+	<div id="mapContainer">
+		<canvas id="mapCanvas" width="501" height="501" />
+	</div>
+
+	<div>
+		<canvas id="effectsCanvas" width="501" height="551" />
+	</div>
+
 </div>
 
 <script type="text/javascript">
 
-    ////////////////////////////////////////////////////////////////////////////
-    //global variables
-    ////////////////////////////////////////////////////////////////////////////
-    var ctx = document.getElementById("mapCanvas").getContext("2d");
-    var $mapCanvas = $("#mapCanvas");
+	////////////////////////////////////////////////////////////////////////////
+	//global variables
+	////////////////////////////////////////////////////////////////////////////
+	var ctx = document.getElementById("mapCanvas").getContext("2d");
+	var $mapCanvas = $("#mapCanvas");
 
-    var effectsCtx = document.getElementById("effectsCanvas").getContext("2d");
-    var $effectsCanvas = $("#effectsCanvas");
-    ///////////////////////////////////////////////////////////////////////////// 
+	var effectsCtx = document.getElementById("effectsCanvas").getContext("2d");
+	var $effectsCanvas = $("#effectsCanvas");
 
-    $(function () {
+	var playerCtx = document.getElementById("playerCanvas").getContext("2d");
+	var playerCanvas = document.getElementById("playerCanvas");
 
-        $(document).dblclick(function (e) {
-            e.preventDefault();
-        })
+	var $playerCanvasContainer = $("#playerCanvasContainer");
 
-        initialize();
-        playing();
+	var mainContainer = document.getElementById("mainContainer");
 
-    });
+	var myClientId;
+	///////////////////////////////////////////////////////////////////////////// 
+
+	$(function () {
+		//Game Canvas related
+		initialize();
+		playing();
+	});
+
+	$("#lobbyContainer").draggable();
+	$("#setPlayerNameModalBox").draggable();
+	$("button").button();
+
+	//////////////////////////////////////////////////////////////////////////////
+	//lobby functions
+	//////////////////////////////////////////////////////////////////////////////
+
+	// Create connection
+	var lobbyConnection = $.connection.lobby;
+
+	lobbyConnection.client.clientReceiveRoomCreated = function (roomName) {
+		$('#roomList').append('<li name="' + roomName + '">' + roomName + '<div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleFull"></div></li>');
+	};
+
+	$("#btnEnterLobby").click(function () {
+		var $lobby = $("#lobbyContainer");
+		var winW = $(window).width();
+		$lobby.css({ 'left': winW / 2 - $("#lobbyContainer").width() / 2, 'top': 100 });
+		lobbyConnection.server.serverBroadcastPlayerEnterLobby();
+	});
+
+	lobbyConnection.client.clientReceivePlayerEnterLobby = function (list) {
+		$('#roomList').empty();
+		$(list).each(function (i, el) {
+			$('#roomList').append('<li name="' + el + '">' + el + '<div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleFull"></div></li>');
+		});
+		$("#lobbyContainer").show();
+	}
+
+	$(".btnCloseLobby").click(function () {
+		$("#lobbyContainer").hide();
+	});
+
+	$("#btnCreateRoom").click(function () {
+		var $txt = $("#txtRoomName");
+		var roomName = $txt.val().trim();
+		if (roomName)
+			lobbyConnection.server.serverBroadcastCreateRoom(roomName);
+		$txt.val("");
+	});
+
+	$("#btnBackToLobby").click(function () {
+		$("#lobbyHeaderTitle").text("Lobby");
+		$("#roomWrapper").hide();
+		$("#lobbyWrapper").show();
+	});
+
+	$("#roomList").on("click", "li", function () {
+		var theRoom = $(this).attr("name");
+		$("#lobbyHeaderTitle").text(theRoom);
+		$(".playerCircleInsideRoom span").text("").parent().removeClass("circleFull").addClass("circleEmpty");
+		$("#lobbyWrapper").hide();
+		$("#roomWrapper").show();
+		lobbyConnection.server.serverBroadcastPlayerEnterRoom(theRoom);
+	});
+
+	lobbyConnection.client.clientReceivePlayerEnterRoom = function (dictionary) {
+		$(".playerCircleInsideRoom span").each(function (i, el) {
+			for (property in dictionary) {
+				if (property === (i + 1).toString()) {
+					$(el).text(dictionary[property]).parent().removeClass("circleEmpty").addClass("circleFull");
+					break;
+				}
+			}
+		});
+	};
+
+	$(document).on("click", "#playerListInsideRoom .circleEmpty", function () {
+		var $theCircle = $(this);
+		var theRoom = $("#lobbyHeaderTitle").text();
+		var seatNumber = parseInt($theCircle.attr("seatNumber"));
+		lobbyConnection.server.serverBroadcastPlayerTakeSeat(theRoom, seatNumber);
+	});
+
+	lobbyConnection.client.clientReceivePlayerTakeSeat = function (dictionary) {
+		$(".playerCircleInsideRoom span").each(function (i, el) {
+			for (property in dictionary) {
+				console.log("seatNumber: " + property + ",spani: " + i);
+				if (property === (i + 1).toString()) {
+					$(el).text(dictionary[property]).parent().removeClass("circleEmpty").addClass("circleFull");
+					//delete seatNumber from list so the loop won't check the taken seat again
+					delete dictionary[i + 1]
+					break;
+				}
+			}
+		});
+	};
+
+	lobbyConnection.client.clientReceivePlayerEnterRoomErrorPlayerAlreadyInARoom = function () {
+		alert("You already took a seat in a room. You need to leave the room you are sitting at in order to sit down here.");
+	}
+
+	lobbyConnection.client.clientReceivePlayerCreateRoomErrorPlayerIsAlreadyAdmin = function () {
+		alert("You are already an admin of a room. You need to leave your room in order to create a new one.");
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	//Home Functions
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+
+	// Create connection
+
+	$("#btnEnterPlayerName").click(function () {
+
+		//HUB START/////////////////////////////////////////////////////////////////////////////////////
+		$.connection.hub.logging = true;
+		$.connection.hub.start().done(function () {
+			myClientId = $.connection.hub.id;
+			////////////////////////////////////////////////////////////////////////////////////////////////
+
+			var playerName = $("#txtPlayerName").val();
+			var player = { name: playerName, id: myClientId };
+			lobbyConnection.server.serverBroadcastAddPlayerToPlayerCollection(player);
+		}).fail(function () {
+			alert("Could not Connect!");
+		});
+		$("#setPlayerNameModalBox").hide();
+	});
+
+	lobbyConnection.client.clientReceiveOnDisconnect = function (name, count) {
+		var $list = $("#homePlayersOnlineList");
+		var $node = $list.find("li:contains(" + name + ")");
+		$($node).remove();
+		$('#spanPlayersOnline').html(count);
+	};
+
+	lobbyConnection.client.clientReceiveMessage = function (count, name) {
+		if (typeof name === "string") {
+			$("#homePlayersOnlineList").append("<li>" + name + "</li>");
+		}
+		else {
+			for (var i = 0; i < name.length; i++) {
+				$("#homePlayersOnlineList").append("<li>" + name[i] + "</li>");
+			}
+		}
+		$('#spanPlayersOnline').html(count);
+	};
+
+	lobbyConnection.client.clientReceivePlayerLeaveSeat = function (roomName, seatNumber) {
+		if ($("#lobbyHeaderTitle").text() == roomName) {
+			var $li = $('.playerCircleInsideRoom[seatNumber="' + seatNumber.toString() + '"]');
+			$li.removeClass("circleFull").addClass("circleEmpty");
+			$li.find("span").text("");
+		}
+	};
+
+	lobbyConnection.client.clientReceiveAdminLeaveSeat = function (roomName) {
+		alert("Admin has left your room. Game room: " + roomName + " is now closed so please find another room.");
+		$('#roomList li[name="' + roomName + '"]').remove();
+		if ($("#lobbyHeaderTitle").text() == roomName) {
+			$("#lobbyHeaderTitle").text("Lobby")
+			$("#roomWrapper").hide();
+			$("#lobbyWrapper").show();
+		}
+	};
 
 </script>
