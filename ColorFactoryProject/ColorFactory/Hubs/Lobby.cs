@@ -5,6 +5,7 @@ using System.Web;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using ColorFactory.Models;
+using ColorFactory.Models.ViewModels;
 using System.Threading.Tasks;
 
 namespace ColorFactory.Hubs
@@ -12,14 +13,16 @@ namespace ColorFactory.Hubs
     [HubName("lobby")]
     public class Lobby : Hub
     {
-        private Dictionary<int, string> GetRoomPlayerNamesList(RoomModel room)
+        private List<IndexPlayersInRoomViewModel> GetRoomPlayerNamesList(RoomModel room)
         {
-            Dictionary<int, string> playerNames = new Dictionary<int, string>();
-
-            foreach (var player in room.Players)
+            List<IndexPlayersInRoomViewModel> playerNames = new List<IndexPlayersInRoomViewModel>();
+            foreach (var item in room.Players)
             {
-                playerNames.Add(player.seatNumber, player.Name);
+                IndexPlayersInRoomViewModel player = new IndexPlayersInRoomViewModel(item.Name, item.seatNumber, item.Ready);
+                playerNames.Add(player);
             }
+
+
             return playerNames;
         }
         private List<string> GetRoomNamesList()
@@ -48,65 +51,126 @@ namespace ColorFactory.Hubs
         {
             PlayerManagerModel.Instance.PlayerCollection.Remove(player);
         }
+        private bool AreAllPlayersReady(RoomModel room)
+        {
+            int counter = 0;
+            foreach (var item in room.Players)
+            {
+                if (item.Ready)
+                    counter++;
+            }
+
+            if (counter == 4)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         public void ServerBroadcastCreateRoom(string roomName)
         {
             PlayerModel player = PlayerManagerModel.Instance.PlayerCollection.Find(p => p.Id.ToString() == Context.ConnectionId);
 
-            if (player.seatNumber != 0)
+            if (player != null)
             {
-                Clients.Caller.clientReceivePlayerCreateRoomErrorPlayerIsAlreadyAdmin();
-                return;
+                if (player.seatNumber != 0)
+                {
+                    Clients.Caller.clientReceivePlayerCreateRoomErrorPlayerIsAlreadyAdmin();
+                    return;
+                }
+                RoomModel room = new RoomModel(player, roomName);
+                player.roomPlayerIsIn = room;
+                RoomManagerModel.Instance.RoomCollection.Add(room);
+                Clients.All.clientReceiveRoomCreated(roomName);
             }
-
-            RoomModel room = new RoomModel(player, roomName);
-            player.roomPlayerIsIn = room;
-            RoomManagerModel.Instance.RoomCollection.Add(room);
-            Clients.All.clientReceiveRoomCreated(roomName);
         }
-
         public void ServerBroadcastPlayerEnterRoom(string roomName)
         {
             var room = RoomManagerModel.Instance.RoomCollection.Find(p => p.Name == roomName);
-            Groups.Add(Context.ConnectionId, roomName).ContinueWith(task =>
+
+            IEnumerable<IGrouping<int, bool>> listOfPlayerReady = room.Players.GroupBy(player => player.seatNumber, player => player.Ready);
+
+            if (room != null)
             {
-
-                if (!task.IsCanceled)
-                {
-                    Clients.Caller.clientReceivePlayerEnterRoom(GetRoomPlayerNamesList(room));
-                }
-            });
+                Groups.Add(Context.ConnectionId, roomName).ContinueWith(task =>
+                            {
+                                if (!task.IsCanceled)
+                                {
+                                    Clients.Caller.clientReceivePlayerEnterRoom(GetRoomPlayerNamesList(room));
+                                }
+                            });
+            }
+            else
+            {
+                Clients.Caller.clientReceiveSpecifiedRoomDoesNotExist(roomName);
+            }
         }
-
         public void ServerBroadcastPlayerEnterLobby()
         {
             Clients.Caller.clientReceivePlayerEnterLobby(GetRoomNamesList());
         }
-
         public void ServerBroadcastPlayerTakeSeat(string roomName, int seatNumber)
         {
             var room = RoomManagerModel.Instance.RoomCollection.Find(p => p.Name == roomName);
             var player = PlayerManagerModel.Instance.PlayerCollection.Find(p => p.Id.ToString() == Context.ConnectionId);
 
-            if (player.seatNumber != 0)
+            if (player != null && room != null)
             {
-                Clients.Caller.clientReceivePlayerEnterRoomErrorPlayerAlreadyInARoom();
-                return;
-            }
-
-            player.seatNumber = seatNumber;
-            room.AddPlayer(player);
-            player.roomPlayerIsIn = room;
-
-            Groups.Add(Context.ConnectionId, roomName).ContinueWith(task =>
-            {
-                if (!task.IsCanceled)
+                if (player.seatNumber != 0)
                 {
-                    Clients.Group(roomName).clientReceivePlayerTakeSeat(GetRoomPlayerNamesList(room));
+                    Clients.Caller.clientReceivePlayerEnterRoomErrorPlayerAlreadyInARoom();
+                    return;
                 }
-            });
-        }
 
+                player.seatNumber = seatNumber;
+                room.AddPlayer(player);
+                player.roomPlayerIsIn = room;
+
+                Groups.Add(Context.ConnectionId, roomName).ContinueWith(task =>
+                {
+                    if (!task.IsCanceled)
+                    {
+                        Clients.Group(roomName).clientReceivePlayerTakeSeat(GetRoomPlayerNamesList(room));
+                    }
+                });
+            }
+        }
+        public void ServerBroadcastPlayerIsReady(string roomName, int seatNumber)
+        {
+            var room = RoomManagerModel.Instance.RoomCollection.Find(p => p.Name == roomName);
+            var player = PlayerManagerModel.Instance.PlayerCollection.Find(p => p.Id.ToString() == Context.ConnectionId);
+
+            if (player != null && room != null)
+            {
+                //If player's seat number is not the same as clicked seat number
+                if (player.seatNumber != seatNumber)
+                {
+
+                    return;
+                }
+
+                if (player.Ready)
+                {
+                    player.Ready = false;
+                    Clients.Group(roomName).clientReceivePlayerIsNotReady(seatNumber);
+                }
+                //player goes from notReady to ready here
+                else
+                {
+                    player.Ready = true;
+                    Clients.Group(roomName).clientReceivePlayerIsReady(seatNumber);
+
+                    if (AreAllPlayersReady(room))
+                    {
+                        //start game
+                        Clients.Group(roomName).clientReceiveStartGame();
+                    }
+                }
+            }
+        }
         public void ServerBroadcastAddPlayerToPlayerCollection(PlayerModel player)
         {
             PlayerManagerModel.Instance.AddPlayer(player);
@@ -118,26 +182,27 @@ namespace ColorFactory.Hubs
         {
             var player = PlayerManagerModel.Instance.PlayerCollection.Find(p => p.Id.ToString() == Context.ConnectionId);
             var room = player.roomPlayerIsIn;
-            room.RemovePlayer(player);
-
-            if (room.Admin == player)
+            if (room != null)
             {
-                Clients.Group(room.Name).clientReceiveAdminLeaveSeat(room.Name);
-                foreach (var aplayer in room.Players)
+                room.RemovePlayer(player);
+
+                if (room.Admin == player)
                 {
-                    aplayer.roomPlayerIsIn = null;
-aplayer.seatNumber = 0;
-aplayer.Ready = false;
+                    Clients.Group(room.Name).clientReceiveAdminLeaveSeat(room.Name);
+                    foreach (var aplayer in room.Players)
+                    {
+                        aplayer.roomPlayerIsIn = null;
+                        aplayer.seatNumber = 0;
+                        aplayer.Ready = false;
+                    }
+                    RoomManagerModel.Instance.RoomCollection.Remove(room);
                 }
-                RoomManagerModel.Instance.RoomCollection.Remove(room);
+                else
+                {
+                    Clients.Group(room.Name).clientReceivePlayerLeaveSeat(room.Name, player.seatNumber);
+                }
             }
-            else
-            {
-                Clients.Group(room.Name).clientReceivePlayerLeaveSeat(room.Name, player.seatNumber);
-            }
-
             RemovePlayerFromPlayerCollection(player);
-
             return Clients.All.clientReceiveOnDisconnect(player.Name, PlayerManagerModel.Instance.PlayerCollection.Count);
         }
     }

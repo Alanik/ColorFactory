@@ -1,11 +1,9 @@
 ﻿@{
-	ViewBag.Title = "Home Page";
+	ViewBag.Title = "Color Factory";
 }
 
 <div id="mainContainer">
-
 	<div id="leftSideContainer">
-
 		<div style="float: right;">
 			<span style="color: white;">points: </span>
 			<span id="ammunitionPointsContainer"></span>
@@ -18,7 +16,6 @@
 			</div>
 			<ul id="homePlayersOnlineList"></ul>
 		</div>
-
 	</div>
 
 	<div id="playerCanvasContainer" style="position: absolute;">
@@ -32,7 +29,6 @@
 	<div>
 		<canvas id="effectsCanvas" width="501" height="551" />
 	</div>
-
 </div>
 
 <script type="text/javascript">
@@ -74,7 +70,7 @@
 	var lobbyConnection = $.connection.lobby;
 
 	lobbyConnection.client.clientReceiveRoomCreated = function (roomName) {
-		$('#roomList').append('<li name="' + roomName + '">' + roomName + '<div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleFull"></div></li>');
+		$('#roomList').append('<li name="' + roomName + '">' + roomName + '<div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleFullPlayerNotReady"></div></li>');
 	};
 
 	$("#btnEnterLobby").click(function () {
@@ -87,7 +83,7 @@
 	lobbyConnection.client.clientReceivePlayerEnterLobby = function (list) {
 		$('#roomList').empty();
 		$(list).each(function (i, el) {
-			$('#roomList').append('<li name="' + el + '">' + el + '<div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleFull"></div></li>');
+			$('#roomList').append('<li name="' + el + '">' + el + '<div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleFullPlayerNotReady"></div></li>');
 		});
 		$("#lobbyContainer").show();
 	}
@@ -113,43 +109,130 @@
 	$("#roomList").on("click", "li", function () {
 		var theRoom = $(this).attr("name");
 		$("#lobbyHeaderTitle").text(theRoom);
-		$(".playerCircleInsideRoom span").text("").parent().removeClass("circleFull").addClass("circleEmpty");
+		$("#playerListInsideRoom li span").text("").prev().removeClass("circleFullPlayerNotReady").addClass("circleEmpty");
 		$("#lobbyWrapper").hide();
 		$("#roomWrapper").show();
 		lobbyConnection.server.serverBroadcastPlayerEnterRoom(theRoom);
 	});
 
-	lobbyConnection.client.clientReceivePlayerEnterRoom = function (dictionary) {
-		$(".playerCircleInsideRoom span").each(function (i, el) {
-			for (property in dictionary) {
-				if (property === (i + 1).toString()) {
-					$(el).text(dictionary[property]).parent().removeClass("circleEmpty").addClass("circleFull");
-					break;
-				}
+	lobbyConnection.client.clientReceivePlayerEnterRoom = function (playerNamesList) {
+		var $span, $circle, $tick, player, seat;
+
+		for (var i = 0; i < playerNamesList.length; i++) {
+			player = playerNamesList[i];
+			seat = player.SeatNumber;
+			$li = $('#playerListInsideRoom li[seatNumber="' + seat.toString() + '"]');
+			$span = $li.find("span");
+			$circle = $span.prev();
+
+			if (player.Ready === true) {
+				$span.css("color", "rgb(10,211,122)");
+				$circle.removeClass("circleFullPlayerNotReady circleEmpty").addClass("circleFullPlayerReady");
+				$li.find('img').attr('src', '/Images/Lobby/success.png');
 			}
-		});
+			else {
+				$span.css("color", "rgb(238,68,68)");
+				$circle.removeClass("circleFullPlayerReady circleEmpty").addClass("circleFullPlayerNotReady");
+				$li.find('img').attr('src', '/Images/Lobby/successGray.png');
+			}
+
+			$span.text(player.Name);
+
+		}
 	};
 
 	$(document).on("click", "#playerListInsideRoom .circleEmpty", function () {
 		var $theCircle = $(this);
 		var theRoom = $("#lobbyHeaderTitle").text();
-		var seatNumber = parseInt($theCircle.attr("seatNumber"));
+		var seatNumber = parseInt($theCircle.parent().attr("seatNumber"));
 		lobbyConnection.server.serverBroadcastPlayerTakeSeat(theRoom, seatNumber);
 	});
 
-	lobbyConnection.client.clientReceivePlayerTakeSeat = function (dictionary) {
-		$(".playerCircleInsideRoom span").each(function (i, el) {
-			for (property in dictionary) {
-				console.log("seatNumber: " + property + ",spani: " + i);
-				if (property === (i + 1).toString()) {
-					$(el).text(dictionary[property]).parent().removeClass("circleEmpty").addClass("circleFull");
-					//delete seatNumber from list so the loop won't check the taken seat again
-					delete dictionary[i + 1]
-					break;
+	lobbyConnection.client.clientReceivePlayerTakeSeat = function (playerNamesList) {
+		var $span, $circle, $tick, player, seat;
+
+		for (var i = 0; i < playerNamesList.length; i++) {
+			player = playerNamesList[i];
+			seat = player.SeatNumber;
+			$li = $('#playerListInsideRoom li[seatNumber="' + seat.toString() + '"]');
+			$span = $li.find("span");
+			$circle = $span.prev();
+
+			if (player.Ready === true) {
+				$span.css("color", "rgb(10,211,122)");
+				$circle.removeClass("circleFullPlayerNotReady circleEmpty").addClass("circleFullPlayerReady");
+				$li.find('img').attr('src', '/Images/Lobby/success.png');
+
+			}
+			else {
+				$span.css("color", "rgb(238,68,68)");
+				$circle.removeClass("circleFullPlayerReady circleEmpty").addClass("circleFullPlayerNotReady");
+				$li.find('img').attr('src', '/Images/Lobby/successGray.png');
+
+			}
+
+			$span.text(player.Name);
+
+		}
+	};
+
+	//on player ready click/////////////////////////////////////////////////////////////////////////////////////////////////
+
+	$(document).on("click", "#playerListInsideRoom li img", function () {
+		$img = $(this);
+		var theRoom = $("#lobbyHeaderTitle").text();
+		var seatNumber = parseInt($img.parent().attr("seatNumber"));
+		lobbyConnection.server.serverBroadcastPlayerIsReady(theRoom, seatNumber);
+	});
+
+	lobbyConnection.client.clientReceivePlayerIsReady = function (seatNumber) {
+		var $li = $('#playerListInsideRoom li[seatNumber="' + seatNumber.toString() + '"]');
+		$li.find('img').attr('src', '/Images/Lobby/success.png').next().removeClass("circleFullPlayerNotReady").addClass("circleFullPlayerReady").next().css("color", "rgb(10,211,122);");
+	};
+
+	lobbyConnection.client.clientReceivePlayerIsNotReady = function (seatNumber) {
+		var $li = $('#playerListInsideRoom li[seatNumber="' + seatNumber.toString() + '"]');
+		$li.find('img').attr('src', '/Images/Lobby/successGray.png').next().removeClass("circleFullPlayerReady").addClass("circleFullPlayerNotReady").next().css("color", "rgb(238,68,68);");
+	};
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//start game
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	lobbyConnection.client.clientReceiveStartGame = function () {
+		console.log("Starting counter..");
+		startCounter();
+
+		function startCounter() {
+			var $counterContainer = $(".startGameCounter");
+			var winW = $(window).width();
+			var numbers = [5, 4, 3, 2, 1];
+			var i = 0;
+
+			
+			$counterContainer.css({ 'left': winW / 2, 'top': 100 }).show();
+			$("#lobbyContainer").hide();
+
+			var animationInterval = setInterval(startGameCountdown, 1000);
+
+			function startGameCountdown() {
+				if (i !== 5) {
+					console.log(numbers[i]);
+					$counterContainer.text(numbers[i]);
+					i++;
+				}
+				else {
+					clearInterval(animationInterval);
+					$counterContainer.hide();
 				}
 			}
-		});
+		}
 	};
+
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//ERROR messages
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	lobbyConnection.client.clientReceivePlayerEnterRoomErrorPlayerAlreadyInARoom = function () {
 		alert("You already took a seat in a room. You need to leave the room you are sitting at in order to sit down here.");
@@ -158,6 +241,10 @@
 	lobbyConnection.client.clientReceivePlayerCreateRoomErrorPlayerIsAlreadyAdmin = function () {
 		alert("You are already an admin of a room. You need to leave your room in order to create a new one.");
 	}
+
+	lobbyConnection.client.clientReceiveSpecifiedRoomDoesNotExist = function (roomName) {
+		alert("Game room: " + roomName + " does not exist.")
+	};
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////
 	//Home Functions
@@ -176,10 +263,14 @@
 			var playerName = $("#txtPlayerName").val();
 			var player = { name: playerName, id: myClientId };
 			lobbyConnection.server.serverBroadcastAddPlayerToPlayerCollection(player);
+			$("#setPlayerNameModalBox").hide();
+			$(".leftWrapper1").animate({ left: '+=100%', width: '-=100%' }, 2000);
+			$(".leftWrapper2").animate({ left: '+=100%', width: '-=100%' }, 2000);
+			$(".rightWrapper1").animate({ right: '+=100%' }, 2000);
+			$(".rightWrapper2").animate({ right: '+=100%' }, 2000);
 		}).fail(function () {
 			alert("Could not Connect!");
 		});
-		$("#setPlayerNameModalBox").hide();
 	});
 
 	lobbyConnection.client.clientReceiveOnDisconnect = function (name, count) {
@@ -203,9 +294,11 @@
 
 	lobbyConnection.client.clientReceivePlayerLeaveSeat = function (roomName, seatNumber) {
 		if ($("#lobbyHeaderTitle").text() == roomName) {
-			var $li = $('.playerCircleInsideRoom[seatNumber="' + seatNumber.toString() + '"]');
-			$li.removeClass("circleFull").addClass("circleEmpty");
-			$li.find("span").text("");
+			alert(roomName)
+			var $li = $('#playerListInsideRoom li[seatNumber="' + seatNumber.toString() + '"]');
+			var $circle = $li.find(".playerCircleInsideRoom").removeClass("circleFullPlayerNotReady").addClass("circleEmpty");
+			$circle.next().css("color", "rgb(238,68,68)").text("");
+			$circle.prev().attr("src", "/Images/Lobby/successGray.png");
 		}
 	};
 

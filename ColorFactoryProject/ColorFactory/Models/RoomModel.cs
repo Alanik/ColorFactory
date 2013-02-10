@@ -14,9 +14,12 @@ namespace ColorFactory.Models
         public Boolean IsFull { get; set; }
 
 
+
         public void AddPlayer(PlayerModel player)
         {
+            if(!this.IsFull)
             Players.Add(player);
+
             IfRoomIsFull();
         }
 

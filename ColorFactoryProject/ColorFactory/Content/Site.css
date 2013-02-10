@@ -2,17 +2,16 @@
     background-color: black;
     margin: 0;
     padding: 0;
-
 }
 
 body {
     background-color: transparent;
     border-top: solid 10px #000;
     color: #333;
-    font-family:Arial,"Segoe UI", Verdana, Helvetica, Sans-Serif;
+    font-family: Helvetica,"Segoe UI", Verdana, Sans-Serif;
     margin: 0;
     padding: 0;
-    min-width:1000px;
+    min-width: 1000px;
 }
 
 a {
@@ -766,7 +765,7 @@ tr.pager td {
 }
 
 #mainContainer {
-position:relative;
+    position: relative;
     overflow: hidden;
     width: 1000px;
     padding-top: 50px;
@@ -777,7 +776,7 @@ position:relative;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-background-color:#1d1d1d;
+    background-color: #1d1d1d;
 }
 
 #effectsCanvas {
@@ -789,8 +788,8 @@ background-color:#1d1d1d;
 
 #playerCanvas {
     position: absolute;
-top:100px;
-left:100px;
+    top: 100px;
+    left: 100px;
 }
 
 #playerCanvasContainer {
@@ -800,144 +799,202 @@ left:100px;
 }
 
 #btnEnterLobby {
-
 }
 
 #lobbyContainer {
-position:absolute;
-width:800px;
-min-height:400px;
-background-color:rgba(0, 0, 0, 0.84);
-border:1px solid rgb(255, 102, 102);
-display:none;
-top:20px;
-left:20px;
-z-index:3;
-padding:10px;
-padding-top:20px;
-
-
+    position: absolute;
+    width: 800px;
+    min-height: 400px;
+    background-color: rgba(0, 0, 0, 0.84);
+    border: 1px solid rgb(255, 102, 102);
+    display: none;
+    top: 20px;
+    left: 20px;
+    z-index: 3;
+    padding: 10px;
+    padding-top: 20px;
 }
 
 #roomListContainer {
-border:1px solid rgb(153, 138, 138);
-margin-top:20px;
-margin-bottom:10px;
-background-color:rgba(0, 0, 0, 0.66);
-padding:10px;
+    border: 1px solid rgb(153, 138, 138);
+    margin-top: 20px;
+    margin-bottom: 10px;
+    background-color: rgba(0, 0, 0, 0.66);
+    padding: 10px;
 }
 
 #setPlayerNameModalBox {
-position:absolute;
-border:1px solid rgb(255, 102, 102);
-background-color:rgba(0, 0, 0, 0.84);
-height:200px;
-top:200px;
-left:500px;
-z-index:4;
-padding:10px;
-color:white;
+    position: absolute;
+    border: 1px solid rgb(255, 102, 102);
+    background-color: rgba(0, 0, 0, 0.84);
+    height: 200px;
+    top: 200px;
+    left: 500px;
+    z-index: 4;
+    padding: 10px;
+    color: white;
 }
 
 #txtPlayerName {
-margin-top:10px;
-
+    margin-top: 10px;
 }
 
 #homePlayersOnlineList {
-border:1px solid white;
-color:#00ff21;
-
+    border: 1px solid white;
+    color: #00ff21;
 }
 
-#roomList li{
-
-width:400px;
-    background:rgba(10,211,122,1);
-padding:10px;
-margin-bottom:6px;
-border-bottom-right-radius: 15px;
--moz-border-bottom-right-radius: 15px;
-border-top-left-radius: 15px;
--moz-border-top-left-radius: 15px;
-display:block;
-
+#roomList li {
+    width: 400px;
+    background: rgba(10,211,122,1);
+    padding: 10px;
+    margin-bottom: 6px;
+    border-bottom-right-radius: 15px;
+    -moz-border-bottom-right-radius: 15px;
+    border-top-left-radius: 15px;
+    -moz-border-top-left-radius: 15px;
+    display: block;
 }
+
     #roomList Li:hover {
-/*
+        /*
 background:#CDCDCD;
 */
-background:rgb(2, 75, 43);
-cursor:pointer;
-}
+        background: rgb(2, 75, 43);
+        cursor: pointer;
+    }
 
 .headerTitle {
-font-size:28px;
-position:absolute;
-top:-32px;
-color:#fff;
-text-shadow:white 0em 0em .9em;
+    font-size: 28px;
+    position: absolute;
+    top: -32px;
+    color: #fff;
+    text-shadow: white 0em 0em .9em;
 }
 
-.dottedWrapper
-{
+.dottedWrapper {
     background: url(/images/point.png) repeat scroll 0 0 transparent;
-    width: 800px;
-    height:800px;
-    position:absolute;
-z-index:-1;
+    position: absolute;
+    z-index: 2;
+}
+
+.leftWrapper1 {
+    width: 100%;
+    height: 25%;
+    top: 0px;
+}
+
+.leftWrapper2 {
+    width: 100%;
+    height: 25%;
+    top: 50%;
+}
+
+.rightWrapper1 {
+    width: 100%;
+    height: 25%;
+    top: 25%;
+}
+
+.rightWrapper2 {
+    width: 100%;
+    height: 25%;
+    top: 75%;
+}
+
+.darkWrapper {
+    background-color: rgba(199, 209, 214, 0.90);
+    position: absolute;
+    z-index: 2;
 }
 
 .playerCircle {
-display:inline-block;
-height:18px;
-width:18px;
-margin-right:10px;
-float:right;
-border-radius: 11px;
-border:2px solid white;
--moz-border-radius: 11px;
+    display: inline-block;
+    height: 18px;
+    width: 18px;
+    margin-right: 10px;
+    float: right;
+    border-radius: 11px;
+    border: 2px solid white;
+    -moz-border-radius: 11px;
 }
 
-.playerCircleInsideRoom span{
-position:relative;
-left:50px;
+.circleFullPlayerNotReady {
+    background: rgb(238,68,68);
 }
 
-.circleFull {
-background:rgba(238,68,68,1);
+.circleFullPlayerReady {
+    background: rgb(10,211,122);
 }
 
 .circleEmpty {
-background:white;
-cursor:pointer;
+    background: white;
+    cursor: pointer;
 }
 
 #roomWrapper {
-display:none;
-
+    display: none;
 }
+
 #lobbyWrapper {
-display:block;
+    display: block;
 }
-#btnBackToLobby {
 
+#btnBackToLobby {
 }
 
 .roomInfoContainer {
-border:1px solid rgb(153, 138, 138);
-margin-top:20px;
-margin-bottom:10px;
-background-color:rgba(0, 0, 0, 0.66);
-padding:10px;
+    border: 1px solid rgb(211,211,211);
+    margin-top: 20px;
+    margin-bottom: 10px;
+    background-color: rgba(0, 0, 0, 0.66);
+    padding: 10px;
 }
 
 .playerCircleInsideRoom {
-display:block;
-height:18px;
-width:18px;
-border-radius: 11px;
--moz-border-radius: 11px;
-margin-bottom:10px;
-border:2px solid white;
+    display: inline-block;
+    height: 18px;
+    width: 18px;
+    border-radius: 11px;
+    -moz-border-radius: 11px;
+    border: 2px solid white;
+    margin-right: 20px;
+}
+
+#playerListInsideRoom li {
+    color: rgb(238,68,68);
+    margin-bottom: 10px;
+    list-style: none;
+}
+
+#playerListInsideRoom li img{
+    cursor:pointer;
+}
+
+#playerListInsideRoom span {
+   position:relative;
+top:-4px;
+}
+
+#playerListInsideRoom img {
+    height: 30px;
+    margin-right: 10px;
+    position: relative;
+    top: 4px;
+}
+
+.inline {
+    display: inline-block;
+}
+
+#playerListInsideRoom {
+    padding-left: 20px;
+}
+
+.startGameCounter {
+font-size:8em;
+color:white;
+position:absolute;
+z-index:1;
+display:none;
 }

@@ -189,10 +189,12 @@
     </Compile>
     <Compile Include="Hubs\Lobby.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\GameSessionModel.cs" />
     <Compile Include="Models\PlayerManagerModel.cs" />
     <Compile Include="Models\PlayerModel.cs" />
     <Compile Include="Models\RoomManagerModel.cs" />
     <Compile Include="Models\RoomModel.cs" />
+    <Compile Include="Models\ViewModels\IndexPlayersInRoomViewModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -269,7 +271,9 @@
     <Content Include="Content\themes\base\minified\jquery.ui.tooltip.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
+    <Content Include="Images\Lobby\successGray.png" />
     <Content Include="Images\point.png" />
+    <Content Include="Images\Lobby\success.png" />
     <Content Include="Images\tilesheet\tileSheetPlayer2.png" />
     <Content Include="Images\tilesheet\tileSheetPlayer3.png" />
     <Content Include="Images\tilesheet\tileSheetPlayer40.png" />
@@ -308,19 +312,6 @@
     </Content>
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Images\accent.png" />
-    <Content Include="Images\bullet.png" />
-    <Content Include="Images\heroAccent.png" />
-    <Content Include="Images\orderedList0.png" />
-    <Content Include="Images\orderedList1.png" />
-    <Content Include="Images\orderedList2.png" />
-    <Content Include="Images\orderedList3.png" />
-    <Content Include="Images\orderedList4.png" />
-    <Content Include="Images\orderedList5.png" />
-    <Content Include="Images\orderedList6.png" />
-    <Content Include="Images\orderedList7.png" />
-    <Content Include="Images\orderedList8.png" />
-    <Content Include="Images\orderedList9.png" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Account\_ChangePasswordPartial.cshtml" />
     <Content Include="Views\Account\_ExternalLoginsListPartial.cshtml" />

@@ -1,14 +1,18 @@
 ﻿<header>
 	<button id="btnBackToLobby">Back to lobby</button>
-		<button class="btnCloseLobby" style="float: right;">close</button>
+	<button class="btnCloseLobby" style="float: right;">close</button>
 </header>
 
 <section class="roomInfoContainer">
-		<div style="color:rgba(10,211,122,1);">players: </div>
+	<div style="color: rgba(10,211,122,1);">players: </div>
 	<ul id="playerListInsideRoom">
-		<li class="playerCircleInsideRoom circleFull" seatNumber="1"><span></span></li>
-		<li class="playerCircleInsideRoom circleEmpty" seatNumber="2"><span></span></li>
-		<li class="playerCircleInsideRoom circleEmpty" seatNumber="3"><span></span></li>
-		<li class="playerCircleInsideRoom circleEmpty" seatNumber="4"><span></span></li>
+		<li seatnumber="1">
+			<img src="~/Images/Lobby/successGray.png" alt="image" /><div class="playerCircleInsideRoom circleFullPlayerNotReady" ></div><span></span></li>
+		<li seatnumber="2">
+			<img src="~/Images/Lobby/successGray.png" alt="image" /><div class="playerCircleInsideRoom circleEmpty" ></div><span></span></li>
+		<li seatnumber="3">
+			<img src="~/Images/Lobby/successGray.png" alt="image" /><div class="playerCircleInsideRoom circleEmpty" ></div><span></span></li>
+		<li seatnumber="4">
+			<img src="~/Images/Lobby/successGray.png" alt="image" /><div class="playerCircleInsideRoom circleEmpty" ></div><span></span></li>
 	</ul>
 </section>
