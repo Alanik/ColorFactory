@@ -166,7 +166,8 @@ namespace ColorFactory.Hubs
                     if (AreAllPlayersReady(room))
                     {
                         //start game
-                        Clients.Group(roomName).clientReceiveStartGame();
+                        //Clients.Group(roomName).clientReceiveStartGameFromLobbyHub();
+                        GameSessionModel.InitializeGame(room.Players, room.Name);
                     }
                 }
             }
@@ -181,9 +182,11 @@ namespace ColorFactory.Hubs
         public override Task OnDisconnected()
         {
             var player = PlayerManagerModel.Instance.PlayerCollection.Find(p => p.Id.ToString() == Context.ConnectionId);
-            var room = player.roomPlayerIsIn;
-            if (room != null)
+
+            if (player != null && player.roomPlayerIsIn != null)
             {
+                var room = player.roomPlayerIsIn;
+
                 room.RemovePlayer(player);
 
                 if (room.Admin == player)

@@ -8,7 +8,7 @@ namespace ColorFactory.Models
     public class RoomManagerModel
     {
 
-private static RoomManagerModel _instance;
+        private static RoomManagerModel _instance;
 
         public List<RoomModel> RoomCollection
         {

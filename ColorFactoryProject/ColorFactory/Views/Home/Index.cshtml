@@ -52,13 +52,23 @@
 	var myClientId;
 	///////////////////////////////////////////////////////////////////////////// 
 
+	//HUB START/////////////////////////////////////////////////////////////////////////////////////
+	$.connection.hub.logging = true;
+	$.connection.hub.start().done(function () {
+		globalGameConnection = $.connection.game;
+		myClientId = $.connection.hub.id;
+	}).fail(function () {
+		alert("Could not Connect!");
+	});
+	////////////////////////////////////////////////////////////////////////////////////////////////
+
 	$(function () {
 		//Game Canvas related
 		initialize();
 		playing();
 	});
 
-	$("#lobbyContainer").draggable();
+	//$("#lobbyContainer").draggable();
 	$("#setPlayerNameModalBox").draggable();
 	$("button").button();
 
@@ -68,6 +78,7 @@
 
 	// Create connection
 	var lobbyConnection = $.connection.lobby;
+	globalGameConnection = $.connection.game;
 
 	lobbyConnection.client.clientReceiveRoomCreated = function (roomName) {
 		$('#roomList').append('<li name="' + roomName + '">' + roomName + '<div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleFullPlayerNotReady"></div></li>');
@@ -170,10 +181,8 @@
 				$li.find('img').attr('src', '/Images/Lobby/successGray.png');
 
 			}
-
 			$span.text(player.Name);
-
-		}
+	}
 	};
 
 	//on player ready click/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -196,40 +205,13 @@
 	};
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//start game
+	//start game, begin in Lobby Hub then communicate to Game Hub throughout the game
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	lobbyConnection.client.clientReceiveStartGame = function () {
-		console.log("Starting counter..");
-		startCounter();
 
-		function startCounter() {
-			var $counterContainer = $(".startGameCounter");
-			var winW = $(window).width();
-			var numbers = [5, 4, 3, 2, 1];
-			var i = 0;
-
-			
-			$counterContainer.css({ 'left': winW / 2, 'top': 100 }).show();
-			$("#lobbyContainer").hide();
-
-			var animationInterval = setInterval(startGameCountdown, 1000);
-
-			function startGameCountdown() {
-				if (i !== 5) {
-					console.log(numbers[i]);
-					$counterContainer.text(numbers[i]);
-					i++;
-				}
-				else {
-					clearInterval(animationInterval);
-					$counterContainer.hide();
-				}
-			}
-		}
-	};
-
-
-
+	lobbyConnection.client.initializePlayers = function (name) {
+		console.log("invoking server broadcast start game in Game hub");
+		globalGameConnection.server.serverBroadcastStartGameFromGameHub(name);
+	}
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//ERROR messages
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -253,24 +235,15 @@
 	// Create connection
 
 	$("#btnEnterPlayerName").click(function () {
-
-		//HUB START/////////////////////////////////////////////////////////////////////////////////////
-		$.connection.hub.logging = true;
-		$.connection.hub.start().done(function () {
-			myClientId = $.connection.hub.id;
-			////////////////////////////////////////////////////////////////////////////////////////////////
-
-			var playerName = $("#txtPlayerName").val();
-			var player = { name: playerName, id: myClientId };
-			lobbyConnection.server.serverBroadcastAddPlayerToPlayerCollection(player);
-			$("#setPlayerNameModalBox").hide();
-			$(".leftWrapper1").animate({ left: '+=100%', width: '-=100%' }, 2000);
-			$(".leftWrapper2").animate({ left: '+=100%', width: '-=100%' }, 2000);
-			$(".rightWrapper1").animate({ right: '+=100%' }, 2000);
-			$(".rightWrapper2").animate({ right: '+=100%' }, 2000);
-		}).fail(function () {
-			alert("Could not Connect!");
-		});
+		var playerName = $("#txtPlayerName").val();
+		var player = { name: playerName, id: myClientId };
+		lobbyConnection.server.serverBroadcastAddPlayerToPlayerCollection(player);
+		$("#setPlayerNameModalBox").hide();
+		$(".leftWrapper1").animate({ left: '+=100%', width: '-=100%' }, 2000);
+		$(".leftWrapper2").animate({ left: '+=100%', width: '-=100%' }, 2000);
+		$(".rightWrapper1").animate({ right: '+=100%' }, 2000);
+		$(".rightWrapper2").animate({ right: '+=100%' }, 2000);
+		
 	});
 
 	lobbyConnection.client.clientReceiveOnDisconnect = function (name, count) {
@@ -294,7 +267,6 @@
 
 	lobbyConnection.client.clientReceivePlayerLeaveSeat = function (roomName, seatNumber) {
 		if ($("#lobbyHeaderTitle").text() == roomName) {
-			alert(roomName)
 			var $li = $('#playerListInsideRoom li[seatNumber="' + seatNumber.toString() + '"]');
 			var $circle = $li.find(".playerCircleInsideRoom").removeClass("circleFullPlayerNotReady").addClass("circleEmpty");
 			$circle.next().css("color", "rgb(238,68,68)").text("");
@@ -313,3 +285,4 @@
 	};
 
 </script>
+<script src="~/Scripts/functions.js" type="text/javascript"></script>

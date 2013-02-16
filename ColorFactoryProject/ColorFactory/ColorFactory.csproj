@@ -187,14 +187,18 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Hubs\Game.cs" />
     <Compile Include="Hubs\Lobby.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\GameSessionManagerModel.cs" />
     <Compile Include="Models\GameSessionModel.cs" />
     <Compile Include="Models\PlayerManagerModel.cs" />
     <Compile Include="Models\PlayerModel.cs" />
     <Compile Include="Models\RoomManagerModel.cs" />
     <Compile Include="Models\RoomModel.cs" />
     <Compile Include="Models\ViewModels\IndexPlayersInRoomViewModel.cs" />
+    <Compile Include="Models\MineInSession.cs" />
+    <Compile Include="Models\PlayerInSession.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -28,9 +28,10 @@ namespace ColorFactory
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
 
-            //initialize Player Collection
+            //initialize Collections
             PlayerManagerModel.Instance.InitializePlayerCollection();
             RoomManagerModel.Instance.InitializeRoomCollection();
+            GameSessionManagerModel.Instance.InitializeGameSessionCollection();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿/////////////////////////////////////////////////////
+﻿
+/////////////////////////////////////////////////////
 //Global variables
 /////////////////////////////////////////////////////
 var playerTimerInterval;
@@ -20,9 +21,7 @@ var playerAnimationCounter = 0;
 var nextTilePlayerMovesToCounter = 0;
 
 var mineNumberAnimationOpacity = .1;
-
 var arrayResult;
-
 
 //////////////////////////////////////////////////////////////
 //Objects
@@ -134,7 +133,6 @@ var cursor = {
 ////////////////////////////////////////////////////////////////////////////////
 
 function initialize() {
-
     initializeEffectsCanvasPosition();
     initializeMines();
     initializeTileNumbers();
@@ -146,7 +144,6 @@ function initialize() {
 
     function eventPlayerLoaded() {
         drawPlayer();
-
     }
 
     function initializePlayer() {
@@ -237,7 +234,6 @@ function initialize() {
         $effectsCanvas.css({ "left": x, "top": y })
         $playerCanvasContainer.css({ "left": x, "top": y + 50 })
     }
-
 }
 
 function playing() {
@@ -247,7 +243,6 @@ function playing() {
 }
 
 function onMouseClickFunction() {
-
     $effectsCanvas.click(function (e) {
         var x = cursor.getCursorPositionInCanvasX(e.pageX),
             y = cursor.getCursorPositionInCanvasY(e.pageY);
@@ -259,10 +254,6 @@ function onMouseClickFunction() {
         cursor.clickedTile.cornerPointY = cornerPoint.y;
 
         resetNextTilePlayerMovesToCounter();
-
-        //console.log("previous: " + player.previousTile.column, player.previousTile.row);
-        //console.log("current: " + player.currentTile.column, player.currentTile.row);
-        //console.log("next: " + player.nextTile.column, player.nextTile.row);
 
         /////////////////////////////////////////////////////////////////////////////////////
         //code responsible for A* algorithm
@@ -719,6 +710,40 @@ function animateUncoveredMineNumbers() {
 
     }
 }
+////////////////////////////////////////////////////////////////////////////////////
+//SignalR game session start!!!
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//start game
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    globalGameConnection.client.clientReceiveStartGameCounter = function (name) {
+        console.log("Starting counter..");
+        startCounter();
+
+        function startCounter() {
+            var $counterContainer = $(".startGameCounter");
+            var winW = $(window).width();
+            var numbers = [5, 4, 3, 2, 1];
+            var i = 0;
+
+            $counterContainer.css({ 'left': winW / 2, 'top': 100 }).show();
+            $("#lobbyContainer").hide();
+
+            var animationInterval = setInterval(startGameCountdown, 1000);
+
+            function startGameCountdown() {
+                if (i !== 5) {
+                    console.log(numbers[i]);
+                    $counterContainer.text(numbers[i]);
+                    i++;
+                }
+                else {
+                    clearInterval(animationInterval);
+                    $counterContainer.hide();
+                }
+            }
+        }
+    };
 
 function clone(obj) {
     var target = {};
@@ -741,3 +766,4 @@ function clone(obj) {
 //}
 
 ///////////////////////////////////////////////////////////////////////////////
+
