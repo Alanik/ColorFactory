@@ -98,7 +98,7 @@ var player = {
 	"startingPositionTile": { "row": 0, "column": 0 },
 	"previousTile": { "row": 0, "column": 0 },
 	"ammunitionPoints": 0,
-	"room": null
+	"room":null
 };
 
 var enemy = {
@@ -147,9 +147,6 @@ var cursor = {
 	}
 
 };
-
-var padding = player.pixelDistanceWhileMoving - 1;
-var negativePadding = (player.pixelDistanceWhileMoving - 1) * (-1);
 
 ////////////////////////////////////////////////////////////////////////////////
 //FUNCTIONS
@@ -204,7 +201,7 @@ function initialize() {
 		}
 
 		alert("player started on a mine!");
-		//initializePlayer();
+         //initializePlayer();
 	}
 
 	function initializeMines() {
@@ -427,7 +424,8 @@ function drawPlayer() {
 	playerCtx.drawImage(tileSheet, 0, 0, 40, 40, canvasPadding, canvasPadding, 40, 40);
 }
 
-function drawEnemy() {
+function drawEnemy()
+{
 	enemyCtx.drawImage(tileSheet, 0, 0, 40, 40, canvasPadding, canvasPadding, 40, 40);
 }
 
@@ -547,6 +545,9 @@ function movePlayerTo() {
 				var tileYMinusPlayerY = tilePoint.x - player.cornerPoint.y;
 				var tileXMinusPlayerX = tilePoint.y - player.cornerPoint.x;
 
+				var padding = player.pixelDistanceWhileMoving - 1;
+				var negativePadding = (player.pixelDistanceWhileMoving - 1) * (-1);
+
 				if (tileYMinusPlayerY > padding)
 					velocityY = 1;
 				else if (tileYMinusPlayerY < negativePadding)
@@ -662,19 +663,20 @@ function movePlayerTo() {
 	}
 }
 
-function initializeEnemy(x, y) {
+function initializeEnemy(x,y)
+{
 	var point = cursor.getTileCornerPoint(x, y);
 
-	enemy.startingPositionTile = { "row": y, "column": x };
-	enemy.currentTile = clone(enemy.startingPositionTile);
-	enemy.nextTile = clone(enemy.currentTile);
+		enemy.startingPositionTile = { "row": y, "column": x };
+		enemy.currentTile = clone(enemy.startingPositionTile);
+		enemy.nextTile = clone(enemy.currentTile);
 
-	enemy.setCornerPoint(point.x, point.y);
+		enemy.setCornerPoint(point.x, point.y);
 
-	//set playerCanvas position here //////////////////////////////////////////////////////
-	enemyCanvas.setAttribute("style", "left:" + point.x + "px; top:" + point.y + "px;");
+		//set playerCanvas position here //////////////////////////////////////////////////////
+		enemyCanvas.setAttribute("style", "left:" + point.x + "px; top:" + point.y + "px;");
 
-	drawEnemy();
+		drawEnemy();
 }
 
 function displayAmmunitionPoints() {
@@ -855,48 +857,45 @@ gameConnection.client.clientReceiveStartGameCounter = function (x, y) {
 
 gameConnection.client.clientReceiveEnemyPosition = function (x, y) {
 
-	initializeEnemy(x, y);
+	initializeEnemy(x,y);
 }
 
 gameConnection.client.clientReceiveUpdateEnemyPosition = function (x, y) {
-
+	console.log("client receive update Enemy Position");
 	moveEnemyTo(x, y);
 
 	function moveEnemyTo(x, y) {
-
-		enemy.nextTile.row = x;
-		enemy.nextTile.column = y;
-		console.log("x: " + x + ", y: " + y);
-
-		//return, not allowing events to stack up
-		if (isEnemyRunningInProgress) {
-			console.log("return running in progress");
-			return;
-		}
-
 		var velocityX = 0;
 		var velocityY = 0;
 
-		
+		//var point = cursor.getTileCornerPoint(x, y);
+		//enemy.setCornerPoint(point.x, point.y);
+
+		//return, not allowing events to stack up
+		if (isEnemyRunningInProgress) {
+			return;
+		}
 
 		isEnemyRunningInProgress = true;
-
 		enemyTimerInterval = setInterval(drawEnemyRunning, 30);
 
 		function drawEnemyRunning() {
-			console.log("draw");
-
 			enemyCtx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
 			enemyCtx.drawImage(tileSheet, 0, 40 * enemyAnimationCounter, 40, 40, canvasPadding, canvasPadding, 40, 40);
 			calculateEnemyPosition();
 
 			function calculateEnemyPosition() {
 
+				enemy.nextTile.row = x;
+				enemy.nextTile.column = y;
+
 				var tilePoint = cursor.getTileCornerPoint(enemy.nextTile.row, enemy.nextTile.column);
-				console.log("enemyNextTileRow: " + enemy.nextTile.row + ", enemyNextTileCol: " + enemy.nextTile.column);
 
 				var tileYMinusEnemyY = tilePoint.x - enemy.cornerPoint.y;
 				var tileXMinusEnemyX = tilePoint.y - enemy.cornerPoint.x;
+
+				var padding = player.pixelDistanceWhileMoving - 1;
+				var negativePadding = (player.pixelDistanceWhileMoving - 1) * (-1);
 
 				if (tileYMinusEnemyY > padding)
 					velocityY = 1;
@@ -921,7 +920,7 @@ gameConnection.client.clientReceiveUpdateEnemyPosition = function (x, y) {
 
 					// move playerCanvas
 					enemyCanvas.setAttribute("style", "left:" + enemy.cornerPoint.x + "px; top:" + enemy.cornerPoint.y + "px;");
-
+					
 				}
 				else {
 					///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -930,11 +929,16 @@ gameConnection.client.clientReceiveUpdateEnemyPosition = function (x, y) {
 					enemy.previousTile = clone(enemy.currentTile);
 					enemy.currentTile = clone(enemy.nextTile);
 
+					console.log("currentTileColumn:" + enemy.currentTile.column + ", currentTileRow: " + enemy.currentTile.row);
+					console.log("cornerPointX:" + enemy.cornerPoint.x + ", conrenrPointY: " + enemy.cornerPoint.y);
+
+					ctx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
 					enemyCtx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+
+					drawMapTiles(ctx, 12, 12, tileSize);
 					drawEnemy();
 					isEnemyRunningInProgress = false;
 					clearInterval(enemyTimerInterval);
-					console.log("enemy is in tile");
 					return;
 				}
 				if (enemyAnimationCounter > enemy.pixelDistanceWhileMoving) {
