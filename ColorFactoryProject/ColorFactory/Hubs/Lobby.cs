@@ -91,11 +91,10 @@ namespace ColorFactory.Hubs
 		public void ServerBroadcastPlayerEnterRoom(string roomName)
 		{
 			var room = RoomManagerModel.Instance.RoomCollection.Find(p => p.Name == roomName);
-
-			IEnumerable<IGrouping<int, bool>> listOfPlayerReady = room.Players.GroupBy(player => player.seatNumber, player => player.Ready);
-
 			if (room != null)
 			{
+				IEnumerable<IGrouping<int, bool>> listOfPlayerReady = room.Players.GroupBy(player => player.seatNumber, player => player.Ready);
+
 				Groups.Add(Context.ConnectionId, roomName).ContinueWith(task =>
 							{
 								if (!task.IsCanceled)

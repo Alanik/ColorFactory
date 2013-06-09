@@ -16,7 +16,6 @@ namespace ColorFactory.Hubs
 			GameSessionModel session = GameSessionManagerModel.Instance.GameSessionCollection.Find(m => m.Name == roomName);
 			PlayerInSessionModel playerInGame = session.PlayersInSession.Find(m => m.Player.ConnnectionId == Context.ConnectionId);
 
-
 			if (playerInGame != null)
 			{
 				Clients.Caller.clientReceiveStartGameCounter(playerInGame.XCornerPoint, playerInGame.YCornerPoint);

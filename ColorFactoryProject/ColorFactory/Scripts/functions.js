@@ -19,7 +19,7 @@ var minimumNumOfMines = 10;
 var maximumNumOfMines = 25;
 
 var tileSheet = new Image();
-tileSheet.src = "Images/tilesheet/tileSheetPlayer40Black2.png";
+tileSheet.src = "colorfactory/Images/tilesheet/tileSheetPlayer40Black2.png";
 
 var playerAnimationCounter = 0;
 var enemyAnimationCounter = 0;
@@ -775,8 +775,6 @@ function animateUncoveredMineNumbers() {
 //start game
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 gameConnection.client.clientReceiveStartGameCounter = function (x, y) {
-
-	console.log("Starting counter..");
 	startCounter();
 
 	function initializeGame(x, y) {
@@ -835,7 +833,6 @@ gameConnection.client.clientReceiveStartGameCounter = function (x, y) {
 
 		function startGameCountdown() {
 			if (i !== 5) {
-				console.log(numbers[i]);
 				$counterContainer.text(numbers[i]);
 				i++;
 			}
@@ -866,11 +863,9 @@ gameConnection.client.clientReceiveUpdateEnemyPosition = function (x, y) {
 
 		enemy.nextTile.row = x;
 		enemy.nextTile.column = y;
-		console.log("x: " + x + ", y: " + y);
 
 		//return, not allowing events to stack up
 		if (isEnemyRunningInProgress) {
-			console.log("return running in progress");
 			return;
 		}
 
@@ -884,7 +879,6 @@ gameConnection.client.clientReceiveUpdateEnemyPosition = function (x, y) {
 		enemyTimerInterval = setInterval(drawEnemyRunning, 30);
 
 		function drawEnemyRunning() {
-			console.log("draw");
 
 			enemyCtx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
 			enemyCtx.drawImage(tileSheet, 0, 40 * enemyAnimationCounter, 40, 40, canvasPadding, canvasPadding, 40, 40);
@@ -893,7 +887,6 @@ gameConnection.client.clientReceiveUpdateEnemyPosition = function (x, y) {
 			function calculateEnemyPosition() {
 
 				var tilePoint = cursor.getTileCornerPoint(enemy.nextTile.row, enemy.nextTile.column);
-				console.log("enemyNextTileRow: " + enemy.nextTile.row + ", enemyNextTileCol: " + enemy.nextTile.column);
 
 				var tileYMinusEnemyY = tilePoint.x - enemy.cornerPoint.y;
 				var tileXMinusEnemyX = tilePoint.y - enemy.cornerPoint.x;
@@ -934,7 +927,6 @@ gameConnection.client.clientReceiveUpdateEnemyPosition = function (x, y) {
 					drawEnemy();
 					isEnemyRunningInProgress = false;
 					clearInterval(enemyTimerInterval);
-					console.log("enemy is in tile");
 					return;
 				}
 				if (enemyAnimationCounter > enemy.pixelDistanceWhileMoving) {

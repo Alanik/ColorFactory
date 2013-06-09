@@ -3,26 +3,26 @@
 }
 
 <div id="mainContainer">
-<section class="topHeader">
-<div style="float:right; margin-right:30px;">
-			<span id="playerNameSpan" style="margin-right:400px;"></span><span style="color: gray;">points: </span>
+	<section class="topHeader">
+		<div style="float: right; margin-right: 30px;">
+			<span id="playerNameSpan" style="margin-right: 400px;"></span><span style="color: gray;">points: </span>
 			<span id="ammunitionPointsContainer"></span>
-			
+
 		</div>
-</section>
+	</section>
 
 	<div id="lobbyContainer">
-				@Html.Partial("_LobbyView")
-			</div>
+		@Html.Partial("_LobbyView")
+	</div>
 
-			<div id="setPlayerNameModalBox">
-				@Html.Partial("_SetPlayerNameModalBox")
-			</div>
+	<div id="setPlayerNameModalBox">
+		@Html.Partial("_SetPlayerNameModalBox")
+	</div>
 
 
 	<div id="leftSideContainer">
-<div id="btnEnterLobby">Lobby</div>
-		
+		<div id="btnEnterLobby">Lobby</div>
+
 
 	</div>
 
@@ -40,17 +40,17 @@
 	<div>
 		<canvas id="effectsCanvas" width="500" height="550" />
 	</div>
-<section class="bottomSection">
+	<section class="bottomSection">
 
-<div id="textDiv">
-				<span>players online: </span><span id="spanPlayersOnline"></span>
-			</div>
-<ul id="homePlayersOnlineList"></ul>
+		<div id="textDiv">
+			<span>players online: </span><span id="spanPlayersOnline"></span>
+		</div>
+		<ul id="homePlayersOnlineList"></ul>
 
-</section>
+	</section>
 </div>
 
-			
+
 <script type="text/javascript">
 
 	////////////////////////////////////////////////////////////////////////////
@@ -157,12 +157,12 @@
 			if (player.IsReady === true) {
 				$span.css("color", "rgb(10,211,122)");
 				$circle.removeClass("circleFullPlayerNotReady circleEmpty").addClass("circleFullPlayerReady");
-				$li.find('img').attr('src', 'Images/Lobby/success.png');
+				$li.find('img').attr('src', 'colorfactory/Images/Lobby/success.png');
 			}
 			else {
 				$span.css("color", "rgb(238,68,68)");
 				$circle.removeClass("circleFullPlayerReady circleEmpty").addClass("circleFullPlayerNotReady");
-				$li.find('img').attr('src', 'Images/Lobby/successGray.png');
+				$li.find('img').attr('src', 'colorfactory/Images/Lobby/successGray.png');
 			}
 
 			$span.text(player.Name);
@@ -193,17 +193,17 @@
 			if (player.IsReady === true) {
 				$span.css("color", "rgb(10,211,122)");
 				$circle.removeClass("circleFullPlayerNotReady circleEmpty").addClass("circleFullPlayerReady");
-				$li.find('img').attr('src', 'Images/Lobby/success.png');
+				$li.find('img').attr('src', 'colorfactory/Images/Lobby/success.png');
 
 			}
 			else {
 				$span.css("color", "rgb(238,68,68)");
 				$circle.removeClass("circleFullPlayerReady circleEmpty").addClass("circleFullPlayerNotReady");
-				$li.find('img').attr('src', 'Images/Lobby/successGray.png');
+				$li.find('img').attr('src', 'colorfactory/Images/Lobby/successGray.png');
 
 			}
 			$span.text(player.Name);
-	}
+		}
 	};
 
 	//on player ready click/////////////////////////////////////////////////////////////////////////////////////////////////
@@ -217,12 +217,12 @@
 
 	lobbyConnection.client.clientReceivePlayerIsReady = function (seatNumber) {
 		var $li = $('#playerListInsideRoom li[seatNumber="' + seatNumber.toString() + '"]');
-		$li.find('img').attr('src', 'Images/Lobby/success.png').next().removeClass("circleFullPlayerNotReady").addClass("circleFullPlayerReady").next().css("color", "rgb(10,211,122);");
+		$li.find('img').attr('src', 'colorfactory/Images/Lobby/success.png').next().removeClass("circleFullPlayerNotReady").addClass("circleFullPlayerReady").next().css("color", "rgb(10,211,122);");
 	};
 
 	lobbyConnection.client.clientReceivePlayerIsNotReady = function (seatNumber) {
 		var $li = $('#playerListInsideRoom li[seatNumber="' + seatNumber.toString() + '"]');
-		$li.find('img').attr('src', 'Images/Lobby/successGray.png').next().removeClass("circleFullPlayerReady").addClass("circleFullPlayerNotReady").next().css("color", "rgb(238,68,68);");
+		$li.find('img').attr('src', 'colorfactory/Images/Lobby/successGray.png').next().removeClass("circleFullPlayerReady").addClass("circleFullPlayerNotReady").next().css("color", "rgb(238,68,68);");
 	};
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -230,7 +230,6 @@
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	lobbyConnection.client.initializePlayers = function (name) {
-		console.log("invoking server broadcast start game in Game hub");
 		gameConnection.server.serverBroadcastStartGameFromGameHub(name);
 	}
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -268,7 +267,7 @@
 		$(".leftWrapper2").animate({ left: '+=100%', width: '-=100%' }, 2000);
 		$(".rightWrapper1").animate({ right: '+=100%' }, 2000);
 		$(".rightWrapper2").animate({ right: '+=100%' }, 2000);
-		
+
 	});
 
 	lobbyConnection.client.clientReceiveOnDisconnect = function (name, count) {
@@ -295,7 +294,7 @@
 			var $li = $('#playerListInsideRoom li[seatNumber="' + seatNumber.toString() + '"]');
 			var $circle = $li.find(".playerCircleInsideRoom").removeClass("circleFullPlayerNotReady").addClass("circleEmpty");
 			$circle.next().css("color", "rgb(238,68,68)").text("");
-			$circle.prev().attr("src", "Images/Lobby/successGray.png");
+			$circle.prev().attr("src", "colorfactory/Images/Lobby/successGray.png");
 		}
 	};
 
