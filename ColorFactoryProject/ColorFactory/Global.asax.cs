@@ -27,11 +27,6 @@ namespace ColorFactory
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
-
-            //initialize Collections
-            PlayerManagerModel.Instance.InitializePlayerCollection();
-            RoomManagerModel.Instance.InitializeRoomCollection();
-            GameSessionManagerModel.Instance.InitializeGameSessionCollection();
         }
     }
 }

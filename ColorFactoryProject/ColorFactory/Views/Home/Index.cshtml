@@ -3,34 +3,54 @@
 }
 
 <div id="mainContainer">
-	<div id="leftSideContainer">
-		<div style="float: right;">
-			<span style="color: white;">points: </span>
+<section class="topHeader">
+<div style="float:right; margin-right:30px;">
+			<span id="playerNameSpan" style="margin-right:400px;"></span><span style="color: gray;">points: </span>
 			<span id="ammunitionPointsContainer"></span>
+			
 		</div>
+</section>
 
-		<div style="margin-top: 40px;">
-			<button id="btnEnterLobby" style="margin-bottom: 20px;">Lobby</button>
-			<div id="textDiv" style="color: white;">
-				<span>players online: </span><span id="spanPlayersOnline"></span>
+	<div id="lobbyContainer">
+				@Html.Partial("_LobbyView")
 			</div>
-			<ul id="homePlayersOnlineList"></ul>
-		</div>
+
+			<div id="setPlayerNameModalBox">
+				@Html.Partial("_SetPlayerNameModalBox")
+			</div>
+
+
+	<div id="leftSideContainer">
+<div id="btnEnterLobby">Lobby</div>
+		
+
 	</div>
 
-	<div id="playerCanvasContainer" style="position: absolute;">
+	<div id="playerCanvasContainer">
 		<canvas id="playerCanvas" width="50" height="50" />
+	</div>
+	<div id="enemyCanvasContainer">
+		<canvas id="enemyCanvas" width="50" height="50" />
 	</div>
 
 	<div id="mapContainer">
-		<canvas id="mapCanvas" width="501" height="501" />
+		<canvas id="mapCanvas" width="500" height="500" />
 	</div>
 
 	<div>
-		<canvas id="effectsCanvas" width="501" height="551" />
+		<canvas id="effectsCanvas" width="500" height="550" />
 	</div>
+<section class="bottomSection">
+
+<div id="textDiv">
+				<span>players online: </span><span id="spanPlayersOnline"></span>
+			</div>
+<ul id="homePlayersOnlineList"></ul>
+
+</section>
 </div>
 
+			
 <script type="text/javascript">
 
 	////////////////////////////////////////////////////////////////////////////
@@ -45,17 +65,21 @@
 	var playerCtx = document.getElementById("playerCanvas").getContext("2d");
 	var playerCanvas = document.getElementById("playerCanvas");
 
+	var enemyCtx = document.getElementById("enemyCanvas").getContext("2d");
+	var enemyCanvas = document.getElementById("enemyCanvas");
+
 	var $playerCanvasContainer = $("#playerCanvasContainer");
+	var $enemyCanvasContainer = $("#enemyCanvasContainer");
 
 	var mainContainer = document.getElementById("mainContainer");
 
 	var myClientId;
-	///////////////////////////////////////////////////////////////////////////// 
+	//////////////////////////////////////////////////////////////////////////////////////////////// 
 
 	//HUB START/////////////////////////////////////////////////////////////////////////////////////
 	$.connection.hub.logging = true;
 	$.connection.hub.start().done(function () {
-		globalGameConnection = $.connection.game;
+		gameConnection = $.connection.game;
 		myClientId = $.connection.hub.id;
 	}).fail(function () {
 		alert("Could not Connect!");
@@ -65,29 +89,23 @@
 	$(function () {
 		//Game Canvas related
 		initialize();
-		playing();
+
 	});
 
-	//$("#lobbyContainer").draggable();
-	$("#setPlayerNameModalBox").draggable();
-	$("button").button();
-
-	//////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////
 	//lobby functions
-	//////////////////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////////////////////
 
 	// Create connection
 	var lobbyConnection = $.connection.lobby;
-	globalGameConnection = $.connection.game;
+	gameConnection = $.connection.game;
 
 	lobbyConnection.client.clientReceiveRoomCreated = function (roomName) {
+		player.room = roomName;
 		$('#roomList').append('<li name="' + roomName + '">' + roomName + '<div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleFullPlayerNotReady"></div></li>');
 	};
 
 	$("#btnEnterLobby").click(function () {
-		var $lobby = $("#lobbyContainer");
-		var winW = $(window).width();
-		$lobby.css({ 'left': winW / 2 - $("#lobbyContainer").width() / 2, 'top': 100 });
 		lobbyConnection.server.serverBroadcastPlayerEnterLobby();
 	});
 
@@ -136,15 +154,15 @@
 			$span = $li.find("span");
 			$circle = $span.prev();
 
-			if (player.Ready === true) {
+			if (player.IsReady === true) {
 				$span.css("color", "rgb(10,211,122)");
 				$circle.removeClass("circleFullPlayerNotReady circleEmpty").addClass("circleFullPlayerReady");
-				$li.find('img').attr('src', '/Images/Lobby/success.png');
+				$li.find('img').attr('src', 'Images/Lobby/success.png');
 			}
 			else {
 				$span.css("color", "rgb(238,68,68)");
 				$circle.removeClass("circleFullPlayerReady circleEmpty").addClass("circleFullPlayerNotReady");
-				$li.find('img').attr('src', '/Images/Lobby/successGray.png');
+				$li.find('img').attr('src', 'Images/Lobby/successGray.png');
 			}
 
 			$span.text(player.Name);
@@ -155,8 +173,11 @@
 	$(document).on("click", "#playerListInsideRoom .circleEmpty", function () {
 		var $theCircle = $(this);
 		var theRoom = $("#lobbyHeaderTitle").text();
+
+		player.room = theRoom;
+
 		var seatNumber = parseInt($theCircle.parent().attr("seatNumber"));
-		lobbyConnection.server.serverBroadcastPlayerTakeSeat(theRoom, seatNumber);
+		lobbyConnection.server.serverBroadcastPlayerTakeSeat(player.room, seatNumber);
 	});
 
 	lobbyConnection.client.clientReceivePlayerTakeSeat = function (playerNamesList) {
@@ -169,16 +190,16 @@
 			$span = $li.find("span");
 			$circle = $span.prev();
 
-			if (player.Ready === true) {
+			if (player.IsReady === true) {
 				$span.css("color", "rgb(10,211,122)");
 				$circle.removeClass("circleFullPlayerNotReady circleEmpty").addClass("circleFullPlayerReady");
-				$li.find('img').attr('src', '/Images/Lobby/success.png');
+				$li.find('img').attr('src', 'Images/Lobby/success.png');
 
 			}
 			else {
 				$span.css("color", "rgb(238,68,68)");
 				$circle.removeClass("circleFullPlayerReady circleEmpty").addClass("circleFullPlayerNotReady");
-				$li.find('img').attr('src', '/Images/Lobby/successGray.png');
+				$li.find('img').attr('src', 'Images/Lobby/successGray.png');
 
 			}
 			$span.text(player.Name);
@@ -196,21 +217,21 @@
 
 	lobbyConnection.client.clientReceivePlayerIsReady = function (seatNumber) {
 		var $li = $('#playerListInsideRoom li[seatNumber="' + seatNumber.toString() + '"]');
-		$li.find('img').attr('src', '/Images/Lobby/success.png').next().removeClass("circleFullPlayerNotReady").addClass("circleFullPlayerReady").next().css("color", "rgb(10,211,122);");
+		$li.find('img').attr('src', 'Images/Lobby/success.png').next().removeClass("circleFullPlayerNotReady").addClass("circleFullPlayerReady").next().css("color", "rgb(10,211,122);");
 	};
 
 	lobbyConnection.client.clientReceivePlayerIsNotReady = function (seatNumber) {
 		var $li = $('#playerListInsideRoom li[seatNumber="' + seatNumber.toString() + '"]');
-		$li.find('img').attr('src', '/Images/Lobby/successGray.png').next().removeClass("circleFullPlayerReady").addClass("circleFullPlayerNotReady").next().css("color", "rgb(238,68,68);");
+		$li.find('img').attr('src', 'Images/Lobby/successGray.png').next().removeClass("circleFullPlayerReady").addClass("circleFullPlayerNotReady").next().css("color", "rgb(238,68,68);");
 	};
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//start game, begin in Lobby Hub then communicate to Game Hub throughout the game
+	//start game, begin in Lobby Hub then communicate to Game Hub from now on throughout the game session
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	lobbyConnection.client.initializePlayers = function (name) {
 		console.log("invoking server broadcast start game in Game hub");
-		globalGameConnection.server.serverBroadcastStartGameFromGameHub(name);
+		gameConnection.server.serverBroadcastStartGameFromGameHub(name);
 	}
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	//ERROR messages
@@ -236,8 +257,12 @@
 
 	$("#btnEnterPlayerName").click(function () {
 		var playerName = $("#txtPlayerName").val();
-		var player = { name: playerName, id: myClientId };
+		$("#playerNameSpan").text(playerName);
+
+		var player = { name: playerName, connectionId: myClientId };
+
 		lobbyConnection.server.serverBroadcastAddPlayerToPlayerCollection(player);
+
 		$("#setPlayerNameModalBox").hide();
 		$(".leftWrapper1").animate({ left: '+=100%', width: '-=100%' }, 2000);
 		$(".leftWrapper2").animate({ left: '+=100%', width: '-=100%' }, 2000);
@@ -249,7 +274,7 @@
 	lobbyConnection.client.clientReceiveOnDisconnect = function (name, count) {
 		var $list = $("#homePlayersOnlineList");
 		var $node = $list.find("li:contains(" + name + ")");
-		$($node).remove();
+		$node.remove();
 		$('#spanPlayersOnline').html(count);
 	};
 
@@ -270,7 +295,7 @@
 			var $li = $('#playerListInsideRoom li[seatNumber="' + seatNumber.toString() + '"]');
 			var $circle = $li.find(".playerCircleInsideRoom").removeClass("circleFullPlayerNotReady").addClass("circleEmpty");
 			$circle.next().css("color", "rgb(238,68,68)").text("");
-			$circle.prev().attr("src", "/Images/Lobby/successGray.png");
+			$circle.prev().attr("src", "Images/Lobby/successGray.png");
 		}
 	};
 

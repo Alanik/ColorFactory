@@ -15,11 +15,12 @@
     <AssemblyName>ColorFactory</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -29,6 +30,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -37,6 +39,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.AspNet.SignalR.Core">
@@ -61,18 +64,16 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
@@ -130,6 +131,7 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WebMatrix.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.Data.2.0.20710.0\lib\net40\WebMatrix.Data.dll</HintPath>
@@ -189,17 +191,23 @@
     </Compile>
     <Compile Include="Hubs\Game.cs" />
     <Compile Include="Hubs\Lobby.cs" />
-    <Compile Include="Models\AccountModels.cs" />
-    <Compile Include="Models\GameSessionManagerModel.cs" />
-    <Compile Include="Models\GameSessionModel.cs" />
-    <Compile Include="Models\PlayerManagerModel.cs" />
-    <Compile Include="Models\PlayerModel.cs" />
-    <Compile Include="Models\RoomManagerModel.cs" />
-    <Compile Include="Models\RoomModel.cs" />
-    <Compile Include="Models\ViewModels\IndexPlayersInRoomViewModel.cs" />
-    <Compile Include="Models\MineInSession.cs" />
-    <Compile Include="Models\PlayerInSession.cs" />
+    <Compile Include="Models\Account\AccountModels.cs" />
+    <Compile Include="Models\GameSession\GameSessionManagerModel.cs" />
+    <Compile Include="Models\GameSession\GameSessionModel.cs" />
+    <Compile Include="Models\Player\PlayerManagerModel.cs" />
+    <Compile Include="Models\Player\PlayerModel.cs" />
+    <Compile Include="Models\Room\RoomManagerModel.cs" />
+    <Compile Include="Models\Room\RoomModel.cs" />
+    <Compile Include="Models\ViewModels\HomePage_PlayersInARoomViewModel.cs" />
+    <Compile Include="Models\GameSession\MineInSession.cs" />
+    <Compile Include="Models\GameSession\PlayerInSessionModel.cs" />
+    <Compile Include="Models\Map\MapTileModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\images\ajax-loader.gif" />
@@ -278,16 +286,14 @@
     <Content Include="Images\Lobby\successGray.png" />
     <Content Include="Images\point.png" />
     <Content Include="Images\Lobby\success.png" />
-    <Content Include="Images\tilesheet\tileSheetPlayer2.png" />
-    <Content Include="Images\tilesheet\tileSheetPlayer3.png" />
-    <Content Include="Images\tilesheet\tileSheetPlayer40.png" />
-    <Content Include="Images\tilesheet\tileSheetPlayer40Black.png" />
     <Content Include="Images\tilesheet\tileSheetPlayer40Black2.png" />
-    <Content Include="Images\tilesheet\tileSheetPlayer40Black4.png" />
-    <Content Include="Images\tilesheet\tileSheetPlayer40Border.png" />
     <Content Include="Scripts\astar.js" />
     <Content Include="Scripts\functions.js" />
     <Content Include="Scripts\graph.js" />
+    <Content Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </Content>
     <None Include="Scripts\jquery-1.8.3.intellisense.js" />
     <Content Include="Scripts\jquery-1.8.3.js" />
     <Content Include="Scripts\jquery-1.8.3.min.js" />
@@ -357,12 +363,11 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>55523</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>
-          </IISUrl>
+          <IISUrl>http://localhost:55555</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

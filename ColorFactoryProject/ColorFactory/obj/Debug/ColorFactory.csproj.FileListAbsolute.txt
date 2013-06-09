@@ -107,7 +107,6 @@ C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\DotNetOpenAuth.OAuth.xml
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\DotNetOpenAuth.OpenId.xml
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\DotNetOpenAuth.OpenId.RelyingParty.xml
-C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\obj\Debug\ColorFactory.csprojResolveAssemblyReference.cache
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\obj\Debug\ColorFactory.dll
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\obj\Debug\ColorFactory.pdb
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\Microsoft.AspNet.SignalR.Core.dll
@@ -119,3 +118,4 @@ C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\Microsoft.AspNet.SignalR.Owin.xml
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\Microsoft.AspNet.SignalR.SystemWeb.xml
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\Microsoft.Owin.Host.SystemWeb.xml
+C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\obj\Debug\ColorFactory.csprojResolveAssemblyReference.cache
