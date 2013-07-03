@@ -1,7 +1,21 @@
 ﻿
-/////////////////////////////////////////////////////
-//Global variables
-/////////////////////////////////////////////////////
+var SETTINGS = new Settings();
+
+var player = {
+	"pixelDistanceWhileMoving": 3,
+	"cornerPoint": { "x": 0, "y": 0 },
+	"setCornerPoint": function (x, y) {
+		player.cornerPoint.x = x;
+		player.cornerPoint.y = y;
+	},
+	"currentTile": { "row": 0, "column": 0 },
+	"nextTile": { "row": 0, "column": 0 },
+	"startingPositionTile": { "row": 0, "column": 0 },
+	"previousTile": { "row": 0, "column": 0 },
+	"ammunitionPoints": 0,
+	"room": null
+};
+
 var playerTimerInterval;
 var isPlayerRunningInProgress = false;
 
@@ -19,7 +33,7 @@ var minimumNumOfMines = 10;
 var maximumNumOfMines = 25;
 
 var tileSheet = new Image();
-tileSheet.src = "colorfactory/Images/tilesheet/tileSheetPlayer40Black2.png";
+tileSheet.src = "Images/tilesheet/tileSheetPlayer40Black2.png";
 
 var playerAnimationCounter = 0;
 var enemyAnimationCounter = 0;
@@ -39,18 +53,18 @@ var arrayResult;
 // 0 = obsticle
 
 var graph = new Graph([
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]);
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]);
 
 //map
 // 0 = covered tile
@@ -61,45 +75,32 @@ var graph = new Graph([
 // 5 = currentHoveredTile
 
 var map = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
 
 var mapNumbers = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-           [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+		   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
 
-var player = {
-	"pixelDistanceWhileMoving": 3,
-	"cornerPoint": { "x": 0, "y": 0 },
-	"setCornerPoint": function (x, y) {
-		player.cornerPoint.x = x;
-		player.cornerPoint.y = y;
-	},
-	"currentTile": { "row": 0, "column": 0 },
-	"nextTile": { "row": 0, "column": 0 },
-	"startingPositionTile": { "row": 0, "column": 0 },
-	"previousTile": { "row": 0, "column": 0 },
-	"ammunitionPoints": 0,
-	"room": null
-};
+
 
 var enemy = {
 	"pixelDistanceWhileMoving": 3,
@@ -139,10 +140,10 @@ var cursor = {
 		var xx = row * tileSize + row;
 		var yy = col * tileSize + col;
 		var tileCornerPoint =
-            {
-            	"x": xx,
-            	"y": yy
-            };
+			{
+				"x": xx,
+				"y": yy
+			};
 		return tileCornerPoint;
 	}
 
@@ -159,11 +160,74 @@ function initialize() {
 	initializeCanvasesPosition();
 	initializeMines();
 	initializeTileNumbers();
-	//initializePlayer(x,y);
-	//tileSheet.addEventListener('load', eventPlayerLoaded, false);
-	drawMapTiles(ctx, numberOfTiles, numberOfTiles, tileSize, player.startingPositionTile);
+	drawMapTiles(ctx, SETTINGS.map.getNumberOfTiles_Column(), SETTINGS.map.getNumberOfTiles_Row(), SETTINGS.map.getTileSize());
 	displayAmmunitionPoints();
 	initializeLobbyAndPlayerNameModalPosition();
+
+	function initializeCanvasesPosition() {
+		var x = mapContainer.offsetLeft;
+		var y = mapContainer.offsetTop - SETTINGS.map.getTileSize;
+
+		$effectsCanvas.css({ "left": x, "top": y })
+		$playerCanvasContainer.css({ "left": x, "top": y + SETTINGS.map.getMapCanvasOffsetTop })
+		$enemyCanvasContainer.css({ "left": x, "top": y + SETTINGS.map.getMapCanvasOffsetTop })
+	}
+	function initializeMines() {
+		var randNumOfMines = Math.floor(Math.random() * SETTINGS.map.getMaximumNumOfMines) + SETTINGS.map.getMinimumNumOfMines;
+
+		for (var i = 0; i < randNumOfMines; i++) {
+			randX = Math.floor(Math.random() * SETTINGS.map.getNumberOfTiles_Column);
+			randY = Math.floor(Math.random() * SETTINGS.map.getNumberOfTiles_Row);
+			if (MAP.tiles[randX][randY] == 2) {
+				i--;
+			}
+			else {
+				MAP.tiles[randX][randY] = 2;
+			}
+		}
+	}
+	function initializeTileNumbers() {
+		var counter, num, rMinusOne, rPlusOne, kMinusOne, kPlusOne;
+
+		for (var r = 0; r < SETTINGS.map.getNumberOfTiles_Row; r++) {
+			for (var k = 0; k < SETTINGS.map.getNumberOfTiles_Column; k++) {
+
+				counter = 0;
+				num = MAP.tiles[r][k];
+				rMinusOne = r - 1;
+				rPlusOne = r + 1;
+				kMinusOne = k - 1;
+				kPlusOne = k + 1;
+
+				if (num != 2) {
+					if (rMinusOne >= 0 && kMinusOne >= 0)
+						countMinesAroundTile(MAP.tiles[rMinusOne][kMinusOne]);
+					if (rMinusOne >= 0)
+						countMinesAroundTile(MAP.tiles[rMinusOne][k]);
+					if (rMinusOne >= 0 && kPlusOne < numberOfTiles)
+						countMinesAroundTile(MAP.tiles[rMinusOne][kPlusOne]);
+					if (kMinusOne >= 0)
+						countMinesAroundTile(MAP.tiles[r][kMinusOne]);
+					if (kPlusOne < numberOfTiles)
+						countMinesAroundTile(MAP.tiles[r][kPlusOne]);
+					if (rPlusOne < numberOfTiles && kMinusOne >= 0)
+						countMinesAroundTile(MAP.tiles[rPlusOne][kMinusOne]);
+					if (rPlusOne < numberOfTiles)
+						countMinesAroundTile(MAP.tiles[rPlusOne][k]);
+					if (rPlusOne < numberOfTiles && kPlusOne < numberOfTiles)
+						countMinesAroundTile(MAP.tiles[rPlusOne][kPlusOne]);
+
+					MAP.numbers[r][k] = counter;
+				}
+
+			}
+		}
+
+		function countMinesAroundTile(num) {
+			if (num == 2)
+				counter++;
+		}
+	}
 
 	function eventPlayerLoaded() {
 		drawPlayer();
@@ -206,71 +270,6 @@ function initialize() {
 		alert("player started on a mine!");
 		//initializePlayer();
 	}
-
-	function initializeMines() {
-		var randNumOfMines = Math.floor(Math.random() * maximumNumOfMines), randX, randY;
-
-		for (var i = 0; i < randNumOfMines; i++) {
-			randX = Math.floor(Math.random() * numberOfTiles);
-			randY = Math.floor(Math.random() * numberOfTiles);
-			if (map[randX][randY] == 2) {
-				i--;
-			}
-			else {
-				map[randX][randY] = 2;
-			}
-		}
-	}
-
-	function initializeTileNumbers() {
-		var counter, num, rMinusOne, rPlusOne, kMinusOne, kPlusOne;
-
-		for (var r = 0; r < numberOfTiles; r++) {
-			for (var k = 0; k < numberOfTiles; k++) {
-
-				counter = 0;
-				num = map[r][k];
-				rMinusOne = r - 1;
-				rPlusOne = r + 1;
-				kMinusOne = k - 1;
-				kPlusOne = k + 1;
-
-				if (num != 2) {
-					if (rMinusOne >= 0 && kMinusOne >= 0)
-						countMinesAroundTile(map[rMinusOne][kMinusOne]);
-					if (rMinusOne >= 0)
-						countMinesAroundTile(map[rMinusOne][k]);
-					if (rMinusOne >= 0 && kPlusOne < numberOfTiles)
-						countMinesAroundTile(map[rMinusOne][kPlusOne]);
-					if (kMinusOne >= 0)
-						countMinesAroundTile(map[r][kMinusOne]);
-					if (kPlusOne < numberOfTiles)
-						countMinesAroundTile(map[r][kPlusOne]);
-					if (rPlusOne < numberOfTiles && kMinusOne >= 0)
-						countMinesAroundTile(map[rPlusOne][kMinusOne]);
-					if (rPlusOne < numberOfTiles)
-						countMinesAroundTile(map[rPlusOne][k]);
-					if (rPlusOne < numberOfTiles && kPlusOne < numberOfTiles)
-						countMinesAroundTile(map[rPlusOne][kPlusOne]);
-					mapNumbers[r][k] = counter;
-				}
-
-			}
-		}
-		function countMinesAroundTile(num) {
-			if (num == 2)
-				counter++;
-		}
-	}
-
-	function initializeCanvasesPosition() {
-		var x = mapContainer.offsetLeft;
-		var y = mapContainer.offsetTop - 50;
-
-		$effectsCanvas.css({ "left": x, "top": y })
-		$playerCanvasContainer.css({ "left": x, "top": y + 50 })
-		$enemyCanvasContainer.css({ "left": x, "top": y + 50 })
-	}
 }
 
 function playing() {
@@ -282,7 +281,7 @@ function playing() {
 function onMouseClickFunction() {
 	$effectsCanvas.click(function (e) {
 		var x = cursor.getCursorPositionInCanvasX(e.pageX),
-            y = cursor.getCursorPositionInCanvasY(e.pageY);
+			y = cursor.getCursorPositionInCanvasY(e.pageY);
 
 		cursor.clickedTile.row = cursor.getRow(y);
 		cursor.clickedTile.column = cursor.getColumn(x);
@@ -439,6 +438,54 @@ function incrementNextTilePlayerMovesToCounter() {
 	nextTilePlayerMovesToCounter++;
 }
 
+function drawMapTiles(ctx, numHorizontalTiles, numVerticalTiles, tileSize) {
+	var x, y, tile, mineNumber, graphNodeType, tileRadius = SETTINGS.map.getTileRadius();
+
+	for (var i = 0; i < numHorizontalTiles; i++) {
+
+		for (var j = 0; j < numVerticalTiles; j++) {
+
+			//graphNodeType = graph.nodes[j][i].type;
+
+			tile = MAP.tiles[i][j];
+			mineNumber = MAP.numbers[i][j];
+
+			x = i * tileSize + i + SETTINGS.map.getCanvasPaddingWithoutBorder();
+			y = j * tileSize + j + SETTINGS.map.getCanvasPaddingWithoutBorder();
+
+			if (tile == 0 || tile == 2) {
+				roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(0,0,0,.5)");
+			}
+			if (tile !== 0) {
+				drawNumbers(i, j, mineNumbers);
+			}
+			if (tile == 3) {
+				roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(238,68,68,.8)");
+			}
+			if (tile == 4) {
+				roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(10,211,122,.8)");
+			}
+			if (tile == 5) {
+				roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(255,0,0,.1)");
+			}
+			//if (graphNodeType == 1) {
+			//    roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(0,240,0,.2)");
+			//}
+
+		}
+	}
+
+	function drawNumbers(row, col, numOfMines) {
+		var point = cursor.getTileCornerPoint(row, col);
+		var posX = tileSize / 2;
+		var posY = posX + 14;
+		ctx.fillStyle = "#444";
+		ctx.font = '25px "Victor\'s Pixel Font"';
+		if (numOfMines != 0)
+			ctx.fillText(numOfMines, point.x + posX, point.y + posY);
+	}
+}
+
 function roundRect(ctx, x, y, width, height, radius, fill, stroke, fillStyle, strokeStyle) {
 
 	if (typeof stroke === "undefined") {
@@ -469,53 +516,6 @@ function roundRect(ctx, x, y, width, height, radius, fill, stroke, fillStyle, st
 		ctx.fill();
 	}
 
-}
-
-function drawMapTiles(ctx, numHorizontalTiles, numVerticalTiles, size, startPoint) {
-	var x, y, num, mineNumbers, graphNodeType;
-
-	for (var i = 0; i < numHorizontalTiles; i++) {
-
-		for (var j = 0; j < numVerticalTiles; j++) {
-
-			num = map[j][i];
-			//graphNodeType = graph.nodes[j][i].type;
-			mineNumbers = mapNumbers[j][i];
-
-			x = i * size + i + 4;
-			y = j * size + j + 4;
-
-			if (num == 0 || num == 2) {
-				roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(0,0,0,.5)");
-			}
-			if (num !== 0) {
-				drawNumbers(i, j, mineNumbers);
-			}
-			if (num == 3) {
-				roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(238,68,68,.8)");
-			}
-			if (num == 4) {
-				roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(10,211,122,.8)");
-			}
-			if (num == 5) {
-				roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(255,0,0,.1)");
-			}
-			//if (graphNodeType == 1) {
-			//    roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(0,240,0,.2)");
-			//}
-
-		}
-	}
-
-	function drawNumbers(row, col, numOfMines) {
-		var point = cursor.getTileCornerPoint(row, col);
-		var posX = tileSize / 2;
-		var posY = posX + 14;
-		ctx.fillStyle = "#444";
-		ctx.font = '25px "Victor\'s Pixel Font"';
-		if (numOfMines != 0)
-			ctx.fillText(numOfMines, point.x + posX, point.y + posY);
-	}
 }
 
 function movePlayerTo() {
@@ -688,9 +688,9 @@ function calculateCursorPosition() {
 		$(this).mousemove(function (e) {
 
 			x = cursor.getCursorPositionInCanvasX(e.pageX),
-            y = cursor.getCursorPositionInCanvasY(e.pageY),
-            row = cursor.getRow(y),
-            col = cursor.getColumn(x);
+			y = cursor.getCursorPositionInCanvasY(e.pageY),
+			row = cursor.getRow(y),
+			col = cursor.getColumn(x);
 			cornerPoint = cursor.getTileCornerPoint(row, col)
 			cursor.currentTileHover = { "cornerPointX": cornerPoint.x, "cornerPointY": cornerPoint.y }
 
@@ -872,7 +872,7 @@ gameConnection.client.clientReceiveUpdateEnemyPosition = function (x, y) {
 		var velocityX = 0;
 		var velocityY = 0;
 
-		
+
 
 		isEnemyRunningInProgress = true;
 
@@ -939,7 +939,7 @@ gameConnection.client.clientReceiveUpdateEnemyPosition = function (x, y) {
 
 ///////////////////////////////////////////////////////////////////////////////
 
-function clone(obj) {
+window.clone = function (obj) {
 	var target = {};
 	for (var i in obj) {
 		if (obj.hasOwnProperty(i)) {
