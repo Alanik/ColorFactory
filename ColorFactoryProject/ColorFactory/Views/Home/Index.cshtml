@@ -1,7 +1,4 @@
-﻿@{
-	ViewBag.Title = "Color Factory";
-}
-
+﻿
 <div id="mainContainer">
 	<section class="topHeader">
 		<div style="float: right; margin-right: 30px;">
@@ -18,7 +15,6 @@
 	<div id="setPlayerNameModalBox">
 		@Html.Partial("_SetPlayerNameModalBox")
 	</div>
-
 
 	<div id="leftSideContainer">
 		<div id="btnEnterLobby">Lobby</div>
@@ -40,6 +36,7 @@
 	<div>
 		<canvas id="effectsCanvas" width="500" height="550" />
 	</div>
+
 	<section class="bottomSection">
 
 		<div id="textDiv">
@@ -49,7 +46,6 @@
 
 	</section>
 </div>
-
 
 <script type="text/javascript">
 
@@ -86,11 +82,7 @@
 	});
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
-	$(function () {
-		//Game Canvas related
-		initialize();
-
-	});
+	
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//lobby functions
@@ -217,12 +209,12 @@
 
 	lobbyConnection.client.clientReceivePlayerIsReady = function (seatNumber) {
 		var $li = $('#playerListInsideRoom li[seatNumber="' + seatNumber.toString() + '"]');
-		$li.find('img').attr('src', 'Images/Lobby/success.png').next().removeClass("circleFullPlayerNotReady").addClass("circleFullPlayerReady").next().css("color", "rgb(10,211,122);");
+		$li.find('img').attr('src', 'Images/Lobby/success.png').next().removeClass("circleFullPlayerNotReady").addClass("circleFullPlayerReady").next().css("color", "rgb(10,211,122)");
 	};
 
 	lobbyConnection.client.clientReceivePlayerIsNotReady = function (seatNumber) {
 		var $li = $('#playerListInsideRoom li[seatNumber="' + seatNumber.toString() + '"]');
-		$li.find('img').attr('src', 'Images/Lobby/successGray.png').next().removeClass("circleFullPlayerReady").addClass("circleFullPlayerNotReady").next().css("color", "rgb(238,68,68);");
+		$li.find('img').attr('src', 'Images/Lobby/successGray.png').next().removeClass("circleFullPlayerReady").addClass("circleFullPlayerNotReady").next().css("color", "rgb(238,68,68)");
 	};
 
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -263,10 +255,6 @@
 		lobbyConnection.server.serverBroadcastAddPlayerToPlayerCollection(player);
 
 		$("#setPlayerNameModalBox").hide();
-		$(".leftWrapper1").animate({ left: '+=100%', width: '-=100%' }, 2000);
-		$(".leftWrapper2").animate({ left: '+=100%', width: '-=100%' }, 2000);
-		$(".rightWrapper1").animate({ right: '+=100%' }, 2000);
-		$(".rightWrapper2").animate({ right: '+=100%' }, 2000);
 
 	});
 
@@ -277,15 +265,11 @@
 		$('#spanPlayersOnline').html(count);
 	};
 
-	lobbyConnection.client.clientReceiveMessage = function (count, name) {
-		if (typeof name === "string") {
-			$("#homePlayersOnlineList").append("<li>" + name + "</li>");
-		}
-		else {
+	lobbyConnection.client.clientReceiveAddPlayerToPlayerCollection = function (count, name) {	
 			for (var i = 0; i < name.length; i++) {
 				$("#homePlayersOnlineList").append("<li>" + name[i] + "</li>");
 			}
-		}
+		
 		$('#spanPlayersOnline').html(count);
 	};
 
@@ -307,11 +291,25 @@
 			$("#lobbyWrapper").show();
 		}
 	};
-
 </script>
 
-<script src="~/Scripts/Models/Map.js"></script>
-<script src="~/Scripts/Models/Players.js"></script>
-<script src="~/Scripts/Models/Settings.js"></script>
-<script src="~/Scripts/Models/Cursor.js"></script>
+<script src="~/Scripts/Models/Map.js" type="text/javascript"></script>
+<script src="~/Scripts/Models/Players.js" type="text/javascript"></script>
+<script src="~/Scripts/Models/Settings.js" type="text/javascript"></script>
+<script src="~/Scripts/Models/Cursor.js" type="text/javascript"></script>
+<script src="~/Scripts/Models/Game.js" type="text/javascript"></script>
 <script src="~/Scripts/functions.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+
+	$(function () {
+		var SETTINGS = new Settings();
+		var CURSOR = new Cursor();
+		var player = new Player("Images/TileSheet/tileSheetPlayer40Black2.png");
+
+		var GAME = new Game(SETTINGS, CURSOR, MAP, player);
+
+		GAME.initialize();
+
+	});
+</script>

@@ -1,109 +1,135 @@
 ﻿var PlayerBase = function (tileSheetSrc) {
+	var self = this;
 
-	//var tileSheet = new Image();
-	//tileSheet.src = tileSheetSrc;
+	var tileSheet = new Image();
+	tileSheet.src = tileSheetSrc;
 
 	var pixelMovementDist = 3;
 
-	_upperLeftCornerPoint = { x: 0, y: 0 },
-	_currentTile = { column: 0, row: 0 },
-	_previousTile = { column: 0, row: 0 },
-	_nextTile = { column: 0, row: 0 },
+	_tileSheetSrc = tileSheetSrc;
+	_upperLeftCornerPoint = { x: 0, y: 0 };
+	_currentTile = { column: 0, row: 0 };
+	_previousTile = { column: 0, row: 0 };
+	_nextTile = { column: 0, row: 0 };
 	_timerInterval = 0;
 	_isPlayerRunningInProgress = false;
-	_animationCounter = 0,
+	_animationCounter = 0;
+	_spriteSize = 40;
 
 
 	//public properties
-	this.getPixelMovementDistance = function () {
-		return pixelMovementDist;
+	self.getSpriteSize = function () {
+		return _spriteSize;
 	}
 
-	this.setUpperLeftCornerPoint = function (xx, yy) {
+	self.getTileSheet = function () {
+	return tileSheet;
+	}
+
+	self.getPixelMovementDistance = function () {
+		return pixelMovementDist;
+	};
+
+	self.setUpperLeftCornerPoint = function (xx, yy) {
 		this._upperLeftCornerPoint.x = xx;
 		this._upperLeftCornerPoint.y = yy;
-	}
-	this.getUpperLeftCornerPoint = function () {
+	};
+	self.getUpperLeftCornerPoint = function () {
 		return _upperLeftCornerPoint;
-	}
+	};
 
-	this.setCurrentTile = function (col, row) {
+	self.setCurrentTile = function (col, row) {
 		this._currentTile.column = col;
 		this._currentTile.row = row;
-	}
-	this.getCurrentTile = function () {
+	};
+	self.getCurrentTile = function () {
 		return _currentTile;
-	}
+	};
 
-	this.setPreviousTile = function (col, row) {
+	self.setPreviousTile = function (col, row) {
 		this._previousTile.column = col;
 		this._previousTile.row = row;
-	}
-	this.getPreviousTile = function () {
+	};
+	self.getPreviousTile = function () {
 		return _previousTile;
-	}
+	};
 
-	this.setNextTile = function (col, row) {
+	self.setNextTile = function (col, row) {
 		this._nextTile.column = col;
 		this._nextTile.row = row;
-	}
-	this.getNextTile = function () {
+	};
+	self.getNextTile = function () {
 		return _nextTile;
-	}
+	};
 
-	this.setTimerInterval = function (num) {
+	self.setTimerInterval = function (num) {
 		this._timerInterval = num;
-	}
-	this.getTimerInterval = function () {
+	};
+	self.getTimerInterval = function () {
 		return this._timerInterval;
-	}
+	};
 
-	this.setIsPlayerRunningInProgress = function (isRunning) {
-		this._isPlayerRunningInProgress = isRunning;
-	}
-	this.getIsPlayerRunningInProgress = function () {
+	self.setIsPlayerRunningInProgress = function () {
+		this._isPlayerRunningInProgress = true;
+	};
+
+	self.getIsPlayerRunningInProgress = function () {
 		return this._isPlayerRunningInProgress;
-	}
-
+	};
 }
-var Player = function (tileSheetSrc) {
-	PlayerBase.apply(this, arguments);
 
-	_startingTile = { column: 0, row: 0 },
-	_nextTilePlayerMovesToCounter = 0,
-	_room = null,
-	_ammunitionPoints = 0
+var Player = function (tileSheetSrc) {
+	PlayerBase.call(this, tileSheetSrc);
+
+	_startingTile = { column: 0, row: 0 };
+	_nextTilePlayerMovesToCounter = 0;
+	_room = null;
+	_ammunitionPoints = 0;
+	_aStartResult = [];
 
 	this.setStartingTile = function (col, row) {
 		this._startingTile.column = col;
 		this._startingTile.row = row;
-	}
+	};
 	this.getStartingTile = function () {
 		return _startingTile;
-	}
+	};
 
 	this.setNextTilePlayerMovesToCounter = function (counter) {
 		this._nextTilePlayerMovesToCounter = counter;
-	}
+	};
 	this.getNextTilePlayerMovesToCounter = function () {
 		return this._nextTilePlayerMovesToCounter;
-	}
+	};
 
 	this.setRoom = function (room) {
 		this._room = room;
-	}
+	};
 	this.getRoom = function () {
 		return this._room;
-	}
+	};
 
 	this.setAmmunitionPoints = function (points) {
 		this._ammunitionPoints = points;
 
-	}
+	};
 	this.getAmmunitionPoints = function () {
 		return this._ammunitionPoints;
-	}
+	};
+
+	this.setAStarResult = function (result) {
+		this._aStartResult = result;
+
+	};
+	this.getAStarResult = function () {
+		return this._aStarResult;
+	};
+
+	this.resetNextTilePlayerMovesToCounter = function () {
+		this._nextTilePlayerMovesToCounter = 0;
+	};
+
 }
 
-Player.prototype = new PlayerBase();
+Player.prototype = new PlayerBase("Images/TileSheet/tileSheetPlayer40Black2.png");
 Player.prototype.constructor = Player;

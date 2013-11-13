@@ -179,8 +179,7 @@ namespace ColorFactory.Hubs
 		{
 			PlayerManagerModel.Instance.AddPlayer(player);
 
-			Clients.Others.clientReceiveMessage(PlayerManagerModel.Instance.PlayerCollection.Count, player.Name);
-			Clients.Caller.clientReceiveMessage(PlayerManagerModel.Instance.PlayerCollection.Count, GetOnlinePlayerNames());
+			Clients.All.clientReceiveAddPlayerToPlayerCollection(PlayerManagerModel.Instance.PlayerCollection.Count, GetOnlinePlayerNames());
 		}
 
 		public override Task OnDisconnected()

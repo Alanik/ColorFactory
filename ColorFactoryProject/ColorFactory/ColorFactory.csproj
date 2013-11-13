@@ -286,7 +286,7 @@
     <Content Include="Images\Lobby\successGray.png" />
     <Content Include="Images\point.png" />
     <Content Include="Images\Lobby\success.png" />
-    <Content Include="Images\tilesheet\tileSheetPlayer40Black2.png" />
+    <Content Include="Images\Tilesheet\tileSheetPlayer40Black2.png" />
     <Content Include="Scripts\astar.js" />
     <Content Include="Scripts\functions.js" />
     <Content Include="Scripts\graph.js" />
@@ -313,6 +313,7 @@
     <Content Include="Scripts\knockout-2.2.0.debug.js" />
     <Content Include="Scripts\knockout-2.2.0.js" />
     <Content Include="Scripts\Models\Cursor.js" />
+    <Content Include="Scripts\Models\Game.js" />
     <Content Include="Scripts\Models\Map.js" />
     <Content Include="Scripts\Models\Players.js" />
     <Content Include="Scripts\Models\Settings.js" />
