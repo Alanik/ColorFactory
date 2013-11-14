@@ -1,27 +1,28 @@
 ﻿var Game = function (Settings, Cursor, Map, Player) {
-	var self = this;
+	var game = this;
 
 	SETTINGS = Settings;
 	MAP = Map;
 	CURSOR = Cursor;
 	player = Player;
 
-	self.initialize = function () {
+	game.initialize = function () {
 
 		initializeCanvasesPosition();
 		initializeMines();
 		initializeTileNumbers();
-		self.drawMapTiles(ctx, SETTINGS.map.getNumberOfTiles_Column(), SETTINGS.map.getNumberOfTiles_Row(), SETTINGS.map.getTileSize());
-		self.displayAmmunitionPoints(player.getAmmunitionPoints());
 		initializeLobbyAndPlayerNameModalPosition();
+
+		game.drawMapTiles(ctx, SETTINGS.map.getNumberOfTiles_Column(), SETTINGS.map.getNumberOfTiles_Row(), SETTINGS.map.getTileSize());
+		game.displayAmmunitionPoints(player.getAmmunitionPoints());
 
 		function initializeCanvasesPosition() {
 			var x = mapContainer.offsetLeft;
 			var y = mapContainer.offsetTop - SETTINGS.map.getTileSize();
 
 			$effectsCanvas.css({ "left": x, "top": y })
-			$playerCanvasContainer.css({ "left": x, "top": y + SETTINGS.map.getMapCanvasOffsetTop() })
-			$enemyCanvasContainer.css({ "left": x, "top": y + SETTINGS.map.getMapCanvasOffsetTop() })
+			$playerCanvasContainer.css({ "left": x, "top": y })
+			$enemyCanvasContainer.css({ "left": x, "top": y })
 		}
 		function initializeMines() {
 			var randNumOfMines = Math.floor(Math.random() * SETTINGS.map.getMaximumNumOfMines()) + SETTINGS.map.getMinimumNumOfMines();
@@ -89,30 +90,48 @@
 
 		}
 
-		function eventPlayerLoaded() {
-			drawPlayer();
-		}
-		function initializePlayer(column, row) {
+	}
 
-			var point = CURSOR.getTileCornerPoint(column, row);
+	game.onGameStart = function () {
 
-			player.setStartingPositionTile(column, row);
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		////SignalR game session start!!! START GAME
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		gameConnection.client.clientReceiveStartGameCounter = function (x, y) {
 
-			var currentTile = window.clone(player.getStartingPositionTile());
-			player.setCurrentTile(currentTile.x, currentTile.y);
-			player.setCornerPoint(currentTile.x, currentTile.y);
-			player.setAmmunitionPoints(MAP.numbers[column][row]);
+			game.gameSession.initializeMap();
+			game.gameSession.initializePlayer(x,y);
 
-			//set playerCanvas position here //////////////////////////////////////////////////////
-			playerCanvas.setAttribute("style", "left:" + point.x + "px; top:" + point.y + "px;");
-			MAP.tiles[column][row] = 1;
-			MAP.graph.nodes[column][row].type = 1;
-			self.displayAmmunitionPoints(MAP.numbers[column][row]);
-		}
+			//startCounter();
+			//function startCounter() {
+			//	var $counterContainer = $(".startGameCounter");
+			//	var winW = $(window).width();
+			//	var numbers = [5, 4, 3, 2, 1];
+			//	var i = 0;
+
+			//	$counterContainer.css({ 'left': winW / 2, 'top': 100 }).show();
+			//	$("#lobbyContainer").hide();
+
+			//	var animationInterval = setInterval(startGameCountdown, 1000);
+
+			//	function startGameCountdown() {
+			//		if (i !== 5) {
+			//			$counterContainer.text(numbers[i]);
+			//			i++;
+			//		}
+			//		else {
+			//			clearInterval(animationInterval);
+			//			$counterContainer.hide();
+			//			initializeGame(x, y);
+			//			playing();
+			//		}
+			//	}
+			//}
+		};
 
 	}
 
-	self.drawMapTiles = function () {
+	game.drawMapTiles = function () {
 		var x, y, tile, padding = SETTINGS.map.getCanvasPaddingWithoutBorder(), tileSize = SETTINGS.map.getTileSize(), mineNumber, graphNodeType, tileRadius = SETTINGS.map.getTileRadius(), numRow = SETTINGS.map.getNumberOfTiles_Row(), numCol = SETTINGS.map.getNumberOfTiles_Column();
 
 		for (var i = 0; i < numCol; i++) {
@@ -140,7 +159,7 @@
 				}
 				if (tile == 5) {
 					roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(255,0,0,.1)");
-				}				
+				}
 				//if (graphNodeType == 1) {
 				//    roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(0,240,0,.2)");
 				//}
@@ -190,8 +209,67 @@
 		}
 
 	}
-	self.displayAmmunitionPoints = function (points) {
+	game.displayAmmunitionPoints = function (points) {
 		$("#ammunitionPointsContainer").text(points);
 	}
 
+	game.gameSession =  {
+
+			initializeMap : function () {
+				var numberOfTiles = SETTINGS.map.getNumberOfTiles_Column();
+				var tileSize = SETTINGS.map.getTileSize();
+
+				ctx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+				game.drawMapTiles();
+			},
+
+			initializePlayer : function (x, y) {
+				//var randX = Math.floor(Math.random() * numberOfTiles);
+				//var randY = Math.floor(Math.random() * numberOfTiles);
+
+				var randX = x;
+				var randY = y;
+
+				if (MAP.tiles[randX][randY] !== 2) {
+
+					player.setStartingTile(randX, randY);
+
+					var startingPositionTile = player.getStartingTile();
+					player.setCurrentTile(startingPositionTile.column, startingPositionTile.row);
+
+					var point = CURSOR.getTileCornerPoint(randX, randY);
+					player.setUpperLeftCornerPoint(point.x, point.y);
+
+					player.setAmmunitionPoints(MAP.numbers[randX][randY]);
+
+					MAP.tiles[randX][randY] = 1;
+					MAP.graph.nodes[randX][randY].type = 1;
+
+					//set playerCanvas position here //////////////////////////////////////////////////////
+					playerCanvas.setAttribute("style", "left:" + point.x + "px; top:" + point.y + "px;");
+
+					game.gameSession.drawPlayer();
+					return;
+				}
+
+				alert("Player is standing on a mine");
+				//initializePlayer();
+
+
+				//tylko dla przykladu, mozna w przyszlosci usunac
+				//tileSheet.addEventListener('load', eventPlayerLoaded, false);
+				//function eventPlayerLoaded() {
+				//drawPlayer();
+				//}
+			},
+		
+			drawPlayer : function () {
+			var canvasPadding = SETTINGS.map.getCanvasPadding();
+			var spriteSize = player.getSpriteSize();
+			var tileSheet = player.getTileSheet();
+
+			playerCtx.drawImage(tileSheet, 0, 0, spriteSize, spriteSize, canvasPadding, canvasPadding, spriteSize, spriteSize);
+		}
+
+	}
 }

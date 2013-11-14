@@ -6,15 +6,15 @@
 
 	var pixelMovementDist = 3;
 
-	_tileSheetSrc = tileSheetSrc;
-	_upperLeftCornerPoint = { x: 0, y: 0 };
-	_currentTile = { column: 0, row: 0 };
-	_previousTile = { column: 0, row: 0 };
-	_nextTile = { column: 0, row: 0 };
-	_timerInterval = 0;
-	_isPlayerRunningInProgress = false;
-	_animationCounter = 0;
-	_spriteSize = 40;
+	var _tileSheetSrc = tileSheetSrc;
+	var _upperLeftCornerPoint = { x: 0, y: 0 };
+	var _currentTile = { column: 0, row: 0 };
+	var _previousTile = { column: 0, row: 0 };
+	var _nextTile = { column: 0, row: 0 };
+	var _timerInterval = 0;
+	var _isPlayerRunningInProgress = false;
+	var _animationCounter = 0;
+	var _spriteSize = 40;
 
 
 	//public properties
@@ -31,105 +31,106 @@
 	};
 
 	self.setUpperLeftCornerPoint = function (xx, yy) {
-		this._upperLeftCornerPoint.x = xx;
-		this._upperLeftCornerPoint.y = yy;
+		_upperLeftCornerPoint.x = xx;
+		_upperLeftCornerPoint.y = yy;
 	};
 	self.getUpperLeftCornerPoint = function () {
 		return _upperLeftCornerPoint;
 	};
 
 	self.setCurrentTile = function (col, row) {
-		this._currentTile.column = col;
-		this._currentTile.row = row;
+		_currentTile.column = col;
+		_currentTile.row = row;
 	};
 	self.getCurrentTile = function () {
 		return _currentTile;
 	};
 
 	self.setPreviousTile = function (col, row) {
-		this._previousTile.column = col;
-		this._previousTile.row = row;
+		_previousTile.column = col;
+		_previousTile.row = row;
 	};
 	self.getPreviousTile = function () {
 		return _previousTile;
 	};
 
 	self.setNextTile = function (col, row) {
-		this._nextTile.column = col;
-		this._nextTile.row = row;
+		_nextTile.column = col;
+		_nextTile.row = row;
 	};
 	self.getNextTile = function () {
 		return _nextTile;
 	};
 
 	self.setTimerInterval = function (num) {
-		this._timerInterval = num;
+		_timerInterval = num;
 	};
 	self.getTimerInterval = function () {
-		return this._timerInterval;
+		return _timerInterval;
 	};
 
 	self.setIsPlayerRunningInProgress = function () {
-		this._isPlayerRunningInProgress = true;
+		_isPlayerRunningInProgress = true;
 	};
 
 	self.getIsPlayerRunningInProgress = function () {
-		return this._isPlayerRunningInProgress;
+		return _isPlayerRunningInProgress;
 	};
 }
 
 var Player = function (tileSheetSrc) {
+	var self = this;
+
 	PlayerBase.call(this, tileSheetSrc);
 
-	_startingTile = { column: 0, row: 0 };
-	_nextTilePlayerMovesToCounter = 0;
-	_room = null;
-	_ammunitionPoints = 0;
-	_aStartResult = [];
+	var _startingTile = { column: 0, row: 0 };
+	var _nextTilePlayerMovesToCounter = 0;
+	var _room = null;
+	var _ammunitionPoints = 0;
+	var _aStartResult = [];
 
-	this.setStartingTile = function (col, row) {
-		this._startingTile.column = col;
-		this._startingTile.row = row;
+	self.setStartingTile = function (col, row) {
+		_startingTile.column = col;
+		_startingTile.row = row;
 	};
-	this.getStartingTile = function () {
+	self.getStartingTile = function () {
 		return _startingTile;
 	};
 
-	this.setNextTilePlayerMovesToCounter = function (counter) {
-		this._nextTilePlayerMovesToCounter = counter;
+	self.setNextTilePlayerMovesToCounter = function (counter) {
+		_nextTilePlayerMovesToCounter = counter;
 	};
-	this.getNextTilePlayerMovesToCounter = function () {
-		return this._nextTilePlayerMovesToCounter;
-	};
-
-	this.setRoom = function (room) {
-		this._room = room;
-	};
-	this.getRoom = function () {
-		return this._room;
+	self.getNextTilePlayerMovesToCounter = function () {
+		return _nextTilePlayerMovesToCounter;
 	};
 
-	this.setAmmunitionPoints = function (points) {
-		this._ammunitionPoints = points;
-
+	self.setRoom = function (room) {
+		_room = room;
 	};
-	this.getAmmunitionPoints = function () {
-		return this._ammunitionPoints;
-	};
-
-	this.setAStarResult = function (result) {
-		this._aStartResult = result;
-
-	};
-	this.getAStarResult = function () {
-		return this._aStarResult;
+	self.getRoom = function () {
+		return _room;
 	};
 
-	this.resetNextTilePlayerMovesToCounter = function () {
-		this._nextTilePlayerMovesToCounter = 0;
+	self.setAmmunitionPoints = function (points) {
+		_ammunitionPoints = points;
+
+	};
+	self.getAmmunitionPoints = function () {
+		return _ammunitionPoints;
+	};
+
+	self.setAStarResult = function (result) {
+		_aStartResult = result;
+
+	};
+	self.getAStarResult = function () {
+		return _aStarResult;
+	};
+
+	self.resetNextTilePlayerMovesToCounter = function () {
+		_nextTilePlayerMovesToCounter = 0;
 	};
 
 }
 
 Player.prototype = new PlayerBase("Images/TileSheet/tileSheetPlayer40Black2.png");
-Player.prototype.constructor = Player;

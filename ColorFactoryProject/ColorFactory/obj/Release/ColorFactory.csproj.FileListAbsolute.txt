@@ -57,6 +57,6 @@ C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\DotNetOpenAuth.OAuth.xml
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\DotNetOpenAuth.OpenId.xml
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\bin\DotNetOpenAuth.OpenId.RelyingParty.xml
+C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\obj\Release\ColorFactory.csprojResolveAssemblyReference.cache
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\obj\Release\ColorFactory.dll
 C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\obj\Release\ColorFactory.pdb
-C:\Users\Alan\Documents\GitHub\ColorFactory\ColorFactoryProject\ColorFactory\obj\Release\ColorFactory.csprojResolveAssemblyReference.cache

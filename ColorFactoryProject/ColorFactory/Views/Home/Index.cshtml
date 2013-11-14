@@ -69,28 +69,22 @@
 
 	var mainContainer = document.getElementById("mainContainer");
 
-	var myClientId;
-	//////////////////////////////////////////////////////////////////////////////////////////////// 
 
 	//HUB START/////////////////////////////////////////////////////////////////////////////////////
 	$.connection.hub.logging = true;
 	$.connection.hub.start().done(function () {
-		gameConnection = $.connection.game;
 		myClientId = $.connection.hub.id;
 	}).fail(function () {
 		alert("Could not Connect!");
 	});
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
-	
+	gameConnection = $.connection.game;	
+	lobbyConnection = $.connection.lobby;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//lobby functions
 	////////////////////////////////////////////////////////////////////////////////////////////////
-
-	// Create connection
-	var lobbyConnection = $.connection.lobby;
-	gameConnection = $.connection.game;
 
 	lobbyConnection.client.clientReceiveRoomCreated = function (roomName) {
 		player.room = roomName;
@@ -310,6 +304,7 @@
 		var GAME = new Game(SETTINGS, CURSOR, MAP, player);
 
 		GAME.initialize();
+		GAME.onGameStart();
 
 	});
 </script>
