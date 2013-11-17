@@ -4,17 +4,17 @@
 	var tileSheet = new Image();
 	tileSheet.src = tileSheetSrc;
 
-	var pixelMovementDist = 3;
-
+	var _pixelMovementDist = 3;
 	var _tileSheetSrc = tileSheetSrc;
 	var _upperLeftCornerPoint = { x: 0, y: 0 };
 	var _currentTile = { column: 0, row: 0 };
 	var _previousTile = { column: 0, row: 0 };
 	var _nextTile = { column: 0, row: 0 };
-	var _timerInterval = 0;
+	var _timerInterval = null;
 	var _isPlayerRunningInProgress = false;
-	var _animationCounter = 0;
 	var _spriteSize = 40;
+	var _playerContextSize = 50;
+	var _numOfAnimationFrames = 4;
 
 
 	//public properties
@@ -27,7 +27,7 @@
 	}
 
 	self.getPixelMovementDistance = function () {
-		return pixelMovementDist;
+		return _pixelMovementDist;
 	};
 
 	self.setUpperLeftCornerPoint = function (xx, yy) {
@@ -62,20 +62,34 @@
 		return _nextTile;
 	};
 
-	self.setTimerInterval = function (num) {
-		_timerInterval = num;
+	self.setTimerInterval = function (timerInterval) {
+		_timerInterval = timerInterval;
 	};
 	self.getTimerInterval = function () {
 		return _timerInterval;
 	};
 
-	self.setIsPlayerRunningInProgress = function () {
-		_isPlayerRunningInProgress = true;
+	self.setIsPlayerRunningInProgress = function (value) {
+		_isPlayerRunningInProgress = value;
 	};
 
 	self.getIsPlayerRunningInProgress = function () {
 		return _isPlayerRunningInProgress;
 	};
+
+	self.getContextSize = function () {
+		return _playerContextSize;
+	};
+	self.getPadding = function () {
+		return _pixelMovementDist - 1;
+	},
+	self.getNegativePadding = function () {
+		return self.getPadding() * (-1);
+	}
+
+	self.getNumOfAnimationFrames = function () {
+		return _numOfAnimationFrames;
+	}
 }
 
 var Player = function (tileSheetSrc) {
@@ -87,7 +101,8 @@ var Player = function (tileSheetSrc) {
 	var _nextTilePlayerMovesToCounter = 0;
 	var _room = null;
 	var _ammunitionPoints = 0;
-	var _aStartResult = [];
+	var _aStarResult = [];
+	var _animationCounter = 0;
 
 	self.setStartingTile = function (col, row) {
 		_startingTile.column = col;
@@ -97,8 +112,8 @@ var Player = function (tileSheetSrc) {
 		return _startingTile;
 	};
 
-	self.setNextTilePlayerMovesToCounter = function (counter) {
-		_nextTilePlayerMovesToCounter = counter;
+	self.incrementNextTilePlayerMovesToCounter = function () {
+		_nextTilePlayerMovesToCounter++;
 	};
 	self.getNextTilePlayerMovesToCounter = function () {
 		return _nextTilePlayerMovesToCounter;
@@ -113,16 +128,20 @@ var Player = function (tileSheetSrc) {
 
 	self.setAmmunitionPoints = function (points) {
 		_ammunitionPoints = points;
-
 	};
+
+	self.addAmmunitionPoints = function (points) {
+		_ammunitionPoints += points;
+	};
+
 	self.getAmmunitionPoints = function () {
 		return _ammunitionPoints;
 	};
 
 	self.setAStarResult = function (result) {
-		_aStartResult = result;
-
+		_aStarResult = result;
 	};
+
 	self.getAStarResult = function () {
 		return _aStarResult;
 	};
@@ -130,6 +149,17 @@ var Player = function (tileSheetSrc) {
 	self.resetNextTilePlayerMovesToCounter = function () {
 		_nextTilePlayerMovesToCounter = 0;
 	};
+
+	self.getAnimationCounter = function () {
+		return _animationCounter;
+	}
+
+	self.incrementAnimationCounter = function () {
+		_animationCounter++;
+	}
+	self.resetAnimationCounter = function () {
+		_animationCounter = 0;
+	}
 
 }
 

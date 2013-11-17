@@ -41,12 +41,6 @@
 			getMapCanvasOffsetTop: function () {
 				return mapCanvasOffsetTop;
 			},
-			getPadding: function () {
-				return PlayerBase.getPixelMovementDist - 1;
-			},
-			getNegativePadding: function () {
-				return this.getPadding * (-1);
-			},
 			getUncoveredTileBackground: function () {
 				return uncoveredTileBackground;
 			},
@@ -61,4 +55,5 @@
 			}
 		}
 	}();
+	
 }

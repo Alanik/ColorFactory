@@ -189,8 +189,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Hubs\Game.cs" />
-    <Compile Include="Hubs\Lobby.cs" />
+    <Compile Include="Filters\Hubs\Game.cs" />
+    <Compile Include="Filters\Hubs\Lobby.cs" />
     <Compile Include="Models\Account\AccountModels.cs" />
     <Compile Include="Models\GameSession\GameSessionManagerModel.cs" />
     <Compile Include="Models\GameSession\GameSessionModel.cs" />
@@ -313,6 +313,7 @@
     <Content Include="Scripts\knockout-2.2.0.debug.js" />
     <Content Include="Scripts\knockout-2.2.0.js" />
     <Content Include="Scripts\Models\Cursor.js" />
+    <Content Include="Scripts\Models\Effects.js" />
     <Content Include="Scripts\Models\Game.js" />
     <Content Include="Scripts\Models\Map.js" />
     <Content Include="Scripts\Models\Players.js" />

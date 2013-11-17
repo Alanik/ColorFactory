@@ -1,14 +1,14 @@
 ﻿var Cursor = function () {
 	var self = this;
 
-	var _clickedTile = function () {
-		column = 0,
-		row = 0
+	var _clickedTile =  {
+		column : 0,
+		row : 0
 	}
 
-	var _currentHoveredTile = function () {
-		column = 0,
-		row = 0
+	var _currentHoveredTile = {
+		column : 0,
+		row : 0
 	}
 
 	self.getClickedTile = function () {
@@ -28,24 +28,22 @@
 	}
 
 	self.getColumn = function (x) {
-		var col = Math.floor(x / SETTINGS.map.tileSize);
-		col = Math.floor((y - col) / SETTINGS.map.tileSize);
-		alert(col);
+		var col = Math.floor(x / SETTINGS.map.getTileSize());
+		col = Math.floor((x - col) / SETTINGS.map.getTileSize());
 		return col;
 	}
 	self.getRow = function (y) {
 
-		var row = Math.floor(y / SETTINGS.map.tileSize);
-		row = Math.floor((y - row) / SETTINGS.map.tileSize);
-		alert(row);
+		var row = Math.floor(y / SETTINGS.map.getTileSize());
+		row = Math.floor((y - row) / SETTINGS.map.getTileSize());
 		return row;
 	}
 	self.getCursorPositionInCanvas_x = function (pageX) {
-		var mouseX = pageX - mainContainer.offsetLeft - mapCanvas.offsetLeft - SETTINGS.map.getCanvasPadding;
+		var mouseX = pageX - mainContainer.offsetLeft - mapCanvas.offsetLeft - SETTINGS.map.getCanvasPadding();
 		return mouseX;
 	}
 	self.getCursorPositionInCanvas_y = function (pageY) {
-		var mouseY = pageY - mainContainer.offsetTop - mapCanvas.offsetTop - SETTINGS.map.getCanvasPadding;
+		var mouseY = pageY - mainContainer.offsetTop - mapCanvas.offsetTop - SETTINGS.map.getCanvasPadding();
 		return mouseY;
 	}
 	self.getTileCornerPoint = function (col, row) {
