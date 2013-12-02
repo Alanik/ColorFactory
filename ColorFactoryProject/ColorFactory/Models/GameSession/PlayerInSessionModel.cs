@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ColorFactory.Models.Player;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,11 +11,12 @@ namespace ColorFactory.Models
         public PlayerModel Player{get; set;}
 
         public int Score { get; set; }
-        public int XCornerPoint { get; set; }
-        public int YCornerPoint { get; set; }
+        public PositionModel NextPosition { get; set;}
+		public PositionModel CurrentPosition { get;  set; }
         public int AmmoPoints { get; set; }
         public int Health { get; set; }
         public int DamageDoneToOthers { get; set; }
+		public MapTileModel[,] PrivateMap { get; set; }
 
         private PlayerInSessionModel()
         {
@@ -24,12 +26,32 @@ namespace ColorFactory.Models
             DamageDoneToOthers = 0;
         }
 
-        public PlayerInSessionModel(int xCornerPoint, int yCornerPoint, string name, string connectionId)
+        public PlayerInSessionModel(PositionModel pos, PlayerModel player)
             : this()
         {
-            this.Player = new PlayerModel(name, connectionId);
-            this.XCornerPoint = xCornerPoint;
-            this.YCornerPoint = yCornerPoint;
+			this.NextPosition = new PositionModel(pos.Column, pos.Row);
+			this.CurrentPosition = new PositionModel(pos.Column, pos.Row);
+			this.Player = player;
+			this.PrivateMap = InitializePrivateMap();
         }
+
+		private MapTileModel[,] InitializePrivateMap()
+		{
+		
+		int mapSize = Consts.Map.NumberOfTiles;
+
+		MapTileModel[,] map = new MapTileModel[mapSize, mapSize];
+
+		for (int i = 0; i < mapSize; i++)
+		{
+			for (int j = 0; j < mapSize; j++)
+			{
+				map[i, j] = new MapTileModel(0, 0, 0, 2);
+			}
+		}
+
+		return map;
+		
+		}
     }
 }

@@ -1,16 +1,17 @@
 ﻿
 <header>
-	<span id="lobbyHeaderTitle" class="headerTitle">Lobby</span>
+	<span id="lobbyHeaderTitle" class="headerTitle">Lobby</span><button class="btnCloseLobby myButton" style="float: right;">close</button>
 </header>
 
 <div id="lobbyWrapper">
-	<button class="btnCloseLobby" style="float: right;">close</button>
+	
 
 <section style="color: white;">
-	<button id="btnCreateRoom">Create Room</button><input id="txtRoomName" class="txtNameInput" style="margin-left: 10px;" type="text" placeholder="room name" />
+	<button id="btnCreateRoom" class="myButton">create room</button><input id="txtRoomName" class="txtNameInput" style="margin-left: 10px;" type="text" placeholder="room name" />
 
+	<div style="padding-top:20px;">rooms: </div>
 	<div id="roomListContainer">
-			<div style="color:rgba(10,211,122,1);">rooms: </div>
+			
 		<span id="clientIdContainer"></span>
 		<ul id="roomList"></ul>
 	</div>

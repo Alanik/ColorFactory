@@ -1,11 +1,11 @@
-﻿var PlayerBase = function (tileSheetSrc) {
+﻿
+var Player = function (tileSheetSrc) {
 	var self = this;
 
-	var tileSheet = new Image();
-	tileSheet.src = tileSheetSrc;
+	var _tileSheet = new Image();
+	_tileSheet.src = tileSheetSrc;
 
 	var _pixelMovementDist = 3;
-	var _tileSheetSrc = tileSheetSrc;
 	var _upperLeftCornerPoint = { x: 0, y: 0 };
 	var _currentTile = { column: 0, row: 0 };
 	var _previousTile = { column: 0, row: 0 };
@@ -15,7 +15,13 @@
 	var _spriteSize = 40;
 	var _playerContextSize = 50;
 	var _numOfAnimationFrames = 4;
-
+	var _tileSheetSrc = tileSheetSrc;
+	var _startingTile = { column: 0, row: 0 };
+	var _nextTilePlayerMovesToCounter = 0;
+	var _room = null;
+	var _ammunitionPoints = 0;
+	var _aStarResult = [];
+	var _animationCounter = 0;
 
 	//public properties
 	self.getSpriteSize = function () {
@@ -23,7 +29,7 @@
 	}
 
 	self.getTileSheet = function () {
-	return tileSheet;
+		return _tileSheet;
 	}
 
 	self.getPixelMovementDistance = function () {
@@ -58,6 +64,7 @@
 		_nextTile.column = col;
 		_nextTile.row = row;
 	};
+
 	self.getNextTile = function () {
 		return _nextTile;
 	};
@@ -90,24 +97,12 @@
 	self.getNumOfAnimationFrames = function () {
 		return _numOfAnimationFrames;
 	}
-}
-
-var Player = function (tileSheetSrc) {
-	var self = this;
-
-	PlayerBase.call(this, tileSheetSrc);
-
-	var _startingTile = { column: 0, row: 0 };
-	var _nextTilePlayerMovesToCounter = 0;
-	var _room = null;
-	var _ammunitionPoints = 0;
-	var _aStarResult = [];
-	var _animationCounter = 0;
 
 	self.setStartingTile = function (col, row) {
 		_startingTile.column = col;
 		_startingTile.row = row;
 	};
+
 	self.getStartingTile = function () {
 		return _startingTile;
 	};
@@ -163,4 +158,4 @@ var Player = function (tileSheetSrc) {
 
 }
 
-Player.prototype = new PlayerBase("Images/TileSheet/tileSheetPlayer40Black2.png");
+

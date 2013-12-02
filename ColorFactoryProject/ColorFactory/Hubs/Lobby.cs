@@ -13,64 +13,7 @@ namespace ColorFactory.Hubs
 	[HubName("lobby")]
 	public class Lobby : Hub
 	{
-
-
-		private List<HomePage_PlayersInARoomViewModel> GetPlayerNamesInRoom(RoomModel room)
-		{
-			List<HomePage_PlayersInARoomViewModel> playerNames = new List<HomePage_PlayersInARoomViewModel>();
-			foreach (var item in room.Players)
-			{
-				HomePage_PlayersInARoomViewModel player = new HomePage_PlayersInARoomViewModel(item.Name, item.seatNumber, item.Ready);
-				playerNames.Add(player);
-			}
-
-			return playerNames;
-		}
-		private List<string> GetRoomNames()
-		{
-			List<string> roomNames = new List<string>();
-
-			foreach (var room in RoomManagerModel.Instance.RoomCollection)
-			{
-				roomNames.Add(room.Name);
-			}
-			return roomNames;
-		}
-		private List<string> GetOnlinePlayerNames()
-		{
-			List<string> Names = new List<string>();
-
-			foreach (var player in PlayerManagerModel.Instance.PlayerCollection)
-			{
-				Names.Add(player.Name);
-
-			}
-			return Names;
-
-		}
-		private void RemovePlayerFromPlayerCollection(PlayerModel player)
-		{
-			PlayerManagerModel.Instance.PlayerCollection.Remove(player);
-		}
-		private bool AreAllPlayersReady(RoomModel room)
-		{
-			int counter = 0;
-			foreach (var item in room.Players)
-			{
-				if (item.Ready)
-					counter++;
-			}
-
-			if (counter == RoomModel.MaxNumOfPlayersInRoom_2)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
+		#region Public Methods
 		public void ServerBroadcastCreateRoom(string roomName)
 		{
 			PlayerModel player = PlayerManagerModel.Instance.PlayerCollection.Find(p => p.ConnnectionId.ToString() == Context.ConnectionId);
@@ -165,12 +108,10 @@ namespace ColorFactory.Hubs
 
 					if (AreAllPlayersReady(room))
 					{
-						//start game
-						//Clients.Group(roomName).clientReceiveStartGameFromLobbyHub();
+						//Initialize game session
+						GameSessionManagerModel.Instance.GameSessionCollection.Add(new GameSessionModel(room.Players, room.Name));
 
-						GameSessionModel.InitializeGame(room.Players, room.Name);
-
-						Clients.Group(roomName).initializePlayers(roomName);
+						Clients.Group(roomName).clientReceiveInitializeGame(roomName);
 					}
 				}
 			}
@@ -219,5 +160,65 @@ namespace ColorFactory.Hubs
 
 			return null;
 		}
+		#endregion
+
+		#region Private Methods
+		private bool AreAllPlayersReady(RoomModel room)
+		{
+			int counter = 0;
+			foreach (var item in room.Players)
+			{
+				if (item.Ready)
+					counter++;
+			}
+
+			if (counter == RoomModel.MaxNumOfPlayersInRoom_2)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		private List<HomePage_PlayersInARoomViewModel> GetPlayerNamesInRoom(RoomModel room)
+		{
+			List<HomePage_PlayersInARoomViewModel> playerNames = new List<HomePage_PlayersInARoomViewModel>();
+			foreach (var item in room.Players)
+			{
+				HomePage_PlayersInARoomViewModel player = new HomePage_PlayersInARoomViewModel(item.Name, item.seatNumber, item.Ready);
+				playerNames.Add(player);
+			}
+
+			return playerNames;
+		}
+		private List<string> GetRoomNames()
+		{
+			List<string> roomNames = new List<string>();
+
+			foreach (var room in RoomManagerModel.Instance.RoomCollection)
+			{
+				roomNames.Add(room.Name);
+			}
+			return roomNames;
+		}
+		private List<string> GetOnlinePlayerNames()
+		{
+			List<string> Names = new List<string>();
+
+			foreach (var player in PlayerManagerModel.Instance.PlayerCollection)
+			{
+				Names.Add(player.Name);
+
+			}
+			return Names;
+
+		}
+		private void RemovePlayerFromPlayerCollection(PlayerModel player)
+		{
+			PlayerManagerModel.Instance.PlayerCollection.Remove(player);
+		}
+		#endregion
+
 	}
 }

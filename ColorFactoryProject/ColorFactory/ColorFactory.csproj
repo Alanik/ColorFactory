@@ -189,13 +189,15 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Filters\Hubs\Game.cs" />
-    <Compile Include="Filters\Hubs\Lobby.cs" />
+    <Compile Include="Hubs\Game.cs" />
+    <Compile Include="Hubs\Lobby.cs" />
     <Compile Include="Models\Account\AccountModels.cs" />
+    <Compile Include="Models\Consts.cs" />
     <Compile Include="Models\GameSession\GameSessionManagerModel.cs" />
     <Compile Include="Models\GameSession\GameSessionModel.cs" />
     <Compile Include="Models\Player\PlayerManagerModel.cs" />
     <Compile Include="Models\Player\PlayerModel.cs" />
+    <Compile Include="Models\Player\PositionModel.cs" />
     <Compile Include="Models\Room\RoomManagerModel.cs" />
     <Compile Include="Models\Room\RoomModel.cs" />
     <Compile Include="Models\ViewModels\HomePage_PlayersInARoomViewModel.cs" />
@@ -286,7 +288,9 @@
     <Content Include="Images\Lobby\successGray.png" />
     <Content Include="Images\point.png" />
     <Content Include="Images\Lobby\success.png" />
-    <Content Include="Images\Tilesheet\tileSheetPlayer40Black2.png" />
+    <Content Include="Images\Tilesheet\tileSheetGreenPixelPlayer.png" />
+    <Content Include="Images\Tilesheet\tileSheetGreenPlayer.png" />
+    <Content Include="Images\Tilesheet\tileSheetRedPlayer.png" />
     <Content Include="Scripts\astar.js" />
     <Content Include="Scripts\functions.js" />
     <Content Include="Scripts\graph.js" />

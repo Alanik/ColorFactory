@@ -1,6 +1,8 @@
 ﻿var Cursor = function () {
 	var self = this;
 
+	var _clickedOnCurrentTile = false;
+
 	var _clickedTile =  {
 		column : 0,
 		row : 0
@@ -9,6 +11,14 @@
 	var _currentHoveredTile = {
 		column : 0,
 		row : 0
+	}
+
+	self.getClickedOnCurrentTile = function () {
+		return _clickedOnCurrentTile;
+	}
+
+	self.setClickedOnCurrentTile = function (value) {
+		_clickedOnCurrentTile = value;
 	}
 
 	self.getClickedTile = function () {

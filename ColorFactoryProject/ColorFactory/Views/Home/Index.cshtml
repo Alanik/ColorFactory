@@ -1,8 +1,9 @@
 ﻿
 <div id="mainContainer">
 	<section class="topHeader">
-		<div style="float: right; margin-right: 30px;">
-			<span id="playerNameSpan" style="margin-right: 400px;"></span><span style="color: gray;">points: </span>
+	<div style="display:inline-block; margin-top:20px;font-size:16px;color:rgb(204, 255, 0);">Color Factory</div>	<div style="display:inline-block; margin-top:20px;font-size:11px;color:rgb(206, 255, 103);">powered by: Html5 + ASP.NET SignalR</div>
+		<div style="float: right; margin-right: 30px;margin-top:20px;">
+			<span id="playerNameSpan" style="padding-right:20px;"></span><span style="color: gray;">points: </span>
 			<span id="ammunitionPointsContainer"></span>
 
 		</div>
@@ -17,7 +18,7 @@
 	</div>
 
 	<div id="leftSideContainer">
-		<div id="btnEnterLobby">Lobby</div>
+		<div id="btnEnterLobby" class="myButton">Lobby</div>
 
 
 	</div>
@@ -26,7 +27,9 @@
 		<canvas id="playerCanvas" width="50" height="50" />
 	</div>
 	<div id="enemyCanvasContainer">
-		<canvas id="enemyCanvas" width="50" height="50" />
+		<canvas id="enemyCanvas1" width="50" height="50" />
+		<canvas id="enemyCanvas2" width="50" height="50" />
+		<canvas id="enemyCanvas3" width="50" height="50" />
 	</div>
 
 	<div id="mapContainer">
@@ -61,8 +64,17 @@
 	var playerCtx = document.getElementById("playerCanvas").getContext("2d");
 	var playerCanvas = document.getElementById("playerCanvas");
 
-	var enemyCtx = document.getElementById("enemyCanvas").getContext("2d");
-	var enemyCanvas = document.getElementById("enemyCanvas");
+	var enemyCtx1 = document.getElementById("enemyCanvas1").getContext("2d");
+	var enemyCanvas1 = document.getElementById("enemyCanvas1");
+
+	var enemyCtx2 = document.getElementById("enemyCanvas1").getContext("2d");
+	var enemyCanvas2 = document.getElementById("enemyCanvas1");
+
+	var enemyCtx2 = document.getElementById("enemyCanvas2").getContext("2d");
+	var enemyCanvas2 = document.getElementById("enemyCanvas2");
+
+	var enemyCtx3 = document.getElementById("enemyCanvas3").getContext("2d");
+	var enemyCanvas3 = document.getElementById("enemyCanvas3");
 
 	var $playerCanvasContainer = $("#playerCanvasContainer");
 	var $enemyCanvasContainer = $("#enemyCanvasContainer");
@@ -132,6 +144,8 @@
 
 	lobbyConnection.client.clientReceivePlayerEnterRoom = function (playerNamesList) {
 		var $span, $circle, $tick, player, seat;
+
+		$('#playerListInsideRoom li').find('img').attr('src', 'Images/Lobby/successGray.png');
 
 		for (var i = 0; i < playerNamesList.length; i++) {
 			player = playerNamesList[i];
@@ -215,7 +229,7 @@
 	//start game, begin in Lobby Hub then communicate to Game Hub from now on throughout the game session
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	lobbyConnection.client.initializePlayers = function (name) {
+	lobbyConnection.client.clientReceiveInitializeGame = function (name) {
 		gameConnection.server.serverBroadcastStartGameFromGameHub(name);
 	}
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -301,7 +315,10 @@
 		var SETTINGS = new Settings();
 		var CURSOR = new Cursor();
 		var EFFECTS = new Effects();
-		var player = new Player("Images/TileSheet/tileSheetPlayer40Black2.png");
+
+		
+		var player = new Player("Images/TileSheet/tileSheetGreenPlayer.png");
+		
 
 		var GAME = new Game(SETTINGS, CURSOR,EFFECTS, MAP, player);
 

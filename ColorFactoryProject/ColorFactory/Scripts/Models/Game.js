@@ -1,17 +1,124 @@
-﻿var Game = function (Settings, Cursor, Effects, Map, Player) {
+﻿var Game = function (Settings, Cursor, Effects, Map, Plr) {
 	var game = this;
 
 	SETTINGS = Settings;
 	MAP = Map;
 	CURSOR = Cursor;
 	EFFECTS = Effects;
-	player = Player;
+	player = Plr;
 
+	game.onGameStart = function () {
+		var player1 = new Player("Images/TileSheet/tileSheetRedPlayer.png");
+		var player2 = new Player("Images/TileSheet/tileSheetRedPlayer.png");
+		var player3 = new Player("Images/TileSheet/tileSheetRedPlayer.png");
+
+		var playerObj1 = { "player": player1, "ctx": enemyCtx1, "canvas": enemyCanvas1 };
+		var playerObj2 = { "player": player2, "ctx": enemyCtx2, "canvas": enemyCanvas2 };
+		var playerObj3 = { "player": player3, "ctx": enemyCtx3, "canvas": enemyCanvas3 };
+
+		game.otherPlayers.push(playerObj1);
+		game.otherPlayers.push(playerObj2);
+		game.otherPlayers.push(playerObj3);
+
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		////SignalR game session start!!! START GAME
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		gameConnection.client.clientReceiveStartGame = function (x, y) {
+			var gameSession = game.gameSession;
+
+			gameSession.initializePlayer(x, y);
+			gameSession.initializeMap();
+			gameSession.playing();
+
+			//startCounter();
+			//function startCounter() {
+			//	var $counterContainer = $(".startGameCounter");
+			//	var winW = $(window).width();
+			//	var numbers = [5, 4, 3, 2, 1];
+			//	var i = 0;
+
+			//	$counterContainer.css({ 'left': winW / 2, 'top': 100 }).show();
+			//	$("#lobbyContainer").hide();
+
+			//	var animationInterval = setInterval(startGameCountdown, 1000);
+
+			//	function startGameCountdown() {
+			//		if (i !== 5) {
+			//			$counterContainer.text(numbers[i]);
+			//			i++;
+			//		}
+			//		else {
+			//			clearInterval(animationInterval);
+			//			$counterContainer.hide();
+			//			initializeGame(x, y);
+			//			playing();
+			//		}
+			//	}
+			//}
+		};
+		gameConnection.client.clientReceiveOtherPlayerPosition = function (randX, randY, playerIndex) {
+
+			var point = CURSOR.getTileCornerPoint(randX, randY);
+			var enemyObj = game.otherPlayers[playerIndex];
+
+			var enemy = enemyObj.player;
+			var enemyCtx = enemyObj.ctx;
+			var canvas = enemyObj.canvas;
+
+			enemy.setCurrentTile(randX, randY);
+			enemy.setUpperLeftCornerPoint(point.x, point.y);
+
+			//set playerCanvas position here //////////////////////////////////////////////////////
+			canvas.setAttribute("style", "left:" + point.x + "px; top:" + point.y + "px;");
+
+			enemyCtx.globalAlpha = 1;
+			game.drawOtherPlayer(enemy, enemyCtx, canvas);
+		}
+		gameConnection.client.clientReceiveUpdateOtherPlayerPosition = function (x, y, otherPlayerIndex, alpha) {
+			var playerObj = game.otherPlayers[otherPlayerIndex];
+
+			game.moveOtherPlayer(x, y, playerObj, alpha);
+		}
+		gameConnection.client.clientReceiveUpdateOtherPlayerPosition_changeAlphaOtherPlayer = function (oldCol, oldRow, col, row, otherPlayerIndex, opacity) {
+			var playerObj = game.otherPlayers[otherPlayerIndex];
+			var otherPlayer = playerObj.player;
+
+			otherPlayer.setCurrentTile(oldCol, oldRow);
+
+			var point = CURSOR.getTileCornerPoint(oldCol, oldRow);
+			otherPlayer.setUpperLeftCornerPoint(point.x, point.y);
+
+			game.moveOtherPlayer(col, row, playerObj, opacity);
+		}
+
+		gameConnection.client.clientReceiveUncoverTile = function (tileNum, mineNum, position) {
+			console.log("tileNum: ", tileNum + " ,mineNum : " + mineNum);
+
+			switch (tileNum) {
+				case 0: {
+					game.playerUncoversTile(mineNum);
+					break;
+				}
+				case 1: {
+					break;
+				}
+				case 2: {
+					game.playerStepsOnMine(position);
+					break;
+
+				}
+				default: {
+					break;
+				}
+			}
+
+		}
+	}
 	game.initialize = function () {
 
 		initializeCanvasesPosition();
-		initializeMines();
-		initializeTileNumbers();
+		//initializeMines();
+		//initializeTileNumbers();
 		initializeLobbyAndPlayerNameModalPosition();
 
 		game.drawMapTiles();
@@ -19,14 +126,14 @@
 
 		function initializeCanvasesPosition() {
 			var x = mapContainer.offsetLeft;
-			var y = mapContainer.offsetTop - SETTINGS.map.getTileSize();
 
-			$effectsCanvas.css({ "left": x, "top": y })
+			$effectsCanvas.css({ "left": x, "top": 18 })
 			$playerCanvasContainer.css("left", x)
 			$enemyCanvasContainer.css("left", x)
 		}
 		function initializeMines() {
 			var randNumOfMines = Math.floor(Math.random() * SETTINGS.map.getMaximumNumOfMines()) + SETTINGS.map.getMinimumNumOfMines();
+			var randX, randY;
 
 			for (var i = 0; i < randNumOfMines; i++) {
 				randX = Math.floor(Math.random() * SETTINGS.map.getNumberOfTiles_Column());
@@ -88,51 +195,14 @@
 
 			$lobby.css({ 'left': winW / 2 - $lobby.width() / 2, 'top': 100 });
 			$playerNameBox.css({ 'left': winW / 2 - $playerNameBox.width() / 2, 'top': 100 });
+			$playerNameBox.show();
 
 		}
 
 	}
-	game.onGameStart = function () {
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		////SignalR game session start!!! START GAME
-		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		gameConnection.client.clientReceiveStartGameCounter = function (x, y) {
-			var gameSession = game.gameSession;
-
-			gameSession.initializePlayer(x, y);
-			gameSession.initializeMap();
-			gameSession.playing();
-
-			//startCounter();
-			//function startCounter() {
-			//	var $counterContainer = $(".startGameCounter");
-			//	var winW = $(window).width();
-			//	var numbers = [5, 4, 3, 2, 1];
-			//	var i = 0;
-
-			//	$counterContainer.css({ 'left': winW / 2, 'top': 100 }).show();
-			//	$("#lobbyContainer").hide();
-
-			//	var animationInterval = setInterval(startGameCountdown, 1000);
-
-			//	function startGameCountdown() {
-			//		if (i !== 5) {
-			//			$counterContainer.text(numbers[i]);
-			//			i++;
-			//		}
-			//		else {
-			//			clearInterval(animationInterval);
-			//			$counterContainer.hide();
-			//			initializeGame(x, y);
-			//			playing();
-			//		}
-			//	}
-			//}
-		};
-
-	}
+	game.otherPlayers = [];
 	game.drawMapTiles = function () {
-		console.log("drawMapTiles");
+
 		var x, y, tile, padding = SETTINGS.map.getCanvasPaddingWithoutBorder(), tileSize = SETTINGS.map.getTileSize(), mineNumber, graphNodeType, tileRadius = SETTINGS.map.getTileRadius(), numRow = SETTINGS.map.getNumberOfTiles_Row(), numCol = SETTINGS.map.getNumberOfTiles_Column();
 
 		ctx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
@@ -280,13 +350,16 @@
 		/////////////////////////////////////////////////////////////////////////////////////
 		//code responsible for A* algorithm
 		/////////////////////////////////////////////////////////////////////////////////////
+		var mapLength = SETTINGS.map.getNumberOfTiles_Column() - 1;
 		var playerCurrentTile = player.getCurrentTile();
 		var clickedTile = CURSOR.getClickedTile();
-		var clickedColumn = clickedTile.column;
-		var clickedRow = clickedTile.row;
 
-		if (clickedColumn != playerCurrentTile.column || clickedRow != playerCurrentTile.row) {
-			var tile = MAP.tiles[clickedColumn][clickedRow];
+		if (clickedTile.column < 0 || clickedTile.column > mapLength || clickedTile.row < 0 || clickedTile.row > mapLength) {
+			return false;
+		}
+
+		if (clickedTile.column != playerCurrentTile.column || clickedTile.row != playerCurrentTile.row) {
+			var tile = MAP.tiles[clickedTile.column][clickedTile.row];
 
 			// 3 = uncovered/destroyed Mine tile
 			// 4 = uncovered/scored Mine tile
@@ -296,12 +369,23 @@
 
 			var calculatedPath = game.aStarAlgorithm();
 			player.setAStarResult(calculatedPath);
-
 			return true;
 		}
 		else {
-			//if player clicks on the currentTile we pop last tile in array so player just goes back to the currentTile
-			player.getAStarResult().pop();
+			// clicked on current tile
+			console.log("clicked on current tile");
+
+			var newArray = [];
+			newArray.push({ "x": clickedTile.column, "y": clickedTile.row });
+
+			player.setAStarResult(newArray);
+
+			player.setNextTile(player.getCurrentTile().column, player.getCurrentTile().row);
+
+			console.log(player.getNextTile().column + ", " + player.getNextTile().row);
+
+			CURSOR.setClickedOnCurrentTile(true);
+
 			return false;
 		}
 
@@ -349,7 +433,6 @@
 		playerCtx.clearRect(0, 0, playerCanvas.width, playerCanvas.height);
 		playerCtx.drawImage(tileSheet, 0, spriteSize * player.getAnimationCounter(), spriteSize, spriteSize, canvasPadding, canvasPadding, spriteSize, spriteSize);
 	}
-
 	game.movePlayer = function () {
 
 		//return, not allowing events to stack up
@@ -362,11 +445,23 @@
 		player.setTimerInterval(setInterval(game.drawPlayerRunning, 30));
 	}
 	game.drawPlayerRunning = function () {
-		console.log("drawPlayerRunning");
 
 		game.drawPlayer();
 		game.calculatePlayerPosition();
 
+	}
+	game.otherPlayerIsFullyInTile = function (enemy, ctx, canvas) {
+
+		var currTile = enemy.getCurrentTile();
+		var nextTile = enemy.getNextTile();
+
+		enemy.setPreviousTile(currTile.column, currTile.row);
+		enemy.setCurrentTile(nextTile.column, nextTile.row);
+
+		enemy.setIsPlayerRunningInProgress(false);
+		enemy.resetAnimationCounter();
+		clearInterval(enemy.getTimerInterval());
+		game.drawOtherPlayer(enemy, ctx, canvas);
 	}
 	game.calculatePlayerPosition = function () {
 
@@ -412,10 +507,9 @@
 
 			//player still moving to tile
 			if (Math.abs(tileXMinusPlayerX) >= pixDist || Math.abs(tileYMinusPlayerY) >= pixDist) {
-				console.log("player still moving");
-				var currenUpperLeftCornerPoint = player.getUpperLeftCornerPoint();
-				var newX = pixDist * velocityX + currenUpperLeftCornerPoint.x;
-				var newY = pixDist * velocityY + currenUpperLeftCornerPoint.y;
+
+				var newX = pixDist * velocityX + playerCornerPoint.x;
+				var newY = pixDist * velocityY + playerCornerPoint.y;
 
 				player.setUpperLeftCornerPoint(newX, newY);
 				// move playerCanvas
@@ -432,8 +526,77 @@
 		}
 
 	}
+	game.calculateOtherPlayerPosition = function (enemy, enemyCtx, canvas) {
+		var velocityX = 0, velocityY = 0;
+		var padding = enemy.getPadding();
+		var negativePadding = enemy.getNegativePadding();
+		var pixDist = enemy.getPixelMovementDistance();
+
+		var tilePoint = CURSOR.getTileCornerPoint(enemy.getNextTile().column, enemy.getNextTile().row);
+		var upperCornerPoint = enemy.getUpperLeftCornerPoint();
+
+		var tileYMinusEnemyY = tilePoint.y - upperCornerPoint.y;
+		var tileXMinusEnemyX = tilePoint.x - upperCornerPoint.x;
+
+		if (tileYMinusEnemyY > padding)
+			velocityY = 1;
+		else if (tileYMinusEnemyY < negativePadding)
+			velocityY = -1;
+		else velocityY = 0
+
+		if (tileXMinusEnemyX > padding)
+			velocityX = 1;
+		else if (tileXMinusEnemyX < negativePadding)
+			velocityX = -1;
+		else velocityX = 0;
+
+		enemy.incrementAnimationCounter();
+
+		//player still moving to tile
+		if (Math.abs(tileXMinusEnemyX) >= pixDist || Math.abs(tileYMinusEnemyY) >= pixDist) {
+			var newX = pixDist * velocityX + upperCornerPoint.x;
+			var newY = pixDist * velocityY + upperCornerPoint.y;
+
+			enemy.setUpperLeftCornerPoint(newX, newY);
+			// move otherPlayerCanvas
+			canvas.setAttribute("style", "left:" + newX + "px; top:" + newY + "px;");
+
+		}
+		else {
+			//at this point other player is fully in tile
+			game.otherPlayerIsFullyInTile(enemy, enemyCtx, canvas);
+		}
+
+		if (enemy.getAnimationCounter() >= enemy.getNumOfAnimationFrames()) {
+			enemy.resetAnimationCounter();
+		}
+	}
 	game.checkIfMineIsUncoveredAllAround = function () {
-		console.log("check if mine is uncovered all around");
+
+		function checkIfTileIsMine(num) {
+			return num == 2 ? true : false;
+		}
+		function checkIfTilesAroundParameterTileAreUncovered(col, row) {
+			var rMinusOne = row - 1;
+			var rPlusOne = row + 1;
+			var kMinusOne = col - 1;
+			var kPlusOne = col + 1;
+			var num;
+
+			for (var r = rMinusOne; r <= rPlusOne; r++) {
+				for (var k = kMinusOne; k <= kPlusOne; k++) {
+
+					if (r >= 0 && r < numberOfTiles && k >= 0 && k < numberOfTiles) {
+						if (MAP.tiles[k][r] == 0) {
+							return false;
+						}
+					}
+
+				}
+			}
+
+			return true;
+		}
 
 		var numberOfTiles = SETTINGS.map.getNumberOfTiles_Column();
 		var col = player.getCurrentTile().column;
@@ -443,6 +606,7 @@
 		var rPlusOne = row + 1;
 		var kMinusOne = col - 1;
 		var kPlusOne = col + 1;
+
 
 		for (var r = rMinusOne; r <= rPlusOne; r++) {
 			for (var k = kMinusOne; k <= kPlusOne; k++) {
@@ -460,50 +624,34 @@
 				}
 			}
 
-			function checkIfTileIsMine(num) {
-				return num == 2 ? true : false;
-			}
-
-			function checkIfTilesAroundParameterTileAreUncovered(col, row) {
-				var rMinusOne = row - 1;
-				var rPlusOne = row + 1;
-				var kMinusOne = col - 1;
-				var kPlusOne = col + 1;
-				var num;
-
-				for (var r = rMinusOne; r <= rPlusOne; r++) {
-					for (var k = kMinusOne; k <= kPlusOne; k++) {
-
-						if (r >= 0 && r < numberOfTiles && k >= 0 && k < numberOfTiles) {
-							if (MAP.tiles[k][r] == 0) {
-								return false;
-							}
-						}
-
-					}
-				}
-
-				return true;
-			}
 		}
 
 	}
-	game.playerStepsOnMine = function () {
-		console.log("playerStepsOnMine");
+	game.playerStepsOnMine = function (position) {
 
 		var currentTile = player.getCurrentTile();
 
 		MAP.tiles[currentTile.column][currentTile.row] = 3;
 		MAP.graph.nodes[currentTile.column][currentTile.row].type = 0;
 
-		var point = CURSOR.getTileCornerPoint(player.getPreviousTile().column, player.getPreviousTile().row);
+		//var point = CURSOR.getTileCornerPoint(player.getPreviousTile().column, player.getPreviousTile().row);
+		var point = CURSOR.getTileCornerPoint(position.Column, position.Row);
 
 		//moves player to the previous tile location
 		player.setUpperLeftCornerPoint(point.x, point.y);
 		playerCanvas.setAttribute("style", "left:" + point.x + "px; top:" + point.y + "px;");
 
-		player.setCurrentTile(player.getPreviousTile().column, player.getPreviousTile().row);
-		player.setNextTile(player.getPreviousTile().column, player.getPreviousTile().row);
+		//player.setCurrentTile(player.getPreviousTile().column, player.getPreviousTile().row);
+		//player.setNextTile(player.getPreviousTile().column, player.getPreviousTile().row);
+		player.setCurrentTile(position.Column, position.Row);
+		player.setNextTile(position.Column, position.Row);
+
+		//////////////////////////////////////////////////////////////////////////////////////////
+		//broadcast to server
+		//////////////////////////////////////////////////////////////////////////////////////////
+		//var nextTile = player.getNextTile();
+		//gameConnection.server.serverBroadcastUpdatePlayerPosition(player.room, nextTile.column, nextTile.row);
+		//////////////////////////////////////////////////////////////////////////////////////////
 
 		game.checkIfMineIsUncoveredAllAround();
 
@@ -515,8 +663,7 @@
 
 		game.drawMapTiles();
 	}
-	game.playerUncoversTile = function () {
-		console.log("playerUncoversTile");
+	game.playerUncoversTile = function (mineNumber) {
 
 		var currentTile = player.getCurrentTile();
 
@@ -524,6 +671,8 @@
 		game.displayAmmunitionPoints(player.getAmmunitionPoints());
 
 		MAP.tiles[currentTile.column][currentTile.row] = 1;
+		MAP.numbers[currentTile.column][currentTile.row] = mineNumber;
+
 		MAP.graph.nodes[currentTile.column][currentTile.row].type = 1;
 
 		game.animateUncoveredMineNumbers();
@@ -540,70 +689,95 @@
 			player.setIsPlayerRunningInProgress(false);
 			clearInterval(player.getTimerInterval());
 
-			console.log("destinationReached");
-
 			return true;
 		}
 
 		return false;
 	}
+	game.drawOtherPlayerRunning = function (playerObj, drawFunc, alpha) {
+		var player = playerObj.player;
+		var ctx = playerObj.ctx;
+		var canvas = playerObj.canvas;
 
+		drawFunc(player, ctx, canvas, alpha);
 
+		game.calculateOtherPlayerPosition(player, ctx, canvas);
+
+	}
+	game.drawOtherPlayer = function (enemy, enemyCtx, enemyCanvas) {
+
+		var canvasPadding = SETTINGS.map.getCanvasPadding();
+		var spriteSize = enemy.getSpriteSize();
+		var tileSheet = enemy.getTileSheet();
+		var ctxSize = enemy.getContextSize();
+
+		enemyCtx.clearRect(0, 0, enemyCanvas.width, enemyCanvas.height);
+		enemyCtx.drawImage(tileSheet, 0, spriteSize * enemy.getAnimationCounter(), spriteSize, spriteSize, canvasPadding, canvasPadding, spriteSize, spriteSize);
+
+	}
+
+	game.drawOtherPlayerAlpha = function (enemy, enemyCtx, enemyCanvas, alpha) {
+
+		var canvasPadding = SETTINGS.map.getCanvasPadding();
+		var spriteSize = enemy.getSpriteSize();
+		var tileSheet = enemy.getTileSheet();
+		var ctxSize = enemy.getContextSize();
+
+		enemyCtx.globalAlpha = alpha;
+
+		enemyCtx.clearRect(0, 0, enemyCanvas.width, enemyCanvas.height);
+		enemyCtx.drawImage(tileSheet, 0, spriteSize * enemy.getAnimationCounter(), spriteSize, spriteSize, canvasPadding, canvasPadding, spriteSize, spriteSize);
+	}
+	game.moveOtherPlayer = function (col, row, playerObj, opacity) {
+		var otherPlayer = playerObj.player
+		game.otherPlayerIsFullyInTile(otherPlayer, playerObj.ctx, playerObj.canvas);
+
+		otherPlayer.setNextTile(col, row);
+
+		if (typeof opacity === 'undefined') {
+			playerObj.ctx.globalAlpha = 1;
+			otherPlayer.setTimerInterval(setInterval(function () { game.drawOtherPlayerRunning(playerObj, game.drawOtherPlayer) }, 30));
+		}
+		else if (opacity === 1) {
+			otherPlayer.setTimerInterval(setInterval(function () { game.drawOtherPlayerRunning(playerObj, game.drawOtherPlayerAlpha, opacity -= .1) }, 30));
+		}
+		else if (opacity === 0) {
+			otherPlayer.setTimerInterval(setInterval(function () { game.drawOtherPlayerRunning(playerObj, game.drawOtherPlayerAlpha, opacity += .1) }, 30));
+		}
+	}
 	game.playerIsFullyInTile = function () {
-		console.log("player fully in tile");
+		console.log("player is fully in tile");
 		var currTile = player.getCurrentTile();
 		var nextTile = player.getNextTile();
 
 		player.setPreviousTile(currTile.column, currTile.row);
 		player.setCurrentTile(nextTile.column, nextTile.row);
 
-		var tileNum = MAP.tiles[player.getCurrentTile().column][player.getCurrentTile().row]
-
-		console.log(tileNum);
-
-		switch (tileNum) {
-			case 0: {
-				game.playerUncoversTile();
-				break;
-			}
-			case 1: {
-				break;
-			}
-			case 2: {
-				game.playerStepsOnMine();
-				break;
-
-			}
-			default: {
-				break;
-			}
-		}
-
 		player.incrementNextTilePlayerMovesToCounter();
 
-		////////////////////////////////////////////////////////////////////////////////////////////////
 		//check if the the current tile is the destination tile
-		////////////////////////////////////////////////////////////////////////////////////////////////
 		if (game.isDestinationTileReached()) {
-
+			console.log("destination reached");
 			player.resetAnimationCounter();
 			game.drawPlayer();
-
-			return;
 		}
+		else {
 
-		var aStarResult = player.getAStarResult();
-		var nextTileCounter = player.getNextTilePlayerMovesToCounter();
+			var aStarResult = player.getAStarResult();
+			var nextTileCounter = player.getNextTilePlayerMovesToCounter();
 
-		if (aStarResult.length > 0) {
 			player.setNextTile(aStarResult[nextTileCounter].x, aStarResult[nextTileCounter].y);
 
-			//////////////////////////////////////////////////////////////////////////////////////////
-			//broadcast to server
-			//////////////////////////////////////////////////////////////////////////////////////////
-			//gameConnection.server.serverBroadcastUpdatePlayerPosition(player.room, player.nextTile.row, player.nextTile.column);
-			//////////////////////////////////////////////////////////////////////////////////////////
+			nextTile = player.getNextTile();
 		}
+
+		//////////////////////////////////////////////////////////////////////////////////////////
+		//broadcast to server                CHECK UNDERNEATH TILE & UPDATE PLAYER POSITION
+		//////////////////////////////////////////////////////////////////////////////////////////
+		gameConnection.server.serverBroadcastCheckUnderneathTile(player.room, nextTile.column, nextTile.row, CURSOR.getClickedOnCurrentTile());
+		//////////////////////////////////////////////////////////////////////////////////////////
+
+		CURSOR.setClickedOnCurrentTile(false);
 	}
 	game.animateUncoveredMineNumbers = function () {
 
@@ -644,13 +818,9 @@
 
 		}
 	}
-
 	game.gameSession = {
 
 		initializeMap: function () {
-			var numberOfTiles = SETTINGS.map.getNumberOfTiles_Column();
-			var tileSize = SETTINGS.map.getTileSize();
-
 			game.drawMapTiles();
 		},
 		initializePlayer: function (randX, randY) {
@@ -679,7 +849,6 @@
 			alert("Player is standing on a mine");
 			//initializePlayer();
 
-
 			//tylko dla przykladu, mozna w przyszlosci usunac
 			//tileSheet.addEventListener('load', eventPlayerLoaded, false);
 			//function eventPlayerLoaded() {
@@ -690,8 +859,9 @@
 
 			game.calculateCursorPosition();
 			game.onMouseClick();
-
 		}
-
 	}
 }
+
+
+
