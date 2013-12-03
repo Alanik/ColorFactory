@@ -4,7 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using ColorFactory.Models.GameSession;
 using ColorFactory.Models;
+using ColorFactory.Models.Map;
+using ColorFactory.Models.Player;
 
 namespace ColorFactory.Hubs
 {
@@ -27,7 +30,7 @@ namespace ColorFactory.Hubs
 					Clients.Caller.clientReceiveStartGame(playerInGame.NextPosition.Column, playerInGame.NextPosition.Row);
 
 					PlayerInSessionModel enemyInGame = session.PlayersInSession.Find(m => m.Player.ConnnectionId != Context.ConnectionId);
-					Clients.Client(enemyInGame.Player.ConnnectionId).clientReceiveOtherPlayerPosition(playerInGame.NextPosition.Column, playerInGame.NextPosition.Row, 0);
+
 				}
 			}
 
@@ -59,16 +62,7 @@ namespace ColorFactory.Hubs
 
 					UpdateOtherPlayerPosition(session, playerInGame, otherPlayer, col, row);
 
-					int mapTile;
-
-					if (session.Map[playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row].IsTileUncoveredByPlayer[playerInGame.Player.seatNumber - 1])
-					{
-						mapTile = playerInGame.PrivateMap[playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row].Tile;
-					}
-					else
-					{
-						mapTile = session.Map[playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row].Tile;
-					}
+					int mapTile = playerInGame.PrivateMap[playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row].Tile;
 
 					//map
 					// 0 = covered tile
@@ -78,53 +72,76 @@ namespace ColorFactory.Hubs
 					// 4 = uncovered/scored Mine tile
 					// 5 = currentHoveredTile
 
-					switch (mapTile)
-					{
-						case 0:
-							{
-								playerInGame.PrivateMap[playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row].Tile = 1;
-								break;
-							}
-						case 1:
-							{
-								break;
-							}
-						case 2:
-							{
-								playerInGame.PrivateMap[playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row].Tile = 3;
-								playerInGame.CurrentPosition.Column = prevCol;
-								playerInGame.CurrentPosition.Row = prevRow;
-								playerInGame.NextPosition.Column = prevCol;
-								playerInGame.NextPosition.Row = prevRow;
-								UpdateOtherPlayerPosition(session, playerInGame, otherPlayer, prevCol, prevRow);
-								break;
-							}
-						case 3:
-							{
-								playerInGame.CurrentPosition.Column = prevCol;
-								playerInGame.CurrentPosition.Row = prevRow;
-								playerInGame.NextPosition.Column = prevCol;
-								playerInGame.NextPosition.Row = prevRow;
-								UpdateOtherPlayerPosition(session, playerInGame, otherPlayer, prevCol, prevRow);
-								break;
-							}
-						case 4:
-							{
-								playerInGame.CurrentPosition.Column = prevCol;
-								playerInGame.CurrentPosition.Row = prevRow;
-								playerInGame.NextPosition.Column = prevCol;
-								playerInGame.NextPosition.Row = prevRow;
-								UpdateOtherPlayerPosition(session, playerInGame, otherPlayer, prevCol, prevRow);
-								break;
-							}
-						default:
-							{
-								break;
-							}
-					}
-
 					if (!clickedOnCurrentTile)
 					{
+						switch (mapTile)
+						{
+							case 0:
+								{
+									playerInGame.PrivateMap[playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row].Tile = 1;
+									List<PositionModel> uncoveredTiles = CheckIfMineIsUncoveredAllAround(playerInGame);
+
+									if (uncoveredTiles.Count > 0)
+									{
+										playerInGame.UncoveredMines += uncoveredTiles.Count;
+
+										Clients.Client(playerInGame.Player.ConnnectionId).clientReceiveMineHasBeenUncovered(uncoveredTiles);
+									}
+
+									playerInGame.AmmoPoints += session.Map[playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row].Number;
+
+									break;
+								}
+							case 1:
+								{
+									break;
+								}
+							case 2:
+								{
+									playerInGame.PrivateMap[playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row].Tile = 3;
+									playerInGame.CurrentPosition.Column = prevCol;
+									playerInGame.CurrentPosition.Row = prevRow;
+									playerInGame.NextPosition.Column = prevCol;
+									playerInGame.NextPosition.Row = prevRow;
+									UpdateOtherPlayerPosition(session, playerInGame, otherPlayer, prevCol, prevRow);
+
+									List<PositionModel> uncoveredTiles = CheckIfMineIsUncoveredAllAround(playerInGame);
+
+									if (uncoveredTiles.Count > 0)
+									{
+										playerInGame.UncoveredMines += uncoveredTiles.Count;
+
+										Clients.Client(playerInGame.Player.ConnnectionId).clientReceiveMineHasBeenUncovered(uncoveredTiles);
+									}
+
+									playerInGame.AmmoPoints = 0;
+
+									break;
+								}
+							case 3:
+								{
+									playerInGame.CurrentPosition.Column = prevCol;
+									playerInGame.CurrentPosition.Row = prevRow;
+									playerInGame.NextPosition.Column = prevCol;
+									playerInGame.NextPosition.Row = prevRow;
+									UpdateOtherPlayerPosition(session, playerInGame, otherPlayer, prevCol, prevRow);
+									break;
+								}
+							case 4:
+								{
+									playerInGame.CurrentPosition.Column = prevCol;
+									playerInGame.CurrentPosition.Row = prevRow;
+									playerInGame.NextPosition.Column = prevCol;
+									playerInGame.NextPosition.Row = prevRow;
+									UpdateOtherPlayerPosition(session, playerInGame, otherPlayer, prevCol, prevRow);
+									break;
+								}
+							default:
+								{
+									break;
+								}
+						}
+
 						session.Map[playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row].IsTileUncoveredByPlayer[playerInGame.Player.seatNumber - 1] = true;
 
 						int mineNumber = session.Map[playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row].Number;
@@ -165,6 +182,78 @@ namespace ColorFactory.Hubs
 				Clients.Client(otherPlayer.Player.ConnnectionId).clientReceiveUpdateOtherPlayerPosition_changeAlphaOtherPlayer(playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row, playerInGame.NextPosition.Column, playerInGame.NextPosition.Row, 0, 1);
 
 			}
+		}
+
+		private bool CheckIfTileIsMine(int num)
+		{
+			return num == 2 ? true : false;
+		}
+
+		private bool CheckIfTilesAroundParameterTileAreUncovered(int col, int row, MapTileModel[,] map)
+		{
+			int rMinusOne = row - 1;
+			int rPlusOne = row + 1;
+			int kMinusOne = col - 1;
+			int kPlusOne = col + 1;
+
+			for (var r = rMinusOne; r <= rPlusOne; r++)
+			{
+				for (var k = kMinusOne; k <= kPlusOne; k++)
+				{
+
+					if (r >= 0 && r < Consts.Map.NumberOfTiles && k >= 0 && k < Consts.Map.NumberOfTiles)
+					{
+						if (map[k, r].Tile == 0)
+						{
+							return false;
+						}
+					}
+
+				}
+			}
+
+			return true;
+		}
+
+		private List<PositionModel> CheckIfMineIsUncoveredAllAround(PlayerInSessionModel player)
+		{
+			List<PositionModel> tiles = new List<PositionModel>();
+
+			int numberOfTiles = Consts.Map.NumberOfTiles;
+			int col = player.CurrentPosition.Column;
+			int row = player.CurrentPosition.Row;
+
+			int rMinusOne = row - 1;
+			int rPlusOne = row + 1;
+			int kMinusOne = col - 1;
+			int kPlusOne = col + 1;
+
+			for (var r = rMinusOne; r <= rPlusOne; r++)
+			{
+				for (var k = kMinusOne; k <= kPlusOne; k++)
+				{
+					//check if tile is outside of map boundry(ex. row = -1)
+					if (r >= 0 && r < numberOfTiles && k >= 0 && k < numberOfTiles)
+					{
+
+						var isMine = CheckIfTileIsMine(player.PrivateMap[k, r].Tile);
+						if (isMine)
+						{
+							if (CheckIfTilesAroundParameterTileAreUncovered(k, r, player.PrivateMap))
+							{
+								//The mine is uncovered from all sides here
+								player.PrivateMap[k, r].Tile = 4;
+								tiles.Add(new PositionModel(k, r));
+							}
+						}
+
+					}
+				}
+
+			}
+
+			return tiles;
+
 		}
 	}
 }

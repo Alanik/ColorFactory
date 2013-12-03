@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace ColorFactory.Models
+namespace ColorFactory.Models.Player
 {
     public class PlayerManagerModel
     {

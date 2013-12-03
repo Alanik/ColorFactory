@@ -4,9 +4,11 @@ using System.Linq;
 using System.Web;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
-using ColorFactory.Models;
 using ColorFactory.Models.ViewModels;
 using System.Threading.Tasks;
+using ColorFactory.Models.Room;
+using ColorFactory.Models.Player;
+using ColorFactory.Models.GameSession;
 
 namespace ColorFactory.Hubs
 {

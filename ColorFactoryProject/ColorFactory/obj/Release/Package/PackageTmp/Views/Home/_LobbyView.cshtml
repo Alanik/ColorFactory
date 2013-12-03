@@ -1,0 +1,26 @@
+﻿
+<header>
+	<span id="lobbyHeaderTitle" class="headerTitle">Lobby</span><button class="btnCloseLobby myButton" style="float: right;">close</button>
+</header>
+
+<div id="lobbyWrapper">
+	
+
+<section style="color: white;">
+	<button id="btnCreateRoom" class="myButton">create room</button><input id="txtRoomName" class="txtNameInput" style="margin-left: 10px;" type="text" placeholder="room name" />
+
+	<div style="padding-top:20px;">rooms: </div>
+	<div id="roomListContainer">
+			
+		<span id="clientIdContainer"></span>
+		<ul id="roomList"></ul>
+	</div>
+</section>
+</div>
+<div id="roomWrapper">
+	@Html.Partial("_RoomView")
+</div>
+
+
+
+

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace ColorFactory.Models
+namespace ColorFactory.Models.Map
 {
 	public class MapTileModel
 	{
@@ -11,15 +11,14 @@ namespace ColorFactory.Models
 		public int Number { get; set; }
 		public int Graph { get; set; }
 
-		public bool[] IsTileUncoveredByPlayer { get; set; }
-
-
-		public MapTileModel(int tile, int number, int Graph, int numOfPlayers)
+		public MapTileModel(int tile, int number, int Graph)
 		{
 			this.Tile = tile;
 			this.Number = number;
 			this.Graph = Graph;
-			this.IsTileUncoveredByPlayer = new bool[numOfPlayers];
+
 		}
 	}
+
+	
 }

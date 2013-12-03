@@ -1,9 +1,10 @@
-﻿using System;
+﻿using ColorFactory.Models.Room;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace ColorFactory.Models
+namespace ColorFactory.Models.Player
 {
     public class PlayerModel
     {
@@ -14,7 +15,7 @@ namespace ColorFactory.Models
         public int seatNumber = 0;
         public RoomModel roomPlayerIsIn;
 
-     private  PlayerModel()
+		private  PlayerModel()
         {
             WhenCreated = DateTime.Now;
         }

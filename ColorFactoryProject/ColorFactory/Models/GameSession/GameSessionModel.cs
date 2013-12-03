@@ -6,15 +6,16 @@ using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using ColorFactory.Hubs;
 using ColorFactory.Models.Player;
+using ColorFactory.Models.Map;
 
 
-namespace ColorFactory.Models
+namespace ColorFactory.Models.GameSession
 {
 	public class GameSessionModel
 	{
 		public List<PlayerInSessionModel> PlayersInSession { get; set; }
 		public string Name { get; set; }
-		public MapTileModel[,] Map { get; set; }
+		public SessionMapTileModel[,] Map { get; set; }
 
 		public GameSessionModel(List<PlayerModel> players, string name)
 		{
@@ -32,17 +33,17 @@ namespace ColorFactory.Models
 			foreach (var player in players)
 			{
 				PositionModel pos = GetRandomPlayerPosition(map, rnd);
-				playersInSession.Add(new PlayerInSessionModel(pos, player));
+				playersInSession.Add(new PlayerInSessionModel(pos, player, map));
 			}
 
 			return playersInSession;
 		}
 
-		private MapTileModel[,] InitializeMap()
+		private SessionMapTileModel[,] InitializeMap()
 		{
 			int mapSize = Consts.Map.NumberOfTiles;
 
-			MapTileModel[,] map = new MapTileModel[mapSize, mapSize];
+			SessionMapTileModel[,] map = new SessionMapTileModel[mapSize, mapSize];
 
 			Random rnd = new Random();
 
@@ -50,7 +51,7 @@ namespace ColorFactory.Models
 			{
 				for (int j = 0; j < mapSize; j++)
 				{
-					map[i, j] = new MapTileModel(0, 0, 0, 2);
+					map[i, j] = new SessionMapTileModel(0, 0, 0, 2);
 				}
 			}
 
@@ -60,7 +61,7 @@ namespace ColorFactory.Models
 			return map;
 		}
 
-		private MapTileModel[,] InitializeMines(MapTileModel[,] map)
+		private SessionMapTileModel[,] InitializeMines(SessionMapTileModel[,] map)
 		{
 			// 0 = covered tile
 			// 1 = uncovered tile
@@ -91,7 +92,7 @@ namespace ColorFactory.Models
 			return map;
 		}
 
-		private MapTileModel[,] InitializeNumbers(MapTileModel[,] map)
+		private SessionMapTileModel[,] InitializeNumbers(SessionMapTileModel[,] map)
 		{
 			int counter, num, rMinusOne, rPlusOne, kMinusOne, kPlusOne, numOfTiles = Consts.Map.NumberOfTiles;
 
