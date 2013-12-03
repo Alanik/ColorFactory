@@ -91,7 +91,6 @@
 			game.moveOtherPlayer(col, row, playerObj, opacity);
 		}
 		gameConnection.client.clientReceiveUncoverTile = function (tileNum, mineNum, position) {
-			console.log("tileNum: ", tileNum + " ,mineNum : " + mineNum);
 
 			switch (tileNum) {
 				case 0: {
@@ -386,16 +385,12 @@
 		}
 		else {
 			// clicked on current tile
-			console.log("clicked on current tile");
-
 			var newArray = [];
 			newArray.push({ "x": clickedTile.column, "y": clickedTile.row });
 
 			player.setAStarResult(newArray);
 
 			player.setNextTile(player.getCurrentTile().column, player.getCurrentTile().row);
-
-			console.log(player.getNextTile().column + ", " + player.getNextTile().row);
 
 			CURSOR.setClickedOnCurrentTile(true);
 
@@ -746,7 +741,6 @@
 		}
 	}
 	game.playerIsFullyInTile = function () {
-		console.log("player is fully in tile");
 		var currTile = player.getCurrentTile();
 		var nextTile = player.getNextTile();
 
@@ -757,7 +751,6 @@
 
 		//check if the the current tile is the destination tile
 		if (game.isDestinationTileReached()) {
-			console.log("destination reached");
 			player.resetAnimationCounter();
 			game.drawPlayer();
 		}

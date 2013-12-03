@@ -90,9 +90,7 @@
 
 			game.moveOtherPlayer(col, row, playerObj, opacity);
 		}
-
 		gameConnection.client.clientReceiveUncoverTile = function (tileNum, mineNum, position) {
-			console.log("tileNum: ", tileNum + " ,mineNum : " + mineNum);
 
 			switch (tileNum) {
 				case 0: {
@@ -113,7 +111,21 @@
 			}
 
 		}
+
+		gameConnection.client.clientReceiveMineHasBeenUncovered = function (listOfTiles) {
+			var tile;
+		
+			for (var i = 0; i < listOfTiles.length; i++) {
+				tile = listOfTiles[i];
+
+				Map.tiles[tile.Column][tile.Row] = 4;
+				
+			}
+
+			game.drawMapTiles();
+		}
 	}
+
 	game.initialize = function () {
 
 		initializeCanvasesPosition();
@@ -373,16 +385,12 @@
 		}
 		else {
 			// clicked on current tile
-			console.log("clicked on current tile");
-
 			var newArray = [];
 			newArray.push({ "x": clickedTile.column, "y": clickedTile.row });
 
 			player.setAStarResult(newArray);
 
 			player.setNextTile(player.getCurrentTile().column, player.getCurrentTile().row);
-
-			console.log(player.getNextTile().column + ", " + player.getNextTile().row);
 
 			CURSOR.setClickedOnCurrentTile(true);
 
@@ -581,7 +589,6 @@
 			var rPlusOne = row + 1;
 			var kMinusOne = col - 1;
 			var kPlusOne = col + 1;
-			var num;
 
 			for (var r = rMinusOne; r <= rPlusOne; r++) {
 				for (var k = kMinusOne; k <= kPlusOne; k++) {
@@ -641,19 +648,8 @@
 		player.setUpperLeftCornerPoint(point.x, point.y);
 		playerCanvas.setAttribute("style", "left:" + point.x + "px; top:" + point.y + "px;");
 
-		//player.setCurrentTile(player.getPreviousTile().column, player.getPreviousTile().row);
-		//player.setNextTile(player.getPreviousTile().column, player.getPreviousTile().row);
 		player.setCurrentTile(position.Column, position.Row);
 		player.setNextTile(position.Column, position.Row);
-
-		//////////////////////////////////////////////////////////////////////////////////////////
-		//broadcast to server
-		//////////////////////////////////////////////////////////////////////////////////////////
-		//var nextTile = player.getNextTile();
-		//gameConnection.server.serverBroadcastUpdatePlayerPosition(player.room, nextTile.column, nextTile.row);
-		//////////////////////////////////////////////////////////////////////////////////////////
-
-		game.checkIfMineIsUncoveredAllAround();
 
 		//reset the resultArray so player wont walk over mines if he clicks too fast
 		player.setAStarResult([]);
@@ -667,7 +663,7 @@
 
 		var currentTile = player.getCurrentTile();
 
-		player.addAmmunitionPoints(MAP.numbers[currentTile.column][currentTile.row]);
+		player.addAmmunitionPoints(mineNumber);
 		game.displayAmmunitionPoints(player.getAmmunitionPoints());
 
 		MAP.tiles[currentTile.column][currentTile.row] = 1;
@@ -715,7 +711,6 @@
 		enemyCtx.drawImage(tileSheet, 0, spriteSize * enemy.getAnimationCounter(), spriteSize, spriteSize, canvasPadding, canvasPadding, spriteSize, spriteSize);
 
 	}
-
 	game.drawOtherPlayerAlpha = function (enemy, enemyCtx, enemyCanvas, alpha) {
 
 		var canvasPadding = SETTINGS.map.getCanvasPadding();
@@ -746,7 +741,6 @@
 		}
 	}
 	game.playerIsFullyInTile = function () {
-		console.log("player is fully in tile");
 		var currTile = player.getCurrentTile();
 		var nextTile = player.getNextTile();
 
@@ -757,7 +751,6 @@
 
 		//check if the the current tile is the destination tile
 		if (game.isDestinationTileReached()) {
-			console.log("destination reached");
 			player.resetAnimationCounter();
 			game.drawPlayer();
 		}
