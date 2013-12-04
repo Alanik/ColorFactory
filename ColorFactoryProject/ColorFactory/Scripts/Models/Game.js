@@ -91,7 +91,7 @@
 			game.moveOtherPlayer(col, row, playerObj, opacity);
 		}
 		gameConnection.client.clientReceiveUncoverTile = function (tileNum, mineNum, position, minePosition) {
-			console.log("server returns: tileNum - " + tileNum + ", mineNum - " + mineNum + ", position - " + position.Column + ", " + position.Row);
+			//console.log("server returns: tileNum - " + tileNum + ", mineNum - " + mineNum + ", position - " + position.Column + ", " + position.Row);
 
 			switch (tileNum) {
 				case 0: {

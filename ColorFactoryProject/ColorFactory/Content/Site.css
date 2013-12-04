@@ -4,7 +4,7 @@
 }
 
 body {
-	background-color: transparent;
+	background-color:rgb(236,236,236);
 	color: rgb(231, 231, 231);
 	font-family:'Oxygen', Helvetica,"Segoe UI", Verdana, Sans-Serif;
 	margin: 0;
@@ -844,7 +844,8 @@ background:#CDCDCD;
 .websiteFooter {
 	height: 100px;
 	background:rgb(236,236,236);
-	width:100%;
+	width:1000px;
+	margin:0 auto;
 }
 
 .txtNameInput {
