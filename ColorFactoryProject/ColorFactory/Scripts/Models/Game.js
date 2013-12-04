@@ -90,18 +90,19 @@
 
 			game.moveOtherPlayer(col, row, playerObj, opacity);
 		}
-		gameConnection.client.clientReceiveUncoverTile = function (tileNum, mineNum, position) {
+		gameConnection.client.clientReceiveUncoverTile = function (tileNum, mineNum, position, minePosition) {
+			console.log("server returns: tileNum - " + tileNum + ", mineNum - " + mineNum + ", position - " + position.Column + ", " + position.Row);
 
 			switch (tileNum) {
 				case 0: {
-					game.playerUncoversTile(mineNum);
+					game.playerUncoversTile(mineNum, position);
 					break;
 				}
 				case 1: {
 					break;
 				}
 				case 2: {
-					game.playerStepsOnMine(position);
+					game.playerStepsOnMine(position, minePosition);
 					break;
 
 				}
@@ -370,6 +371,10 @@
 			return false;
 		}
 
+		if (MAP.tiles[clickedTile.column][clickedTile.row] == 3 || MAP.tiles[clickedTile.column][clickedTile.row] == 4) {
+			return false;
+		}
+
 		if (clickedTile.column != playerCurrentTile.column || clickedTile.row != playerCurrentTile.row) {
 			var tile = MAP.tiles[clickedTile.column][clickedTile.row];
 
@@ -407,12 +412,12 @@
 
 			CURSOR.setClickedTile(CURSOR.getColumn(x), CURSOR.getRow(y));
 
-			player.resetNextTilePlayerMovesToCounter();
-
 			var isAllowedToMove = game.setPlayerPositionForAStarAlgorithm();
 			if (isAllowedToMove == false) {
 				return;
 			}
+
+			player.resetNextTilePlayerMovesToCounter();
 
 			var result = player.getAStarResult();
 
@@ -634,12 +639,10 @@
 		}
 
 	}
-	game.playerStepsOnMine = function (position) {
+	game.playerStepsOnMine = function (position, minePosition) {
 
-		var currentTile = player.getCurrentTile();
-
-		MAP.tiles[currentTile.column][currentTile.row] = 3;
-		MAP.graph.nodes[currentTile.column][currentTile.row].type = 0;
+		MAP.tiles[minePosition.Column][minePosition.Row] = 3;
+		MAP.graph.nodes[minePosition.Column][minePosition.Row].type = 0;
 
 		//var point = CURSOR.getTileCornerPoint(player.getPreviousTile().column, player.getPreviousTile().row);
 		var point = CURSOR.getTileCornerPoint(position.Column, position.Row);
@@ -659,17 +662,15 @@
 
 		game.drawMapTiles();
 	}
-	game.playerUncoversTile = function (mineNumber) {
-
-		var currentTile = player.getCurrentTile();
+	game.playerUncoversTile = function (mineNumber, position) {
 
 		player.addAmmunitionPoints(mineNumber);
 		game.displayAmmunitionPoints(player.getAmmunitionPoints());
 
-		MAP.tiles[currentTile.column][currentTile.row] = 1;
-		MAP.numbers[currentTile.column][currentTile.row] = mineNumber;
+		MAP.tiles[position.Column][position.Row] = 1;
+		MAP.numbers[position.Column][position.Row] = mineNumber;
 
-		MAP.graph.nodes[currentTile.column][currentTile.row].type = 1;
+		MAP.graph.nodes[position.Column][position.Row].type = 1;
 
 		game.animateUncoveredMineNumbers();
 		game.checkIfMineIsUncoveredAllAround();

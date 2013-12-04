@@ -72,6 +72,8 @@ namespace ColorFactory.Hubs
 					// 4 = uncovered/scored Mine tile
 					// 5 = currentHoveredTile
 
+					PositionModel minePosition = new PositionModel(-1, -1);
+
 					if (!clickedOnCurrentTile)
 					{
 						switch (mapTile)
@@ -99,6 +101,10 @@ namespace ColorFactory.Hubs
 							case 2:
 								{
 									playerInGame.PrivateMap[playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row].Tile = 3;
+
+									minePosition.Column = playerInGame.CurrentPosition.Column;
+									minePosition.Row = playerInGame.CurrentPosition.Row;
+
 									playerInGame.CurrentPosition.Column = prevCol;
 									playerInGame.CurrentPosition.Row = prevRow;
 									playerInGame.NextPosition.Column = prevCol;
@@ -146,7 +152,7 @@ namespace ColorFactory.Hubs
 
 						int mineNumber = session.Map[playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row].Number;
 
-						Clients.Client(playerInGame.Player.ConnnectionId).clientReceiveUncoverTile(mapTile, mineNumber, playerInGame.CurrentPosition);
+						Clients.Client(playerInGame.Player.ConnnectionId).clientReceiveUncoverTile(mapTile, mineNumber, playerInGame.CurrentPosition, minePosition);
 					}
 
 				}
