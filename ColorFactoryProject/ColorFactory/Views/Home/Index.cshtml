@@ -1,9 +1,9 @@
-﻿
-<div id="mainContainer">
+﻿<div id="mainContainer">
 	<section class="topHeader">
-	<div style="display:inline-block; margin-top:20px;font-size:16px;color:rgb(204, 255, 0);">Color Factory</div>	<div style="display:inline-block; margin-top:20px;font-size:11px;color:rgb(206, 255, 103);">powered by: Html5 + ASP.NET SignalR</div>
-		<div style="float: right; margin-right: 30px;margin-top:20px;">
-			<span id="playerNameSpan" style="padding-right:20px;"></span><span style="color: gray;">points: </span>
+		<div style="display: inline-block; margin-top: 20px; font-size: 16px; color: rgb(204, 255, 0);">Color Factory</div>
+		<div style="display: inline-block; margin-top: 20px; font-size: 11px; color: rgb(206, 255, 103);">powered by: Html5 + ASP.NET SignalR</div>
+		<div style="float: right; margin-right: 30px; margin-top: 20px;">
+			<span id="playerNameSpan" style="padding-right: 20px;"></span><span style="color: gray;">points: </span>
 			<span id="ammunitionPointsContainer"></span>
 
 		</div>
@@ -34,6 +34,10 @@
 
 	<div id="mapContainer">
 		<canvas id="mapCanvas" width="500" height="500" />
+	</div>
+
+	<div id="bulletsCanvasContainer">
+		<canvas id="bulletsCanvas" width="500" height="500" />
 	</div>
 
 	<div id="effectsCanvasContainer">
@@ -91,7 +95,7 @@
 	});
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
-	gameConnection = $.connection.game;	
+	gameConnection = $.connection.game;
 	lobbyConnection = $.connection.lobby;
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -273,11 +277,13 @@
 		$('#spanPlayersOnline').html(count);
 	};
 
-	lobbyConnection.client.clientReceiveAddPlayerToPlayerCollection = function (count, name) {	
-			for (var i = 0; i < name.length; i++) {
-				$("#homePlayersOnlineList").append("<li>" + name[i] + "</li>");
-			}
-		
+	lobbyConnection.client.clientReceiveAddPlayerToPlayerCollection = function (count, names) {
+		$("#homePlayersOnlineList").empty();
+
+		for (var i = 0; i < names.length; i++) {
+			$("#homePlayersOnlineList").append("<li>" + names[i] + "</li>");
+		}
+
 		$('#spanPlayersOnline').html(count);
 	};
 
@@ -302,22 +308,23 @@
 </script>
 
 <script src="~/Scripts/Models/Map.js" type="text/javascript"></script>
-<script src="~/Scripts/Models/Players.js" type="text/javascript"></script>
+<script src="~/Scripts/Models/Player.js" type="text/javascript"></script>
 <script src="~/Scripts/Models/Effects.js" type="text/javascript"></script>
 <script src="~/Scripts/Models/Settings.js" type="text/javascript"></script>
 <script src="~/Scripts/Models/Cursor.js" type="text/javascript"></script>
 <script src="~/Scripts/Models/Game.js" type="text/javascript"></script>
-<script src="~/Scripts/functions.js" type="text/javascript"></script>
-
+<script src="~/Scripts/Models/Bullet.js"></script>
+<script src="~/Scripts/Models/AnimationManager.js"></script>
 <script type="text/javascript">
 
 	$(function () {
 		var SETTINGS = new Settings();
 		var CURSOR = new Cursor();
 		var EFFECTS = new Effects();
-		var player = new Player("Images/TileSheet/tileSheetGreenPlayer.png");
-		
-		var GAME = new Game(SETTINGS, CURSOR,EFFECTS, MAP, player);
+		var ANIMATION_MANAGER = new AnimationManager();
+		var player = new Player("Images/TileSheet/tileSheetGreenPlayer.png", "/Images/Tilesheet/tileSheetRedPlayerTarget.png");
+
+		var GAME = new Game(SETTINGS, CURSOR, EFFECTS, ANIMATION_MANAGER, MAP, player);
 
 		GAME.initialize();
 		GAME.onGameStart();

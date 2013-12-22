@@ -1,16 +1,24 @@
-﻿var Game = function (Settings, Cursor, Effects, Map, Plr) {
+﻿var Game = function (Settings, Cursor, Effects, AnimationManager, Map, Plr) {
 	var game = this;
 
 	SETTINGS = Settings;
 	MAP = Map;
 	CURSOR = Cursor;
 	EFFECTS = Effects;
+	ANIMATION_MANAGER = AnimationManager;
 	player = Plr;
 
+	game.otherPlayers = [];
+
 	game.onGameStart = function () {
-		var player1 = new Player("Images/TileSheet/tileSheetRedPlayer.png");
-		var player2 = new Player("Images/TileSheet/tileSheetRedPlayer.png");
-		var player3 = new Player("Images/TileSheet/tileSheetRedPlayer.png");
+		var player1 = new Player("Images/TileSheet/tileSheetRedPlayer.png", "/Images/Tilesheet/tileSheetRedPlayerTarget.png");
+		var player2 = new Player("Images/TileSheet/tileSheetRedPlayer.png", "/Images/Tilesheet/tileSheetRedPlayerTarget.png");
+		var player3 = new Player("Images/TileSheet/tileSheetRedPlayer.png", "/Images/Tilesheet/tileSheetRedPlayerTarget.png");
+
+		player.setBullet(new Bullet("Images/TileSheet/Bullet/bullet.png"));
+		player1.setBullet(new Bullet("Images/TileSheet/Bullet/bullet.png"));
+		player2.setBullet(new Bullet("Images/TileSheet/Bullet/bullet.png"));
+		player3.setBullet(new Bullet("Images/TileSheet/Bullet/bullet.png"));
 
 		var playerObj1 = { "player": player1, "ctx": enemyCtx1, "canvas": enemyCanvas1 };
 		var playerObj2 = { "player": player2, "ctx": enemyCtx2, "canvas": enemyCanvas2 };
@@ -56,10 +64,10 @@
 			//	}
 			//}
 		};
-		gameConnection.client.clientReceiveOtherPlayerPosition = function (randX, randY, playerIndex) {
+		gameConnection.client.clientReceiveOtherPlayerPosition = function (randX, randY, seatNumber) {
 
 			var point = CURSOR.getTileCornerPoint(randX, randY);
-			var enemyObj = game.otherPlayers[playerIndex];
+			var enemyObj = game.otherPlayers[seatNumber];
 
 			var enemy = enemyObj.player;
 			var enemyCtx = enemyObj.ctx;
@@ -90,19 +98,19 @@
 
 			game.moveOtherPlayer(col, row, playerObj, opacity);
 		}
-		gameConnection.client.clientReceiveUncoverTile = function (tileNum, mineNum, position, minePosition) {
+		gameConnection.client.clientReceiveUncoverTile = function (tileNum, mineNum, playerCurrentPosition, minePosition) {
 			//console.log("server returns: tileNum - " + tileNum + ", mineNum - " + mineNum + ", position - " + position.Column + ", " + position.Row);
 
 			switch (tileNum) {
 				case 0: {
-					game.playerUncoversTile(mineNum, position);
+					game.playerUncoversTile(mineNum, playerCurrentPosition);
 					break;
 				}
 				case 1: {
 					break;
 				}
 				case 2: {
-					game.playerStepsOnMine(position, minePosition);
+					game.playerStepsOnMine(playerCurrentPosition, minePosition);
 					break;
 
 				}
@@ -112,26 +120,101 @@
 			}
 
 		}
-
 		gameConnection.client.clientReceiveMineHasBeenUncovered = function (listOfTiles) {
 			var tile;
-		
+
 			for (var i = 0; i < listOfTiles.length; i++) {
 				tile = listOfTiles[i];
 
-				Map.tiles[tile.Column][tile.Row] = 4;
-				
+				MAP.tiles[tile.Column][tile.Row] = 4;
+
 			}
 
 			game.drawMapTiles();
 		}
-	}
+		gameConnection.client.clientReceivePlayerShootsOtherPlayer = function (rndDamage, seatNumber) {
 
+			var halfSize = player.getSpriteSize() / 2;
+			var opponentObj = game.otherPlayers[seatNumber];
+			var opponentUpperLeftCornerPoint = opponentObj.player.getUpperLeftCornerPoint();
+			var centerPointX = player.getUpperLeftCornerPoint().x + halfSize;
+			var centerPointY = player.getUpperLeftCornerPoint().y + halfSize;
+			var calculatedPoints = game.calculateStraightLine(centerPointX, centerPointY, opponentUpperLeftCornerPoint.x + halfSize, opponentUpperLeftCornerPoint.y + halfSize);
+
+			opponentObj.player.setTileSheet(opponentObj.player.getTargetTileSheet());
+			game.drawOtherPlayer(opponentObj.player, opponentObj.ctx, opponentObj.canvas);
+
+			game.shootBullet(calculatedPoints, player.getBullet(), opponentObj.player);
+		}
+
+		gameConnection.client.clientReceivePlayerStopsShooting = function (index) {
+
+			var opponentObj = game.otherPlayers[index];
+			opponentObj.player.setTileSheet(opponentObj.player.getStarterTileSheet());
+
+			game.drawOtherPlayer(opponentObj.player, opponentObj.ctx, opponentObj.canvas);
+		}
+	}
+	game.onMouseClick = function () {
+		$effectsCanvas.click(function (e) {
+			var x = CURSOR.getCursorPositionInCanvas_x(e.pageX),
+				y = CURSOR.getCursorPositionInCanvas_y(e.pageY);
+
+			CURSOR.setClickedTile(CURSOR.getColumn(x), CURSOR.getRow(y));
+			CURSOR.setClickedOnCurrentTile(false);
+
+			var startTile = player.getCurrentTile();
+			var endTile = CURSOR.getClickedTile();
+
+			//shoot
+			if (game.clickedOnOpponent(x, y)) {
+				var calculatedTiles = game.calculateStraightLine(startTile.column, startTile.row, endTile.column, endTile.row);
+
+				if (game.shootingPathIsClear(calculatedTiles)) {
+
+					///////////////////////////////////////////////////////////////////////////////////////////////
+					//broadcast to server              CHECK IF PLAYER IS ALLOWED TO SHOOT AT THE TARGET
+					///////////////////////////////////////////////////////////////////////////////////////////////
+					gameConnection.server.serverBroadcastPlayerClickedOnOtherPlayer(endTile.column, endTile.row, player.room);
+					///////////////////////////////////////////////////////////////////////////////////////////////
+
+					return;
+				}
+			}
+
+			//move (check if is allowed to move)
+			if (!game.setPlayerPositionForAStarAlgorithm()) {
+				return;
+			}
+
+			player.resetNextTilePlayerMovesToCounter();
+
+			var result = player.getAStarResult();
+
+			if (typeof result !== "undefined" && result.length > 0) {
+				//check arrayResult for uncovered tile (in case player clicks on map too fast thus allowing him to walk over uncovered tiles)
+				var length = result.length;
+				var resultX, resultY, tile;
+
+				for (var i = 0; i < length; i++) {
+					resultX = result[i].x;
+					resultY = result[i].y;
+
+					tile = MAP.tiles[resultX][resultY];
+
+					if (tile === 0 || tile === 2) {
+						MAP.graph.nodes[resultX][resultY].type = 0;
+					}
+				}
+
+				game.movePlayer(player);
+
+			}
+		});
+	}
 	game.initialize = function () {
 
 		initializeCanvasesPosition();
-		//initializeMines();
-		//initializeTileNumbers();
 		initializeLobbyAndPlayerNameModalPosition();
 
 		game.drawMapTiles();
@@ -143,63 +226,6 @@
 			$effectsCanvas.css({ "left": x, "top": 18 })
 			$playerCanvasContainer.css("left", x)
 			$enemyCanvasContainer.css("left", x)
-		}
-		function initializeMines() {
-			var randNumOfMines = Math.floor(Math.random() * SETTINGS.map.getMaximumNumOfMines()) + SETTINGS.map.getMinimumNumOfMines();
-			var randX, randY;
-
-			for (var i = 0; i < randNumOfMines; i++) {
-				randX = Math.floor(Math.random() * SETTINGS.map.getNumberOfTiles_Column());
-				randY = Math.floor(Math.random() * SETTINGS.map.getNumberOfTiles_Row());
-				if (MAP.tiles[randX][randY] == 2) {
-					i--;
-				}
-				else {
-					MAP.tiles[randX][randY] = 2;
-				}
-			}
-		}
-		function initializeTileNumbers() {
-			var counter, num, rMinusOne, rPlusOne, kMinusOne, kPlusOne, numOfTiles = SETTINGS.map.getNumberOfTiles_Column();
-
-			for (var r = 0; r < SETTINGS.map.getNumberOfTiles_Row() ; r++) {
-				for (var k = 0; k < SETTINGS.map.getNumberOfTiles_Column() ; k++) {
-
-					counter = 0;
-					num = MAP.tiles[r][k];
-					rMinusOne = r - 1;
-					rPlusOne = r + 1;
-					kMinusOne = k - 1;
-					kPlusOne = k + 1;
-
-					if (num != 2) {
-						if (rMinusOne >= 0 && kMinusOne >= 0)
-							countMinesAroundTile(MAP.tiles[rMinusOne][kMinusOne]);
-						if (rMinusOne >= 0)
-							countMinesAroundTile(MAP.tiles[rMinusOne][k]);
-						if (rMinusOne >= 0 && kPlusOne < numOfTiles)
-							countMinesAroundTile(MAP.tiles[rMinusOne][kPlusOne]);
-						if (kMinusOne >= 0)
-							countMinesAroundTile(MAP.tiles[r][kMinusOne]);
-						if (kPlusOne < numOfTiles)
-							countMinesAroundTile(MAP.tiles[r][kPlusOne]);
-						if (rPlusOne < numOfTiles && kMinusOne >= 0)
-							countMinesAroundTile(MAP.tiles[rPlusOne][kMinusOne]);
-						if (rPlusOne < numOfTiles)
-							countMinesAroundTile(MAP.tiles[rPlusOne][k]);
-						if (rPlusOne < numOfTiles && kPlusOne < numOfTiles)
-							countMinesAroundTile(MAP.tiles[rPlusOne][kPlusOne]);
-
-						MAP.numbers[r][k] = counter;
-					}
-
-				}
-			}
-
-			function countMinesAroundTile(num) {
-				if (num == 2)
-					counter++;
-			}
 		}
 		function initializeLobbyAndPlayerNameModalPosition() {
 			var $lobby = $("#lobbyContainer");
@@ -213,7 +239,6 @@
 		}
 
 	}
-	game.otherPlayers = [];
 	game.drawMapTiles = function () {
 
 		var x, y, tile, padding = SETTINGS.map.getCanvasPaddingWithoutBorder(), tileSize = SETTINGS.map.getTileSize(), mineNumber, graphNodeType, tileRadius = SETTINGS.map.getTileRadius(), numRow = SETTINGS.map.getNumberOfTiles_Row(), numCol = SETTINGS.map.getNumberOfTiles_Column();
@@ -222,8 +247,6 @@
 
 		for (var i = 0; i < numCol; i++) {
 			for (var j = 0; j < numRow; j++) {
-
-				//graphNodeType = graph.nodes[j][i].type;
 
 				tile = MAP.tiles[i][j];
 				mineNumber = MAP.numbers[i][j];
@@ -243,13 +266,6 @@
 				if (tile == 4) {
 					roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(10,211,122,.8)");
 				}
-				if (tile == 5) {
-					roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(255,0,0,.1)");
-				}
-				//if (graphNodeType == 1) {
-				//    roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(0,240,0,.2)");
-				//}
-
 			}
 		}
 
@@ -366,30 +382,30 @@
 		var mapLength = SETTINGS.map.getNumberOfTiles_Column() - 1;
 		var playerCurrentTile = player.getCurrentTile();
 		var clickedTile = CURSOR.getClickedTile();
+		var tileNum;
 
+		//clicked outside map boundry
 		if (clickedTile.column < 0 || clickedTile.column > mapLength || clickedTile.row < 0 || clickedTile.row > mapLength) {
 			return false;
 		}
 
-		if (MAP.tiles[clickedTile.column][clickedTile.row] == 3 || MAP.tiles[clickedTile.column][clickedTile.row] == 4) {
+		tileNum = MAP.tiles[clickedTile.column][clickedTile.row];
+
+		//clicked on a mine
+		if (tileNum == 3 || tileNum == 4) {
 			return false;
 		}
 
 		if (clickedTile.column != playerCurrentTile.column || clickedTile.row != playerCurrentTile.row) {
-			var tile = MAP.tiles[clickedTile.column][clickedTile.row];
-
-			// 3 = uncovered/destroyed Mine tile
-			// 4 = uncovered/scored Mine tile
-			if (tile === 3 || tile === 4) {
-				return false;
-			}
-
 			var calculatedPath = game.aStarAlgorithm();
+
 			player.setAStarResult(calculatedPath);
 			return true;
 		}
 		else {
-			// clicked on current tile
+			// clicked on current tile, this is where player is able to go back to his previous tile not uncovering the tile he was heading to
+			player.resetNextTilePlayerMovesToCounter();
+
 			var newArray = [];
 			newArray.push({ "x": clickedTile.column, "y": clickedTile.row });
 
@@ -403,39 +419,7 @@
 		}
 
 
-	}
-	game.onMouseClick = function () {
-		$effectsCanvas.click(function (e) {
 
-			var x = CURSOR.getCursorPositionInCanvas_x(e.pageX),
-				y = CURSOR.getCursorPositionInCanvas_y(e.pageY);
-
-			CURSOR.setClickedTile(CURSOR.getColumn(x), CURSOR.getRow(y));
-
-			var isAllowedToMove = game.setPlayerPositionForAStarAlgorithm();
-			if (isAllowedToMove == false) {
-				return;
-			}
-
-			player.resetNextTilePlayerMovesToCounter();
-
-			var result = player.getAStarResult();
-
-			if (typeof result !== "undefined" && result.length > 0) {
-				//check arrayResult for uncovered tile (in case player clicks on map too fast thus allowing him to walk over uncovered tiles)
-				var length = result.length;
-				for (var i = 0; i < length; i++) {
-					var tile = MAP.tiles[result[i].x][result[i].y];
-
-					if (tile === 0 || tile === 2) {
-						MAP.graph.nodes[result[i].x][result[i].y].type = 0;
-					}
-				}
-
-				game.movePlayer(player);
-
-			}
-		});
 	}
 	game.drawPlayer = function () {
 		var canvasPadding = SETTINGS.map.getCanvasPadding();
@@ -470,7 +454,7 @@
 
 		enemy.setPreviousTile(currTile.column, currTile.row);
 		enemy.setCurrentTile(nextTile.column, nextTile.row);
-
+		
 		enemy.setIsPlayerRunningInProgress(false);
 		enemy.resetAnimationCounter();
 		clearInterval(enemy.getTimerInterval());
@@ -692,13 +676,13 @@
 		return false;
 	}
 	game.drawOtherPlayerRunning = function (playerObj, drawFunc, alpha) {
-		var player = playerObj.player;
+		var otherPlayer = playerObj.player;
 		var ctx = playerObj.ctx;
 		var canvas = playerObj.canvas;
 
-		drawFunc(player, ctx, canvas, alpha);
+		drawFunc(otherPlayer, ctx, canvas, alpha);
 
-		game.calculateOtherPlayerPosition(player, ctx, canvas);
+		game.calculateOtherPlayerPosition(otherPlayer, ctx, canvas);
 
 	}
 	game.drawOtherPlayer = function (enemy, enemyCtx, enemyCanvas) {
@@ -771,7 +755,7 @@
 		gameConnection.server.serverBroadcastCheckUnderneathTile(player.room, nextTile.column, nextTile.row, CURSOR.getClickedOnCurrentTile());
 		//////////////////////////////////////////////////////////////////////////////////////////
 
-		CURSOR.setClickedOnCurrentTile(false);
+		//console.log("client send: nextTile - " + nextTile.column + "," + nextTile.row + " clickedOnCurrentTile - " + CURSOR.getClickedOnCurrentTile());
 	}
 	game.animateUncoveredMineNumbers = function () {
 
@@ -787,20 +771,21 @@
 			if (EFFECTS.getIsAnimationNumbersInProgress()) {
 				clearInterval(EFFECTS.getAnimationNumbersTimerInterval());
 			}
+
+			effectsCtx.fillStyle = "rgba(10,211,122,1)";
+			effectsCtx.font = '50px "Victor\'s Pixel Font"';
+
 			EFFECTS.setIsAnimationNumbersInProgress(true)
 			EFFECTS.setAnimationNumbersTimerInterval(setInterval(showUncoveredMineNumbersAnimation, 100));
 		}
 
 		function showUncoveredMineNumbersAnimation() {
 
-			var color = "rgba(10,211,122,1)";
 			var offsetY = counter * 2;
 
 			if (counter < 10) {
 				counter++;
 				effectsCtx.clearRect(0, 0, effectsCanvas.width, effectsCanvas.height);
-				effectsCtx.fillStyle = color;
-				effectsCtx.font = '50px "Victor\'s Pixel Font"';
 				effectsCtx.fillText(number, tilePointX + 14, tilePointY + 50 - offsetY);
 			}
 			else {
@@ -812,8 +797,208 @@
 
 		}
 	}
-	game.gameSession = {
+	game.clickedOnOpponent = function (x, y) {
+		var c, c_x, c_y, len, playerSize, playerObj, opacity;
+		len = game.otherPlayers.length;
+		playerSize = player.getContextSize();
 
+		for (var i = 0; i < len; i++) {
+			playerObj = game.otherPlayers[i];
+			c = playerObj.canvas;
+
+			c_x = parseInt(c.style.left);
+			c_y = parseInt(c.style.top);
+
+			if (!isNaN(c_x) && !isNaN(c_y)) {
+
+				opacity = playerObj.ctx.globalAlpha;
+
+				if (opacity > .1) {
+
+					if (x > c_x && x < (c_x + playerSize) && y > c_y && y < (c_y + playerSize)) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
+
+	}
+	game.calculateStraightLine = function (startX, startY, endX, endY) {
+
+		var coordinatesArray = new Array();
+		// Translate coordinates
+		var x1 = startX;
+		var y1 = startY;
+		var x2 = endX;
+		var y2 = endY;
+		// Define differences and error check
+		var dx = Math.abs(x2 - x1);
+		var dy = Math.abs(y2 - y1);
+		var sx = (x1 < x2) ? 1 : -1;
+		var sy = (y1 < y2) ? 1 : -1;
+		var err = dx - dy;
+		// Set first coordinates
+		coordinatesArray.push({ "x": x1, "y": y1 });
+		// Main loop
+		while (!((x1 == x2) && (y1 == y2))) {
+			var e2 = err << 1;
+			if (e2 > -dy) {
+				err -= dy;
+				x1 += sx;
+			}
+			if (e2 < dx) {
+				err += dx;
+				y1 += sy;
+			}
+			// Set coordinates
+			coordinatesArray.push({ "x": x1, "y": y1 });
+		}
+		// Return the result
+		return coordinatesArray;
+	}
+	game.shootingPathIsClear = function (tilesArray) {
+		var tile;
+
+		for (var i = 0; i < tilesArray.length; i++) {
+			tile = tilesArray[i];
+
+			if (MAP.tiles[tile.x][tile.y] !== 1) {
+				return false;
+			}
+		}
+
+		return true;
+
+	}
+	game.shootBullet = function (pointsArray, bullet, opponent) {
+		var arrLength, len, adjustBullet;
+
+		//return, not allowing events to stack up
+		if (bullet.getIsBulletShootingInProgress()) {
+			return;
+		}
+
+		arrLength = pointsArray.length;
+		len = Math.floor(arrLength / 2) + Math.floor(arrLength / 4);
+		adjustBullet = true;
+
+		bullet.setIsBulletShootingInProgress(true);
+		bullet.setUpperLeftCornerPoint(pointsArray[0].x, pointsArray[0].y);
+		bullet.setTimerInterval(setInterval(function () { game.drawFlyingBullet(pointsArray, len, bullet, opponent, adjustBullet) }, 20));
+
+	}
+	game.drawFlyingBullet = function (pointsArray, len, bullet, opponent, adjustBullet) {
+		var counter;
+		var startingPoint = bullet.getUpperLeftCornerPoint();
+		var spriteSize = bullet.getSpriteSize();
+		var tileSheet = bullet.getTileSheet();
+
+		effectsCtx.clearRect(0, 0, effectsCanvas.width, effectsCanvas.height);
+		effectsCtx.drawImage(tileSheet, startingPoint.x, startingPoint.y + 50);
+
+		bullet.incrementAnimationPathCounterBy(10);
+		counter = bullet.getAnimationPathCounter();
+
+		if (counter < len) {
+
+			var point = pointsArray[counter];
+			bullet.setUpperLeftCornerPoint(point.x, point.y);
+
+		}
+		else {
+			effectsCtx.clearRect(0, 0, effectsCanvas.width, effectsCanvas.height);
+
+			clearInterval(bullet.getTimerInterval());
+			bullet.resetAnimationPathCounter();
+			bullet.setIsBulletShootingInProgress(false);
+
+			if (adjustBullet) {
+				game.adjustBullet(opponent, bullet);
+			}
+			
+		}
+	}
+	game.adjustBullet = function (opponent, bullet) {
+		var adjustBullet = false;	
+		var startingPoint = bullet.getUpperLeftCornerPoint();
+		var halfSprite = opponent.getSpriteSize() / 2;
+		var endPoint = opponent.getUpperLeftCornerPoint();
+
+		var pointsArray = game.calculateStraightLine(startingPoint.x, startingPoint.y, endPoint.x + halfSprite, + endPoint.y + halfSprite);
+		var len = pointsArray.length;
+
+		bullet.setTimerInterval(setInterval(function () { game.drawFlyingBullet(pointsArray, len, bullet, opponent, adjustBullet) }, 20));
+	}
+	game.animateDamageNumber = function (dmg, opponent) {
+
+
+
+
+	}
+
+
+	game.getPlayerPositionInRegardToOpponentPosition = function (startCol, startRow, endCol, endRow) {
+
+		function getRow(startCol, startRow, endCol, endRow) {
+			if (startRow < endRow) {
+
+				return 1;
+			}
+			else if (startRow > endRow) {
+
+				return 2;
+			}
+			else if (startRow == endRow) {
+
+				return 0;
+			}
+		}
+
+		if (startCol < endCol) {
+
+			var rowResult = getRow(startCol, startRow, endCol, endRow);
+			switch (rowResult) {
+				case 0:
+					return 0;
+				case 1:
+					return 1;
+				case 2:
+					return 7;
+				default: return null;
+			}
+		}
+		else if (startCol > endCol) {
+
+			var rowResult = getRow(startCol, startRow, endCol, endRow);
+			switch (rowResult) {
+				case 0:
+					return 4;
+				case 1:
+					return 3;
+				case 2:
+					return 5;
+				default: return null;
+			}
+		}
+		else if (startCol == endCol) {
+
+			var rowResult = getRow(startCol, startRow, endCol, endRow);
+			switch (rowResult) {
+				case 0:
+					return 8;
+				case 1:
+					return 2;
+				case 2:
+					return 6;
+				default: return null;
+			}
+
+		}
+	}
+
+	game.gameSession = {
 		initializeMap: function () {
 			game.drawMapTiles();
 		},

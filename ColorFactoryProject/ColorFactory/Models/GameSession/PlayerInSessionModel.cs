@@ -18,6 +18,7 @@ namespace ColorFactory.Models.GameSession
 		public int UncoveredMines { get; set; }
 		public int Health { get; set; }
 		public int DamageDoneToOthers { get; set; }
+		public bool IsShooting { get; set; }
 		public MapTileModel[,] PrivateMap { get; set; }
 
 		private PlayerInSessionModel()
@@ -27,6 +28,7 @@ namespace ColorFactory.Models.GameSession
 			Health = 100;
 			DamageDoneToOthers = 0;
 			UncoveredMines = 0;
+			IsShooting = false;
 		}
 
 		public PlayerInSessionModel(PositionModel pos, PlayerModel player, MapTileModel[,] map)

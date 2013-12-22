@@ -289,9 +289,11 @@
     <Content Include="Images\Lobby\successGray.png" />
     <Content Include="Images\point.png" />
     <Content Include="Images\Lobby\success.png" />
+    <Content Include="Images\Tilesheet\Bullet\bullet.png" />
     <Content Include="Images\Tilesheet\tileSheetGreenPixelPlayer.png" />
     <Content Include="Images\Tilesheet\tileSheetGreenPlayer.png" />
     <Content Include="Images\Tilesheet\tileSheetRedPlayer.png" />
+    <Content Include="Images\Tilesheet\tileSheetRedPlayerTarget.png" />
     <Content Include="Scripts\astar.js" />
     <Content Include="Scripts\functions.js" />
     <Content Include="Scripts\graph.js" />
@@ -317,11 +319,13 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\knockout-2.2.0.debug.js" />
     <Content Include="Scripts\knockout-2.2.0.js" />
+    <Content Include="Scripts\Models\AnimationManager.js" />
+    <Content Include="Scripts\Models\Bullet.js" />
     <Content Include="Scripts\Models\Cursor.js" />
     <Content Include="Scripts\Models\Effects.js" />
     <Content Include="Scripts\Models\Game.js" />
     <Content Include="Scripts\Models\Map.js" />
-    <Content Include="Scripts\Models\Players.js" />
+    <Content Include="Scripts\Models\Player.js" />
     <Content Include="Scripts\Models\Settings.js" />
     <Content Include="Scripts\modernizr-2.5.3.js" />
     <Content Include="Web.config" />

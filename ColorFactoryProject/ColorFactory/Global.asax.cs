@@ -11,6 +11,7 @@ using Microsoft.AspNet.SignalR.Hubs;
 using ColorFactory.Models;
 
 
+
 namespace ColorFactory
 {
     // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
@@ -18,6 +19,8 @@ namespace ColorFactory
 
     public class MvcApplication : System.Web.HttpApplication
     {
+		public static System.Timers.Timer GlobalTimer = new System.Timers.Timer(2000); // This will raise the event every two seconds.
+
         protected void Application_Start()
         {
             AreaRegistration.RegisterAllAreas();
@@ -27,6 +30,8 @@ namespace ColorFactory
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
+
+			GlobalTimer.Enabled = true;
         }
     }
 }
