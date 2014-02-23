@@ -10,11 +10,7 @@ namespace ColorFactory.Models.Room
 
         private static RoomManagerModel _instance;
 
-        public List<RoomModel> RoomCollection
-        {
-            get;
-            set;
-        }
+        public List<RoomModel> RoomCollection { get; set;}
 
         private RoomManagerModel()
         {

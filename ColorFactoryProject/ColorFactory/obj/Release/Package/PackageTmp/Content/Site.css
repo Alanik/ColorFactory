@@ -4,9 +4,9 @@
 }
 
 body {
-	background-color: transparent;
+	background-color: rgb(236,236,236);
 	color: rgb(231, 231, 231);
-	font-family:'Oxygen', Helvetica,"Segoe UI", Verdana, Sans-Serif;
+	font-family: 'Oxygen', Helvetica,"Segoe UI", Verdana, Sans-Serif;
 	margin: 0;
 	padding: 0;
 }
@@ -95,13 +95,10 @@ h5, h6 {
 	max-width: 960px;
 }
 
-#body {
-	/*
-    background-color: #1d1d1d;
-*/
+#bodyContainer {
 	background-color: #2E2E2E;
-	min-width: 1000px;
-	min-height: 601px;
+	min-width: 1100px;
+	min-height: 600px;
 }
 
 .main-content {
@@ -556,185 +553,14 @@ tr.pager td {
 	padding: 0 0.25em 0 0;
 }
 
-
-/********************
-*   Mobile Styles   *
-********************/
-@media only screen and (max-width: 850px) {
-
-	/* header
-    ----------------------------------------------------------*/
-	header .float-left,
-	header .float-right {
-		float: none;
-	}
-
-	/* logo */
-	header .site-title {
-		margin: 10px;
-		text-align: center;
-	}
-
-	/* login */
-	#login {
-		font-size: .85em;
-		margin: 0 0 12px;
-		text-align: center;
-	}
-
-		#login ul {
-			margin: 5px 0;
-			padding: 0;
-		}
-
-		#login li {
-			display: inline;
-			list-style: none;
-			margin: 0;
-			padding: 0;
-		}
-
-		#login a {
-			background: none;
-			color: #999;
-			font-weight: 600;
-			margin: 2px;
-			padding: 0;
-		}
-
-			#login a:hover {
-				color: #333;
-			}
-
-	/* menu */
-	nav {
-		margin-bottom: 5px;
-	}
-
-	ul#menu {
-		margin: 0;
-		padding: 0;
-		text-align: center;
-	}
-
-		ul#menu li {
-			margin: 0;
-			padding: 0;
-		}
-
-
-	/* main layout
-    ----------------------------------------------------------*/
-	.main-content,
-	.featured + .main-content {
-		background-position: 10px 0;
-	}
-
-	.content-wrapper {
-		padding-right: 10px;
-		padding-left: 10px;
-	}
-
-	.featured .content-wrapper {
-		padding: 10px;
-	}
-
-	/* page content */
-	article, aside {
-		float: none;
-		width: 100%;
-	}
-
-	/* ordered list */
-	ol.round {
-		list-style-type: none;
-		padding-left: 0;
-	}
-
-		ol.round li {
-			padding-left: 10px;
-			margin: 25px 0;
-		}
-
-			ol.round li.zero,
-			ol.round li.one,
-			ol.round li.two,
-			ol.round li.three,
-			ol.round li.four,
-			ol.round li.five,
-			ol.round li.six,
-			ol.round li.seven,
-			ol.round li.eight,
-			ol.round li.nine {
-				background: none;
-			}
-
-	/* features */
-	section.feature {
-		float: none;
-		padding: 10px;
-		width: auto;
-	}
-
-		section.feature img {
-			color: #999;
-			content: attr(alt);
-			font-size: 1.5em;
-			font-weight: 600;
-		}
-
-	/* forms */
-	input {
-		width: 90%;
-	}
-
-	/* login page */
-	#loginForm {
-		border-right: none;
-		float: none;
-		width: auto;
-	}
-
-		#loginForm .validation-error {
-			display: block;
-			margin-left: 15px;
-		}
-
-	#socialLoginForm {
-		margin-left: 0;
-		float: none;
-		width: auto;
-	}
-
-
-	/* footer
-    ----------------------------------------------------------*/
-	footer .float-left,
-	footer .float-right {
-		float: none;
-	}
-
-	footer {
-		text-align: center;
-		height: auto;
-		padding: 10px 0;
-	}
-
-		footer p {
-			margin: 0;
-		}
-}
-
 /* game css --------------------------------------- */
 
 #mapContainer {
-	/*background: rgba(255, 255, 255, 0.8);*/
 	background: rgb(197, 206, 198);
 	overflow: hidden;
 	height: 500px;
 	width: 500px;
-	/*
-	border: 1px solid #E44;
+	/*border: 1px solid #E44;
 	-webkit-box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.3);
     -moz-box-shadow: inset 0 3px 10px rgba(0,0,0,0.3);
     -ms-box-shadow: inset 0 3px 10px rgba(0,0,0,0.3);
@@ -742,15 +568,36 @@ tr.pager td {
     box-shadow: inset 0 3px 10px rgba(0, 0, 0, 0.3);*/
 }
 
-#leftSideContainer {
+#chatWindowContainer {
 	background: rgb(27, 27, 27);
-	padding: 20px;
+	border: 1px solid rgb(59, 153, 104);
+	width: 100%;
+	height: 409px;
+	position: relative;
+	top: 41px;
+	overflow: hidden;
+}
+
+#chatWindow {
+	/*background: rgb(15,15,15);*/
+	width: 100%;
+	height: 100%;
+	/*padding: 10px 0px;
+	border-bottom: 1px solid rgb(43,43,43);*/
+}
+
+#chatContent {
+	position: absolute;
+	bottom: 68px;
+	width: 100%;
+}
+
+#leftSideContainer {
 	margin-right: 28px;
 	width: 400px;
 	float: left;
-	height: 459px;
+	height: 455px;
 	position: relative;
-	border: 1px solid rgb(59, 153, 104);
 }
 
 .bottomSection {
@@ -760,8 +607,34 @@ tr.pager td {
 }
 
 #ammunitionPointsContainer {
-	font-size: 30px;
+	font-size: 20px;
 	color: rgb(0,200,255);
+	display: inline-block;
+}
+
+#healthPointsContainer {
+	font-size: 20px;
+	color: rgb(0,200,255);
+	display: inline-block;
+}
+
+#specialTilePointsContainer {
+	font-size: 20px;
+	color: rgb(0,200,255);
+	display: inline-block;
+	position: relative;
+	top: 3px;
+}
+
+#rightSideDisplay {
+	position: absolute;
+	width: 70px;
+	top: 250px;
+	left: 929px;
+}
+
+.rightSideDisplayPanels {
+	padding-left: 4px;
 }
 
 #mainContainer {
@@ -807,6 +680,12 @@ tr.pager td {
 	height: 500px;
 }
 
+#bulletsCanvasContainer {
+	position: absolute;
+	width: 500px;
+	height: 500px;
+}
+
 #enemyCanvasContainer {
 	position: absolute;
 	width: 500px;
@@ -814,10 +693,7 @@ tr.pager td {
 }
 
 #btnEnterLobby {
-	position: absolute;
-	top: 0px;
-	left: 0px;
-	
+	background: rgb(216,216,216);
 }
 
 #lobbyContainer {
@@ -827,7 +703,7 @@ tr.pager td {
 	background-color: rgba(0, 0, 0, 0.95);
 	display: none;
 	z-index: 3;
-	padding:20px;
+	padding: 20px;
 }
 
 #roomListContainer {
@@ -845,7 +721,7 @@ tr.pager td {
 	z-index: 4;
 	padding: 10px;
 	color: white;
-	display:none;
+	display: none;
 }
 
 #txtPlayerName {
@@ -857,6 +733,7 @@ tr.pager td {
 	max-height: 300px;
 	overflow: hidden;
 }
+
 
 #roomList li {
 	width: 400px;
@@ -880,7 +757,7 @@ background:#CDCDCD;
 
 .headerTitle {
 	font-size: 28px;
-	color:whitesmoke;
+	color: whitesmoke;
 }
 
 .dottedWrapper {
@@ -953,6 +830,7 @@ background:#CDCDCD;
 
 
 #btnBackToLobby {
+	margin-bottom: 20px;
 }
 
 .roomInfoContainer {
@@ -1002,17 +880,56 @@ background:#CDCDCD;
 	padding-left: 20px;
 }
 
-.startGameCounter {
-	font-size: 8em;
+#startGameCounter {
+	font-size: 40px;
 	color: white;
 	position: absolute;
-	z-index: 1;
+	z-index: 100;
+	top: 260px;
+	left: 730px;
 	display: none;
 }
 
-.siteFooter {
+.borderSquare {
+	position: absolute;
+	z-index: 10;
+	width: 20px;
+	height: 20px;
+}
+
+#square1 {
+	border-top: 1px solid rgb(59, 153, 104);
+	border-left: 1px solid rgb(59, 153, 104);
+	left: 427px;
+	top: 67px;
+}
+
+#square2 {
+	border-top: 1px solid rgb(59, 153, 104);
+	border-right: 1px solid rgb(59, 153, 104);
+	left: 908px;
+	top: 67px;
+}
+
+#square3 {
+	border-bottom: 1px solid rgb(59, 153, 104);
+	border-left: 1px solid rgb(59, 153, 104);
+	left: 427px;
+	top: 548px;
+}
+
+#square4 {
+	border-bottom: 1px solid rgb(59, 153, 104);
+	border-right: 1px solid rgb(59, 153, 104);
+	left: 908px;
+	top: 548px;
+}
+
+.websiteFooter {
 	height: 100px;
-	background:rgb(236,236,236);
+	background: rgb(236,236,236);
+	width: 1000px;
+	margin: 0 auto;
 }
 
 .txtNameInput {
@@ -1031,35 +948,49 @@ background:#CDCDCD;
 }
 
 .myButton {
-	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #eae0c2), color-stop(1, #ccc2a6));
-	background:-moz-linear-gradient(top, #eae0c2 5%, #ccc2a6 100%);
-	background:-webkit-linear-gradient(top, #eae0c2 5%, #ccc2a6 100%);
-	background:-o-linear-gradient(top, #eae0c2 5%, #ccc2a6 100%);
-	background:-ms-linear-gradient(top, #eae0c2 5%, #ccc2a6 100%);
-	background:linear-gradient(to bottom, #eae0c2 5%, #ccc2a6 100%);
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#eae0c2', endColorstr='#ccc2a6',GradientType=0);
-	background-color:#eae0c2;
-	border:2px solid #333029;
-	display:inline-block;
-	cursor:pointer;
-	color:#505739;
-	font-family:arial;
-	font-size:14px;
-	font-weight:bold;
-	padding:12px 16px;
-	text-decoration:none;
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #eae0c2), color-stop(1, #ccc2a6));
+	background: -moz-linear-gradient(top, #eae0c2 5%, #ccc2a6 100%);
+	background: -webkit-linear-gradient(top, #eae0c2 5%, #ccc2a6 100%);
+	background: -o-linear-gradient(top, #eae0c2 5%, #ccc2a6 100%);
+	background: -ms-linear-gradient(top, #eae0c2 5%, #ccc2a6 100%);
+	background: linear-gradient(to bottom, #eae0c2 5%, #ccc2a6 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eae0c2', endColorstr='#ccc2a6',GradientType=0);
+	background-color: #eae0c2;
+	/*border: 2px solid #333029;*/
+	display: inline-block;
+	cursor: pointer;
+	color: #505739;
+	font-family: arial;
+	font-size: 14px;
+	font-weight: bold;
+	padding: 12px 16px;
+	text-decoration: none;
 }
-.myButton:hover {
-	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ccc2a6), color-stop(1, #eae0c2));
-	background:-moz-linear-gradient(top, #ccc2a6 5%, #eae0c2 100%);
-	background:-webkit-linear-gradient(top, #ccc2a6 5%, #eae0c2 100%);
-	background:-o-linear-gradient(top, #ccc2a6 5%, #eae0c2 100%);
-	background:-ms-linear-gradient(top, #ccc2a6 5%, #eae0c2 100%);
-	background:linear-gradient(to bottom, #ccc2a6 5%, #eae0c2 100%);
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ccc2a6', endColorstr='#eae0c2',GradientType=0);
-	background-color:#ccc2a6;
-}
-.myButton:active {
-	position:relative;
-	top:1px;
+
+	.myButton:hover {
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #ccc2a6), color-stop(1, #eae0c2));
+		background: -moz-linear-gradient(top, #ccc2a6 5%, #eae0c2 100%);
+		background: -webkit-linear-gradient(top, #ccc2a6 5%, #eae0c2 100%);
+		background: -o-linear-gradient(top, #ccc2a6 5%, #eae0c2 100%);
+		background: -ms-linear-gradient(top, #ccc2a6 5%, #eae0c2 100%);
+		background: linear-gradient(to bottom, #ccc2a6 5%, #eae0c2 100%);
+		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ccc2a6', endColorstr='#eae0c2',GradientType=0);
+		background-color: #ccc2a6;
+	}
+
+	.myButton:active {
+		position: relative;
+		top: 1px;
+	}
+
+
+
+
+
+@font-face {
+	font-family: 'victors_pixel_fontregular';
+	src: url('fonts/victor-pixel-webfont.eot');
+	src: url('fonts/victor-pixel-webfont.eot?#iefix') format('embedded-opentype'), url('fonts/victor-pixel-webfont.woff') format('woff'), url('fonts/victor-pixel-webfont.ttf') format('truetype'), url('fonts.victor-pixel-webfont.svg#victors_pixel_fontregular') format('svg');
+	font-weight: normal;
+	font-style: normal;
 }

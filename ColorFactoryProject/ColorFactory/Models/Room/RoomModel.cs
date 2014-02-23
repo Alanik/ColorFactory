@@ -8,7 +8,7 @@ namespace ColorFactory.Models.Room
 {
 	public class RoomModel
 	{
-		public const int MaxNumOfPlayersInRoom_2 = 2;
+		public const int MaxNumOfPlayersInRoom = 2;
 
 		public string Name { get; set; }
 		public List<PlayerModel> Players { get; set; }
@@ -18,7 +18,7 @@ namespace ColorFactory.Models.Room
 		{
 			get
 			{
-				if (this.Players.Count == MaxNumOfPlayersInRoom_2)
+				if (this.Players.Count == MaxNumOfPlayersInRoom)
 				{
 					return true;
 				}

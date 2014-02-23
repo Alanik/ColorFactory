@@ -23,7 +23,6 @@
 	// 2 = covered Mine tile
 	// 3 = uncovered/destroyed Mine tile
 	// 4 = uncovered/scored Mine tile
-	// 5 = currentHoveredTile
 
 	tiles: [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

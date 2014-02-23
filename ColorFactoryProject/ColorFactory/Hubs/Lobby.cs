@@ -31,6 +31,7 @@ namespace ColorFactory.Hubs
 				player.roomPlayerIsIn = room;
 				RoomManagerModel.Instance.RoomCollection.Add(room);
 				Clients.All.clientReceiveRoomCreated(roomName);
+				Clients.Caller.clientReceiveSetRoomToPlayerOnRoomCreated(roomName);
 			}
 		}
 		public void ServerBroadcastPlayerEnterRoom(string roomName)
@@ -125,6 +126,13 @@ namespace ColorFactory.Hubs
 			Clients.All.clientReceiveAddPlayerToPlayerCollection(PlayerManagerModel.Instance.PlayerCollection.Count, GetOnlinePlayerNames());
 		}
 
+		public void ServerBroadcastChatMessage(string message, string playerName)
+		{
+
+			Clients.All.clientReceiveChatMessage(message, playerName);
+
+		}
+
 		public override Task OnDisconnected()
 		{
 			PlayerModel player = PlayerManagerModel.Instance.PlayerCollection.Find(p => p.ConnnectionId.ToString() == Context.ConnectionId);
@@ -174,7 +182,7 @@ namespace ColorFactory.Hubs
 					counter++;
 			}
 
-			if (counter == RoomModel.MaxNumOfPlayersInRoom_2)
+			if (counter == RoomModel.MaxNumOfPlayersInRoom)
 			{
 				return true;
 			}

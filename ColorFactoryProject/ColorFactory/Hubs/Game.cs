@@ -17,6 +17,7 @@ namespace ColorFactory.Hubs
 	public class Game : Hub
 	{
 		private ElapsedEventHandler playerShootingHandler;
+		private Random random = new Random();
 
 		public void ServerBroadcastStartGameFromGameHub(string roomName)
 		{
@@ -34,7 +35,6 @@ namespace ColorFactory.Hubs
 					Clients.Caller.clientReceiveStartGame(playerInGame.NextPosition.Column, playerInGame.NextPosition.Row);
 
 					PlayerInSessionModel enemyInGame = session.PlayersInSession.Find(m => m.Player.ConnnectionId != Context.ConnectionId);
-
 				}
 			}
 
@@ -48,6 +48,12 @@ namespace ColorFactory.Hubs
 				PlayerInSessionModel playerInGame = session.PlayersInSession.Find(m => m.Player.ConnnectionId == Context.ConnectionId);
 				if (playerInGame != null)
 				{
+					//TODO: temporary
+					if (playerInGame.Player.seatNumber == 0)
+					{
+						return;
+					}
+
 					int prevCol = playerInGame.CurrentPosition.Column;
 					int prevRow = playerInGame.CurrentPosition.Row;
 
@@ -61,7 +67,7 @@ namespace ColorFactory.Hubs
 
 					if (IsOtherPlayerInTile(otherPlayer.NextPosition.Column, otherPlayer.NextPosition.Row, playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row))
 					{
-					int index = GetOpponentIndex(playerInGame.Player.seatNumber, otherPlayer.Player.seatNumber);
+						int index = GetOpponentIndex(playerInGame.Player.seatNumber, otherPlayer.Player.seatNumber);
 
 						Clients.Client(playerInGame.Player.ConnnectionId).clientReceiveOtherPlayerPosition(otherPlayer.NextPosition.Column, otherPlayer.NextPosition.Row, index);
 					}
@@ -88,14 +94,20 @@ namespace ColorFactory.Hubs
 									playerInGame.PrivateMap[playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row].Tile = 1;
 									List<PositionModel> uncoveredTiles = CheckIfMineIsUncoveredAllAround(playerInGame);
 
+									playerInGame.AmmoPoints += session.Map[playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row].Number;
+
 									if (uncoveredTiles.Count > 0)
 									{
 										playerInGame.UncoveredMines += uncoveredTiles.Count;
 
 										Clients.Client(playerInGame.Player.ConnnectionId).clientReceiveMineHasBeenUncovered(uncoveredTiles);
-									}
 
-									playerInGame.AmmoPoints += session.Map[playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row].Number;
+										if (!playerInGame.WalkedIntoMine && playerInGame.UncoveredMines == session.NumberOfMines)
+										{
+											Clients.Client(playerInGame.Player.ConnnectionId).clientReceiveWinGame(string.Format("Player {0} has won the game by uncovering all the special tiles! Hail to the king! Congratz {0}.", playerInGame.Player.Name));
+											Clients.Client(otherPlayer.Player.ConnnectionId).clientReceiveWinGame(string.Format("Player {0} has won the game by uncovering all the special tiles! Hail to the king! Congratz {0}.", playerInGame.Player.Name));
+										}
+									}
 
 									break;
 								}
@@ -105,6 +117,8 @@ namespace ColorFactory.Hubs
 								}
 							case 2:
 								{
+									playerInGame.WalkedIntoMine = true;
+
 									playerInGame.PrivateMap[playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row].Tile = 3;
 
 									minePosition.Column = playerInGame.CurrentPosition.Column;
@@ -172,6 +186,11 @@ namespace ColorFactory.Hubs
 				PlayerInSessionModel playerInGame = session.PlayersInSession.Find(m => m.Player.ConnnectionId == Context.ConnectionId);
 				if (playerInGame != null)
 				{
+					//TODO: temporary
+					if (playerInGame.Player.seatNumber == 0)
+					{
+						return;
+					}
 
 					PlayerInSessionModel otherPlayer = session.PlayersInSession.Find(m => m.Player.ConnnectionId != Context.ConnectionId);
 
@@ -181,9 +200,7 @@ namespace ColorFactory.Hubs
 						{
 							playerInGame.IsShooting = true;
 
-							Random rnd = new Random();
-
-							playerShootingHandler = (sender, e) => Shoot(playerInGame, otherPlayer, rnd);
+							playerShootingHandler = (sender, e) => Shoot(playerInGame, otherPlayer, this.random, session);
 							MvcApplication.GlobalTimer.Elapsed += playerShootingHandler;
 
 						}
@@ -193,23 +210,61 @@ namespace ColorFactory.Hubs
 			}
 		}
 
-		public void Shoot(PlayerInSessionModel playerInGame, PlayerInSessionModel opponent, Random rnd)
+		#region Private Methods
+
+		private void Shoot(PlayerInSessionModel playerInGame, PlayerInSessionModel opponent, Random rnd, GameSessionModel game)
 		{
+			ArrayList tiles;
 			int startCol = playerInGame.CurrentPosition.Column;
 			int startRow = playerInGame.CurrentPosition.Row;
 			int endCol = opponent.CurrentPosition.Column;
 			int endRow = opponent.CurrentPosition.Row;
 			int index = GetOpponentIndex(playerInGame.Player.seatNumber, opponent.Player.seatNumber);
 
-			if (ShootingPathIsClear(startCol, startRow, endCol, endRow, playerInGame.PrivateMap))
+			if (playerInGame.AmmoPoints == 0)
+			{
+				MvcApplication.GlobalTimer.Elapsed -= playerShootingHandler;
+				playerInGame.IsShooting = false;
+				Clients.Client(playerInGame.Player.ConnnectionId).clientReceivePlayerStopsShooting
+(index);
+				return;
+			}
+
+			if (ShootingPathIsClear(startCol, startRow, endCol, endRow, playerInGame.PrivateMap, out tiles))
 			{
 				int rndDamage = rnd.Next(0, 11);
+				rndDamage += (2 * playerInGame.UncoveredMines);
+
 				opponent.Health -= rndDamage;
-				
+				playerInGame.AmmoPoints -= 1;
 
-				Clients.Client(playerInGame.Player.ConnnectionId).clientReceivePlayerShootsOtherPlayer(rndDamage, index);
+				//TODO: temporary
+				if (opponent.Health <= 0 && !game.EndGame)
+				{
+					game.EndGame = true;
 
-				Clients.Client(opponent.Player.ConnnectionId).clientReceivePlayerGetsShotByOtherPlayer(rndDamage, opponent.Health);
+					PositionModel uncoveredBulletTile = GetUncoveredBulletTile(tiles, game.Map, playerInGame.UncoveredBulletTile, opponent.Player.seatNumber - 1);
+
+					Clients.Client(playerInGame.Player.ConnnectionId).clientReceivePlayerShootsOtherPlayer(rndDamage, index, string.Format("Player {0} has won the game by destroying player {1}. Hail to the king! Congratz {0}.", playerInGame.Player.Name, opponent.Player.Name));
+					Clients.Client(opponent.Player.ConnnectionId).clientReceivePlayerGetsShotByOtherPlayer(rndDamage, opponent.Health, uncoveredBulletTile, string.Format("Player {0} has won the game by destroying player {1}. Hail to the king! Congratz {0}.", playerInGame.Player.Name, opponent.Player.Name));
+
+					playerInGame.IsShooting = false;
+
+					//unsubscribe to event
+					MvcApplication.GlobalTimer.Elapsed -= playerShootingHandler;
+
+
+					//Clients.Caller.clientReceiveWinGame(string.Format("Player {0} has won the game by destroying player {1}. Hail to the king! Congratz {0}.", playerInGame.Player.Name, opponent.Player.Name));
+					//Clients.Others.clientReceiveWinGame(string.Format("Player {0} has won the game by destroying player {1}. Hail to the king! Congratz {0}.", playerInGame.Player.Name, opponent.Player.Name));
+
+				}
+				else
+				{
+					PositionModel uncoveredBulletTile = GetUncoveredBulletTile(tiles, game.Map, playerInGame.UncoveredBulletTile, opponent.Player.seatNumber - 1);
+
+					Clients.Client(playerInGame.Player.ConnnectionId).clientReceivePlayerShootsOtherPlayer(rndDamage, index);
+					Clients.Client(opponent.Player.ConnnectionId).clientReceivePlayerGetsShotByOtherPlayer(rndDamage, opponent.Health, uncoveredBulletTile);
+				}
 			}
 			else
 			{
@@ -222,7 +277,41 @@ namespace ColorFactory.Hubs
 (index);
 			}
 		}
-		#region Private Methods
+
+		private PositionModel GetUncoveredBulletTile(ArrayList tiles, SessionMapTileModel[,] map, PositionModel uncoveredBulletTile, int index)
+		{
+			bool previousUncovered = false;
+			PositionModel firstTile = (PositionModel)tiles[0];
+
+			if (map[firstTile.Column, firstTile.Row].IsTileUncoveredByPlayer[index])
+			{
+				uncoveredBulletTile.Column = firstTile.Column;
+				uncoveredBulletTile.Row = firstTile.Row;
+
+				return uncoveredBulletTile;
+			}
+
+			foreach (PositionModel tile in tiles)
+			{
+				if (map[tile.Column, tile.Row].IsTileUncoveredByPlayer[index])
+				{
+					if (previousUncovered)
+					{
+						return uncoveredBulletTile;
+					}
+				}
+				else
+				{
+					previousUncovered = true;
+
+					uncoveredBulletTile.Column = tile.Column;
+					uncoveredBulletTile.Row = tile.Row;
+				}
+			}
+
+			return uncoveredBulletTile;
+
+		}
 
 		private bool IsOtherPlayerInTile(int otherCol, int otherRow, int col, int row)
 		{
@@ -231,7 +320,6 @@ namespace ColorFactory.Hubs
 
 		private void UpdateOtherPlayerPosition(GameSessionModel session, PlayerInSessionModel playerInGame, PlayerInSessionModel otherPlayer, int col, int row)
 		{
-
 			bool nextTileOtherPlayerUncovered = session.Map[col, row].IsTileUncoveredByPlayer[otherPlayer.Player.seatNumber - 1];
 			bool prevTileOtherPlayerUncovered = session.Map[playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row].IsTileUncoveredByPlayer[otherPlayer.Player.seatNumber - 1];
 
@@ -327,7 +415,6 @@ namespace ColorFactory.Hubs
 
 		private ArrayList CalculateStraightLine(int startX, int startY, int endX, int endY)
 		{
-
 			ArrayList coordinatesArray = new ArrayList();
 			// Translate coordinates
 			int x1 = startX;
@@ -364,13 +451,13 @@ namespace ColorFactory.Hubs
 
 		}
 
-		private bool ShootingPathIsClear(int startColumn, int startRow, int endColumn, int endRow, MapTileModel[,] map)
+		private bool ShootingPathIsClear(int startColumn, int startRow, int endColumn, int endRow, MapTileModel[,] playerMap, out ArrayList tiles)
 		{
-			ArrayList tiles = CalculateStraightLine(startColumn, startRow, endColumn, endRow);
+			tiles = CalculateStraightLine(startColumn, startRow, endColumn, endRow);
 
 			foreach (PositionModel tile in tiles)
 			{
-				if (map[tile.Column, tile.Row].Tile != 1)
+				if (playerMap[tile.Column, tile.Row].Tile != 1)
 				{
 					return false;
 				}

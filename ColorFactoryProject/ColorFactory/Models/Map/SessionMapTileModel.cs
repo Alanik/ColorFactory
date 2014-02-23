@@ -15,5 +15,7 @@ namespace ColorFactory.Models.Map
 		{
 			this.IsTileUncoveredByPlayer = new bool[numOfPlayers];
 		}
+
+
 	}
 }

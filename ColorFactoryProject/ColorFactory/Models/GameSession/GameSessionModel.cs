@@ -16,9 +16,12 @@ namespace ColorFactory.Models.GameSession
 		public List<PlayerInSessionModel> PlayersInSession { get; set; }
 		public string Name { get; set; }
 		public SessionMapTileModel[,] Map { get; set; }
+		public int NumberOfMines { get; set; }
+		public bool EndGame { get; set; }
 
 		public GameSessionModel(List<PlayerModel> players, string name)
 		{
+			this.EndGame = false;
 			this.Name = name;
 			this.Map = InitializeMap();
 			this.PlayersInSession = InitializePlayers(players, this.Map);
@@ -44,7 +47,6 @@ namespace ColorFactory.Models.GameSession
 			int mapSize = Consts.Map.NumberOfTiles;
 
 			SessionMapTileModel[,] map = new SessionMapTileModel[mapSize, mapSize];
-
 			Random rnd = new Random();
 
 			for (int i = 0; i < mapSize; i++)
@@ -73,6 +75,7 @@ namespace ColorFactory.Models.GameSession
 			Random rnd = new Random();
 
 			int numOfMines = rnd.Next(Consts.Map.minimumNumberOfMines, Consts.Map.maximumNumberOfMines + 1);
+			this.NumberOfMines = numOfMines;
 
 			for (int i = 0; i < numOfMines; i++)
 			{
@@ -137,7 +140,7 @@ namespace ColorFactory.Models.GameSession
 		}
 
 		private PositionModel GetRandomPlayerPosition(MapTileModel[,] map, Random rnd)
-		{			
+		{
 			int x = rnd.Next(Consts.Map.NumberOfTiles);
 			int y = rnd.Next(Consts.Map.NumberOfTiles);
 
