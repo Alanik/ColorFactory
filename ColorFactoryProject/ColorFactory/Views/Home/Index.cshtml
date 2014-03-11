@@ -1,5 +1,5 @@
 ﻿<div id="mainContainer">
-<div id="startGameCounter">Game Started</div>
+	<div id="startGameCounter">Game Started</div>
 	<div id="square1" class="borderSquare"></div>
 	<div id="square2" class="borderSquare"></div>
 	<div id="square3" class="borderSquare"></div>
@@ -56,6 +56,12 @@
 
 	<div id="effectsCanvasContainer">
 		<canvas id="effectsCanvas" width="580" height="550" />
+	</div>
+
+	<div id="personalMenuContainer" style="display: none; width: 100px; height: 100px; background: white; position: absolute; z-index: 10;">
+		<div id="granadeIconContainer" style="position: absolute; top: 0; left: 0px;" onclick="GAME.granadeIconOnClick();">
+			<img src="~/Images/Icons/Weapons/Military-Grenade-icon-small.png" />
+		</div>
 	</div>
 
 	<section class="bottomSection">
@@ -354,7 +360,7 @@
 			$txtBox = $("#txtPlayerName");
 			playerName = $txtBox.val();
 			if (playerName !== "") {
-				
+
 				mainPlayer.setName(playerName);
 				$("#playerNameSpan").text(playerName);
 
@@ -436,7 +442,7 @@
 		var ANIMATION_MANAGER = new AnimationManager();
 		mainPlayer = new Player("Images/TileSheet/tileSheetGreenPlayer.png", "/Images/Tilesheet/tileSheetRedPlayerTarget.png");
 
-		var GAME = new Game(SETTINGS, CURSOR, EFFECTS, ANIMATION_MANAGER, MAP, mainPlayer);
+		GAME = new Game(SETTINGS, CURSOR, EFFECTS, ANIMATION_MANAGER, MAP, mainPlayer);
 
 		ANIMATION_MANAGER.game = GAME;
 

@@ -13,11 +13,17 @@
 	//TODO: temporary
 	game.WIN_MESSAGE;
 
+	//FLAGS
+	game.flags = {
+		isPersonalMenuVisible: false,
+		isGranadeChosen : false
+	}
+
 	////////////////////////////////////////////////////////////////////////
 	//methods
 	////////////////////////////////////////////////////////////////////////
 
-	game.onGameStart = function () {
+	game.onGameStart =  function () {
 		var player1 = new Player("Images/TileSheet/tileSheetRedPlayer.png", "/Images/Tilesheet/tileSheetRedPlayerTarget.png");
 		var player2 = new Player("Images/TileSheet/tileSheetRedPlayer.png", "/Images/Tilesheet/tileSheetRedPlayerTarget.png");
 		var player3 = new Player("Images/TileSheet/tileSheetRedPlayer.png", "/Images/Tilesheet/tileSheetRedPlayerTarget.png");
@@ -45,34 +51,10 @@
 
 			gameSession.initializePlayer(x, y);
 			gameSession.initializeMap();
+			gameSession.initializePersonalPlayerMenu();
 			gameSession.playing();
-
-			//startCounter();
-			//function startCounter() {
-			//	var $counterContainer = $(".startGameCounter");
-			//	var winW = $(window).width();
-			//	var numbers = [5, 4, 3, 2, 1];
-			//	var i = 0;
-
-			//	$counterContainer.css({ 'left': winW / 2, 'top': 100 }).show();
-			//	$("#lobbyContainer").hide();
-
-			//	var animationInterval = setInterval(startGameCountdown, 1000);
-
-			//	function startGameCountdown() {
-			//		if (i !== 5) {
-			//			$counterContainer.text(numbers[i]);
-			//			i++;
-			//		}
-			//		else {
-			//			clearInterval(animationInterval);
-			//			$counterContainer.hide();
-			//			initializeGame(x, y);
-			//			playing();
-			//		}
-			//	}
-			//}
 		};
+
 		gameConnection.client.clientReceiveOtherPlayerPosition = function (randX, randY, seatNumber) {
 
 			var point = game.CURSOR.getTileCornerPoint(randX, randY);
@@ -221,21 +203,38 @@
 	}
 	game.onMouseClick = function () {
 		$effectsCanvas.click(function (e) {
-			//TODO: fix clicking on map padding, check for negative/12 row column before shoot/move
-
 			var cursor = game.CURSOR;
 			var mainPlayer = game.player;
+			var map = game.MAP;
+			var tiles = map.tiles, graph = map.graph;
+			var settingsMap = game.SETTINGS.map;
+			var mapLength = settingsMap.getNumberOfTiles_Column() - 1;
 
 			var x = cursor.getCursorPositionInCanvas_x(e.pageX),
 				y = cursor.getCursorPositionInCanvas_y(e.pageY);
-			var map = game.MAP;
-			var tiles = map.tiles, graph = map.graph;
 
 			cursor.setClickedTile(cursor.getColumn(x), cursor.getRow(y));
 			cursor.setClickedOnCurrentTile(false);
 
 			var startTile = mainPlayer.getCurrentTile();
 			var endTile = cursor.getClickedTile();
+
+			var clickedTile = cursor.getClickedTile();
+
+			if (game.flags.isPersonalMenuVisible) {
+				game.hidePersonalMenu();
+			}
+
+			//clicked outside map boundry
+			if (clickedTile.column < 0 || clickedTile.column > mapLength || clickedTile.row < 0 || clickedTile.row > mapLength) {
+				return;
+			}
+
+			//check if clicked on self
+			if (clickedTile.column == game.player.getCurrentTile().column && clickedTile.row == game.player.getCurrentTile().row) {
+				game.clickedOnSelf();
+				return;
+			}
 
 			//shoot
 			if (game.clickedOnOpponent(x, y)) {
@@ -462,19 +461,13 @@
 		/////////////////////////////////////////////////////////////////////////////////////
 		//code responsible for A* algorithm
 		/////////////////////////////////////////////////////////////////////////////////////
-		var settingsMap = game.SETTINGS.map;
 		var map, cursor = game.CURSOR;
 		var mainPlayer = game.player;
 
-		var mapLength = settingsMap.getNumberOfTiles_Column() - 1;
+		
 		var playerCurrentTile = mainPlayer.getCurrentTile();
 		var clickedTile = cursor.getClickedTile();
 		var tileNum;
-
-		//clicked outside map boundry
-		if (clickedTile.column < 0 || clickedTile.column > mapLength || clickedTile.row < 0 || clickedTile.row > mapLength) {
-			return false;
-		}
 
 		map = game.MAP;
 		tileNum = map.tiles[clickedTile.column][clickedTile.row];
@@ -484,30 +477,10 @@
 			return false;
 		}
 
-		if (clickedTile.column != playerCurrentTile.column || clickedTile.row != playerCurrentTile.row) {
-			var calculatedPath = game.aStarAlgorithm();
+		var calculatedPath = game.aStarAlgorithm();
+		mainPlayer.setAStarResult(calculatedPath);
 
-			mainPlayer.setAStarResult(calculatedPath);
-			return true;
-		}
-		else {
-			// clicked on current tile, this is where player is able to go back to his previous tile not uncovering the tile he was heading to
-			mainPlayer.resetNextTilePlayerMovesToCounter();
-
-			var newArray = [];
-			newArray.push({ "x": clickedTile.column, "y": clickedTile.row });
-
-			mainPlayer.setAStarResult(newArray);
-
-			mainPlayer.setNextTile(mainPlayer.getCurrentTile().column, mainPlayer.getCurrentTile().row);
-
-			cursor.setClickedOnCurrentTile(true);
-
-			return false;
-		}
-
-
-
+		return true;
 	}
 	game.drawPlayer = function () {
 		var mainPlayer = game.player;
@@ -1015,6 +988,67 @@
 
 		window.location.reload();
 	}
+	game.clickedOnSelf = function () {
+		if (game.flags.isPersonalMenuVisible) {
+			game.hidePersonalMenu();
+		}
+		else {
+			game.showPersonalMenu();
+		}
+
+	};
+	game.showPersonalMenu = function () {
+		var $container = $("#personalMenuContainer");
+
+		var playerPositionPoint = game.player.getUpperLeftCornerPoint();
+
+		//TODO: get rid of const numbers, use properties
+		$container.css({ "right": (80 + (500 - playerPositionPoint.x)) + "px", "top": (playerPositionPoint.y + 20) + "px" });
+
+		$container.show();
+
+		game.flags.isPersonalMenuVisible = true;
+	};
+
+	game.hidePersonalMenu = function () {
+		var $container = $("#personalMenuContainer");
+		$container.hide();
+
+		game.flags.isPersonalMenuVisible = false;
+	};
+
+	game.initializePersonalMenuContainerPosition = function () {
+		var $container = $("#personalMenuContainer");
+		$container.css("right", "80px");
+
+		var playerPositionPoint = game.player.getUpperLeftCornerPoint();
+
+		//TODO: get rid of const numbers, use properties
+		$container.css({ "right": (80 + (500 - playerPositionPoint.x)) + "px", "top": (playerPositionPoint.y + 20) + "px" });
+	};
+
+	game.showSmallGranadeIcon = function () {
+		$container = $("#smallGranadeIcon");
+		$container.show();
+	}
+
+	game.hideSmallGranadeIcon = function () {
+		$container = $("#smallGranadeIcon");
+		$container.hide();
+	}
+
+	game.granadeIconOnClick = function () {
+		if (game.flags.isGranadeChosen) {
+			game.flags.isGranadeChosen = false;
+			game.hideSmallGranadeIcon();
+		}
+		else {
+			game.flags.isGranadeChosen = true;
+			game.showSmallGranadeIcon();
+		}
+
+		game.hidePersonalMenu();
+	};
 
 	game.getPlayerPositionInRegardToOpponentPosition = function (startCol, startRow, endCol, endRow) {
 
@@ -1115,6 +1149,9 @@
 			//function eventPlayerLoaded() {
 			//drawPlayer();
 			//}
+		},
+		initializePersonalPlayerMenu : function(){
+			game.initializePersonalMenuContainerPosition();
 		},
 		playing: function () {
 			game.calculateCursorPosition();

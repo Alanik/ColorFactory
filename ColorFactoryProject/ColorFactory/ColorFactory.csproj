@@ -291,6 +291,8 @@
     <Content Include="Images\Icons\bullets-icon.png" />
     <Content Include="Images\Icons\heart-blackandwhite.png" />
     <Content Include="Images\Icons\heart.png" />
+    <Content Include="Images\Icons\Military-Grenade-icon-small-white.png" />
+    <Content Include="Images\Icons\Weapons\Military-Grenade-icon-small.png" />
     <Content Include="Images\Lobby\successGray.png" />
     <Content Include="Images\point.png" />
     <Content Include="Images\Lobby\success.png" />
