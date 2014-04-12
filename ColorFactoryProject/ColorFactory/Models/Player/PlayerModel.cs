@@ -10,7 +10,7 @@ namespace ColorFactory.Models.Player
     {
         public string Name { get; set; }
         public DateTime WhenCreated { get; set; }
-        public string ConnnectionId { get; set; }
+        public string ConnectionId { get; set; }
         public bool Ready = false;
         public int seatNumber = 0;
         public RoomModel roomPlayerIsIn;
@@ -23,7 +23,7 @@ namespace ColorFactory.Models.Player
        public PlayerModel(string name, string connectionId)
             : this()
         {
-            ConnnectionId = connectionId;
+            ConnectionId = connectionId;
             Name = name;
         }
     }

@@ -46,7 +46,7 @@ namespace ColorFactory.Models.Player
 
         public void RemovePlayerBasedOnConnectionId(string playerId)
         {
-            var player = PlayerCollection.Find(p => p.ConnnectionId == playerId);
+            var player = PlayerCollection.Find(p => p.ConnectionId == playerId);
             PlayerCollection.Remove(player);
         }
 

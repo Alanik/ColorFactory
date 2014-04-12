@@ -15,15 +15,14 @@
 
 	//FLAGS
 	game.flags = {
-		isPersonalMenuVisible: false,
-		isGranadeChosen : false
+		isPersonalMenuVisible: false
 	}
 
 	////////////////////////////////////////////////////////////////////////
 	//methods
 	////////////////////////////////////////////////////////////////////////
 
-	game.onGameStart =  function () {
+	game.onGameStart = function () {
 		var player1 = new Player("Images/TileSheet/tileSheetRedPlayer.png", "/Images/Tilesheet/tileSheetRedPlayerTarget.png");
 		var player2 = new Player("Images/TileSheet/tileSheetRedPlayer.png", "/Images/Tilesheet/tileSheetRedPlayerTarget.png");
 		var player3 = new Player("Images/TileSheet/tileSheetRedPlayer.png", "/Images/Tilesheet/tileSheetRedPlayerTarget.png");
@@ -94,7 +93,7 @@
 
 			switch (tileNum) {
 				case 0: {
-					game.playerUncoversTile(mineNum, playerCurrentPosition);
+					game.playerStepsOnEmptyTile(mineNum, playerCurrentPosition);
 					break;
 				}
 				case 1: {
@@ -111,7 +110,7 @@
 			}
 
 		}
-		gameConnection.client.clientReceiveMineHasBeenUncovered = function (listOfTiles) {
+		gameConnection.client.clientReceiveMineHasBeenUncovered = function (listOfTiles, mines) {
 			var tile;
 			var tiles = game.MAP.tiles;
 			var len = listOfTiles.length;
@@ -124,10 +123,8 @@
 
 			//TODO: temporary
 			game.drawMapTiles();
-
-			var $container = $("#specialTilePointsContainer");
-			var num = $container.text();
-			$container.text(parseInt(num) + len);
+			game.player.setUncoveredMines(mines);
+			game.displayUncoveredMines(mines);
 		}
 		gameConnection.client.clientReceivePlayerShootsOtherPlayer = function (rndDamage, seatNumber, winMessage) {
 			if (typeof winMessage !== "undefined") {
@@ -194,16 +191,58 @@
 			bullet.setIsMyBullet(false);
 
 			game.shootBullet(calculatedPoints, bullet, mainPlayer, game.ANIMATION_MANAGER.BulletAnimationManager);
-
-			$("#healthPointsContainer").text(health);
+			game.displayHealthPoints(health);
 		}
+		gameConnection.client.clientReceivePlayerGetsHitByPineCone = function (mineNumber, col, row, tile, rndDamage, health) {
+			game.player.setHealth(health);
+			game.displayHealthPoints(health);
+
+			game.uncoverTile(mineNumber, col, row, tile);
+
+			var text = new TextAnimation("-" + rndDamage + "boom");
+			var point = game.player.getUpperLeftCornerPoint();
+			text.setUpperLeftCornerPoint(point.x, point.y);
+
+			game.ANIMATION_MANAGER.TextAnimationManager.addTextToAnimationCollection(text);
+		};
+		gameConnection.client.clientReceivePineConeExplodes = function (mineNumber, col, row, tile, rndDamage) {
+			var otherPlayerObj = game.otherPlayers[0], text;
+			
+			game.uncoverTile(mineNumber, col, row, tile);
+
+			if (rndDamage < 0) {
+				text = new TextAnimation("boom");
+			}
+			else {
+				text = new TextAnimation("-" + rndDamage);
+				game.drawOtherPlayer(otherPlayerObj.player, otherPlayerObj.ctx, otherPlayerObj.canvas);
+			}
+
+			var point = game.CURSOR.getTileCornerPoint(col, row);
+			text.setUpperLeftCornerPoint(point.x, point.y);
+
+			game.ANIMATION_MANAGER.TextAnimationManager.addTextToAnimationCollection(text);
+		};
+		gameConnection.client.clientReceiveHealPlayer = function (healPoints, health, mines) {
+			game.player.setHealth(health);
+			game.displayHealthPoints(health);
+			game.player.setUncoveredMines(mines);
+			game.displayUncoveredMines(mines);
+
+			var text = new TextAnimation("+" + healPoints);
+			var point = game.player.getUpperLeftCornerPoint();
+			text.setUpperLeftCornerPoint(point.x, point.y);
+
+			game.ANIMATION_MANAGER.TextAnimationManager.addTextToAnimationCollection(text);
+		};
+
 		gameConnection.client.clientReceiveWinGame = function (message) {
 			game.winGame(message);
 		}
 	}
 	game.onMouseClick = function () {
 		$effectsCanvas.click(function (e) {
-			var cursor = game.CURSOR;
+			var cursor = game.CURSOR, uncoveredMines;
 			var mainPlayer = game.player;
 			var map = game.MAP;
 			var tiles = map.tiles, graph = map.graph;
@@ -214,7 +253,6 @@
 				y = cursor.getCursorPositionInCanvas_y(e.pageY);
 
 			cursor.setClickedTile(cursor.getColumn(x), cursor.getRow(y));
-			cursor.setClickedOnCurrentTile(false);
 
 			var startTile = mainPlayer.getCurrentTile();
 			var endTile = cursor.getClickedTile();
@@ -236,6 +274,34 @@
 				return;
 			}
 
+			//Pine Cone
+			if (mainPlayer.getCurrentWeapon() == mainPlayer.getWeapons().pineCone) {
+
+				 uncoveredMines = mainPlayer.getUncoveredMines();
+
+				if (uncoveredMines <= 0) {
+					mainPlayer.setCurrentWeapon(mainPlayer.getWeapons().acorn);
+					game.hideSmallGranadeIcon();
+					gameConnection.server.serverBroadcastWeaponSwitched(mainPlayer.getCurrentWeapon(), mainPlayer.getRoom());
+					return;
+				}
+
+				uncoveredMines = uncoveredMines - 1;
+				mainPlayer.setUncoveredMines(uncoveredMines);
+				game.displayUncoveredMines(uncoveredMines);
+
+				///////////////////////////////////////////////////////////////////////////////////////////////
+				//broadcast to server				  THROW PINE CONE
+				///////////////////////////////////////////////////////////////////////////////////////////////
+				gameConnection.server.serverBroadcastPineConeThrown(endTile.column, endTile.row, mainPlayer.getRoom());
+				///////////////////////////////////////////////////////////////////////////////////////////////
+
+				mainPlayer.setCurrentWeapon(mainPlayer.getWeapons().acorn);
+				game.hideSmallGranadeIcon();
+				gameConnection.server.serverBroadcastWeaponSwitched(mainPlayer.getCurrentWeapon(), mainPlayer.getRoom());
+				return;
+			}
+
 			//shoot
 			if (game.clickedOnOpponent(x, y)) {
 				var calculatedTiles = game.calculateStraightLine(startTile.column, startTile.row, endTile.column, endTile.row);
@@ -245,11 +311,15 @@
 					///////////////////////////////////////////////////////////////////////////////////////////////
 					//broadcast to server              CHECK IF PLAYER IS ALLOWED TO SHOOT AT THE TARGET
 					///////////////////////////////////////////////////////////////////////////////////////////////
-					gameConnection.server.serverBroadcastPlayerClickedOnOtherPlayer(endTile.column, endTile.row, mainPlayer.room);
+					gameConnection.server.serverBroadcastPlayerClickedOnOtherPlayer(endTile.column, endTile.row, mainPlayer.getRoom());
 					///////////////////////////////////////////////////////////////////////////////////////////////
 
 					return;
 				}
+				else {
+					return;
+				}
+				
 			}
 
 			//move (check if is allowed to move)
@@ -339,7 +409,7 @@
 				if (tile == 0 || tile == 2) {
 					roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(0,0,0,.5)");
 				}
-				if (tile == 1) {
+				if (tile == 1 || tile == 6) {
 					drawNumbers(i, j, mineNumber);
 				}
 				if (tile == 3) {
@@ -347,6 +417,12 @@
 				}
 				if (tile == 4) {
 					roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(10,211,122,.8)");
+				}
+				if (tile == 5) {
+					roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(238,68,68,.8)");
+				}
+				if (tile == 6) {
+					roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, false, "rgba(255,255,255,.4)");
 				}
 			}
 		}
@@ -463,8 +539,6 @@
 		/////////////////////////////////////////////////////////////////////////////////////
 		var map, cursor = game.CURSOR;
 		var mainPlayer = game.player;
-
-		
 		var playerCurrentTile = mainPlayer.getCurrentTile();
 		var clickedTile = cursor.getClickedTile();
 		var tileNum;
@@ -481,7 +555,7 @@
 		mainPlayer.setAStarResult(calculatedPath);
 
 		return true;
-	}
+	};
 	game.drawPlayer = function () {
 		var mainPlayer = game.player;
 		var canvasPadding = game.SETTINGS.map.getCanvasPadding();
@@ -491,7 +565,7 @@
 
 		playerCtx.clearRect(0, 0, playerCanvas.width, playerCanvas.height);
 		playerCtx.drawImage(tileSheet, 0, spriteSize * mainPlayer.getAnimationCounter(), spriteSize, spriteSize, canvasPadding, canvasPadding, spriteSize, spriteSize);
-	}
+	};
 	game.movePlayer = function () {
 		var mainPlayer = game.player;
 		//return, not allowing events to stack up
@@ -502,13 +576,13 @@
 		mainPlayer.setIsPlayerRunningInProgress(true);
 
 		mainPlayer.setTimerInterval(setInterval(game.drawPlayerRunning, 30));
-	}
+	};
 	game.drawPlayerRunning = function () {
 
 		game.drawPlayer();
 		game.calculatePlayerPosition();
 
-	}
+	};
 	game.otherPlayerIsFullyInTile = function (enemy, ctx, canvas) {
 
 		var currTile = enemy.getCurrentTile();
@@ -521,7 +595,7 @@
 		enemy.resetAnimationCounter();
 		clearInterval(enemy.getTimerInterval());
 		game.drawOtherPlayer(enemy, ctx, canvas);
-	}
+	};
 	game.calculatePlayerPosition = function () {
 		var mainPlayer = game.player;
 
@@ -587,7 +661,7 @@
 
 		}
 
-	}
+	};
 	game.calculateOtherPlayerPosition = function (enemy, enemyCtx, canvas) {
 		var velocityX = 0, velocityY = 0;
 		var padding = enemy.getPadding();
@@ -632,8 +706,8 @@
 		if (enemy.getAnimationCounter() >= enemy.getNumOfAnimationFrames()) {
 			enemy.resetAnimationCounter();
 		}
-	}
-	game.checkIfMineIsUncoveredAllAround = function () {
+	};
+	game.checkIfMineIsUncoveredAllAround = function (col, row) {
 
 		function checkIfTileIsMine(num) {
 			return num == 2 ? true : false;
@@ -664,8 +738,12 @@
 
 		var numberOfTiles = game.SETTINGS.map.getNumberOfTiles_Column();
 		var mainPlayer = game.player;
-		var col = mainPlayer.getCurrentTile().column;
-		var row = mainPlayer.getCurrentTile().row;
+
+		//TODO: temporary
+		if (typeof col == 'undefined' && typeof row == 'undefined') {
+			col = mainPlayer.getCurrentTile().column;
+			row = mainPlayer.getCurrentTile().row;
+		}
 
 		var rMinusOne = row - 1;
 		var rPlusOne = row + 1;
@@ -673,7 +751,6 @@
 		var kPlusOne = col + 1;
 
 		var tiles = game.MAP.tiles;
-
 
 		for (var r = rMinusOne; r <= rPlusOne; r++) {
 			for (var k = kMinusOne; k <= kPlusOne; k++) {
@@ -693,7 +770,7 @@
 
 		}
 
-	}
+	};
 	game.playerStepsOnMine = function (position, minePosition) {
 		var map = game.MAP;
 		var tiles = map.tiles;
@@ -720,8 +797,8 @@
 		game.displayAmmunitionPoints(mainPlayer.getAmmunitionPoints());
 
 		game.drawMapTiles();
-	}
-	game.playerUncoversTile = function (mineNumber, position) {
+	};
+	game.playerStepsOnEmptyTile = function (mineNumber, position) {
 		var map = game.MAP;
 		var tiles = map.tiles;
 		var numbers = map.numbers;
@@ -736,8 +813,27 @@
 		graph.nodes[position.Column][position.Row].type = 1;
 
 		game.animateUncoveredMineNumbers();
-		game.checkIfMineIsUncoveredAllAround();
+		game.checkIfMineIsUncoveredAllAround();	
+		game.drawMapTiles();
+	};
+	game.uncoverTile = function (mineNumber, col, row, tile) {
+		var map = game.MAP;
+		var tiles = map.tiles;
+		var numbers = map.numbers;
+		var graph = map.graph;
+		var mainPlayer = game.player;
 
+		tiles[col][row] = tile;
+		numbers[col][row] = mineNumber;
+
+		if (tile == 5) {
+			graph.nodes[col][row].type = 0;
+		}
+		else if (tile == 1) {
+			graph.nodes[col][row].type = 1;
+		}
+
+		game.checkIfMineIsUncoveredAllAround(col, row);
 		game.drawMapTiles();
 	}
 	game.isDestinationTileReached = function () {
@@ -753,7 +849,7 @@
 		}
 
 		return false;
-	}
+	};
 	game.drawOtherPlayerRunning = function (playerObj, drawFunc, alpha) {
 		var otherPlayer = playerObj.player;
 		var ctx = playerObj.ctx;
@@ -763,7 +859,7 @@
 
 		game.calculateOtherPlayerPosition(otherPlayer, ctx, canvas);
 
-	}
+	};
 	game.drawOtherPlayer = function (enemy, enemyCtx, enemyCanvas) {
 
 		var canvasPadding = game.SETTINGS.map.getCanvasPadding();
@@ -774,7 +870,7 @@
 		enemyCtx.clearRect(0, 0, enemyCanvas.width, enemyCanvas.height);
 		enemyCtx.drawImage(tileSheet, 0, spriteSize * enemy.getAnimationCounter(), spriteSize, spriteSize, canvasPadding, canvasPadding, spriteSize, spriteSize);
 
-	}
+	};
 	game.drawOtherPlayerAlpha = function (enemy, enemyCtx, enemyCanvas, alpha) {
 
 		var canvasPadding = game.SETTINGS.map.getCanvasPadding();
@@ -786,7 +882,7 @@
 
 		enemyCtx.clearRect(0, 0, enemyCanvas.width, enemyCanvas.height);
 		enemyCtx.drawImage(tileSheet, 0, spriteSize * enemy.getAnimationCounter(), spriteSize, spriteSize, canvasPadding, canvasPadding, spriteSize, spriteSize);
-	}
+	};
 	game.moveOtherPlayer = function (col, row, playerObj, opacity) {
 		var otherPlayer = playerObj.player
 		game.otherPlayerIsFullyInTile(otherPlayer, playerObj.ctx, playerObj.canvas);
@@ -833,11 +929,11 @@
 		//////////////////////////////////////////////////////////////////////////////////////////
 		//broadcast to server                CHECK UNDERNEATH TILE & UPDATE PLAYER POSITION
 		//////////////////////////////////////////////////////////////////////////////////////////
-		gameConnection.server.serverBroadcastCheckUnderneathTile(mainPlayer.room, nextTile.column, nextTile.row, game.CURSOR.getClickedOnCurrentTile());
+		gameConnection.server.serverBroadcastCheckUnderneathTile(mainPlayer.getRoom(), nextTile.column, nextTile.row);
 		//////////////////////////////////////////////////////////////////////////////////////////
 
 		//console.log("client send: nextTile - " + nextTile.column + "," + nextTile.row + " clickedOnCurrentTile - " + game.CURSOR.getClickedOnCurrentTile());
-	}
+	};
 	game.animateUncoveredMineNumbers = function () {
 
 		var animationNumbersTimerInterval, counter = 0;
@@ -878,7 +974,7 @@
 			}
 
 		}
-	}
+	};
 	game.clickedOnOpponent = function (x, y) {
 		var c, c_x, c_y, len, playerSize, playerObj, opacity;
 		len = game.otherPlayers.length;
@@ -906,7 +1002,7 @@
 
 		return false;
 
-	}
+	};
 	game.calculateStraightLine = function (startX, startY, endX, endY) {
 
 		var coordinatesArray = new Array();
@@ -939,7 +1035,7 @@
 		}
 		// Return the result
 		return coordinatesArray;
-	}
+	};
 	game.shootingPathIsClear = function (tilesArray) {
 		var tile, tiles = game.MAP.tiles;
 
@@ -953,7 +1049,7 @@
 
 		return true;
 
-	}
+	};
 	game.shootBullet = function (pointsArray, bullet, opponent, bulletAnimationManager) {
 		var arrLength, len, adjustBulletFlag;
 
@@ -977,7 +1073,7 @@
 	};
 	game.animateDamageNumber = function (dmg, opponent) {
 
-	}
+	};
 	game.winGame = function (message) {
 		effectsCtx.clearRect(0, 0, effectsCanvas.width, effectsCanvas.height);
 		ctx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
@@ -987,15 +1083,36 @@
 		alert(message);
 
 		window.location.reload();
-	}
+	};
 	game.clickedOnSelf = function () {
 		if (game.flags.isPersonalMenuVisible) {
 			game.hidePersonalMenu();
 		}
 		else {
-			game.showPersonalMenu();
-		}
 
+			var mainPlayer = game.player;
+			var weapons = mainPlayer.getWeapons();
+
+			if (mainPlayer.getCurrentWeapon() === weapons.pineCone) {
+				mainPlayer.setCurrentWeapon(weapons.acorn);
+				game.hideSmallGranadeIcon();
+
+				console.log(mainPlayer.getUncoveredMines());
+				if (mainPlayer.getUncoveredMines() > 0) {
+					gameConnection.server.serverBroadcastHealPlayer(mainPlayer.getRoom());
+				}
+
+			}
+			else {
+				game.showPersonalMenu();
+			}
+		}
+	};
+	game.displayHealthPoints = function (health) {
+		$("#healthPointsContainer").text(health);
+	};
+	game.displayUncoveredMines = function (tiles) {
+		$("#uncoveredMinesContainer").text(tiles);
 	};
 	game.showPersonalMenu = function () {
 		var $container = $("#personalMenuContainer");
@@ -1003,20 +1120,18 @@
 		var playerPositionPoint = game.player.getUpperLeftCornerPoint();
 
 		//TODO: get rid of const numbers, use properties
-		$container.css({ "right": (80 + (500 - playerPositionPoint.x)) + "px", "top": (playerPositionPoint.y + 20) + "px" });
+		$container.css({ "right": (495 - playerPositionPoint.x) + "px", "top": (playerPositionPoint.y + 40) + "px" });
 
 		$container.show();
 
 		game.flags.isPersonalMenuVisible = true;
 	};
-
 	game.hidePersonalMenu = function () {
 		var $container = $("#personalMenuContainer");
 		$container.hide();
 
 		game.flags.isPersonalMenuVisible = false;
 	};
-
 	game.initializePersonalMenuContainerPosition = function () {
 		var $container = $("#personalMenuContainer");
 		$container.css("right", "80px");
@@ -1024,32 +1139,37 @@
 		var playerPositionPoint = game.player.getUpperLeftCornerPoint();
 
 		//TODO: get rid of const numbers, use properties
-		$container.css({ "right": (80 + (500 - playerPositionPoint.x)) + "px", "top": (playerPositionPoint.y + 20) + "px" });
+		$container.css({ "right": (495 - playerPositionPoint.x) + "px", "top": (playerPositionPoint.y + 40) + "px" });
+
+		$container.click(function () {
+			game.hidePersonalMenu();
+		});
 	};
-
 	game.showSmallGranadeIcon = function () {
-		$container = $("#smallGranadeIcon");
-		$container.show();
-	}
-
+		$("#smallGranadeIcon").show();
+	};
 	game.hideSmallGranadeIcon = function () {
-		$container = $("#smallGranadeIcon");
-		$container.hide();
-	}
-
+		$("#smallGranadeIcon").hide();
+	};
 	game.granadeIconOnClick = function () {
-		if (game.flags.isGranadeChosen) {
-			game.flags.isGranadeChosen = false;
+		var mainPlayer = game.player;
+
+		var weapons = mainPlayer.getWeapons();
+
+		if (mainPlayer.getCurrentWeapon() === weapons.pineCone) {
+			mainPlayer.setCurrentWeapon(weapons.acorn);
 			game.hideSmallGranadeIcon();
 		}
 		else {
-			game.flags.isGranadeChosen = true;
+			mainPlayer.setCurrentWeapon(weapons.pineCone);
 			game.showSmallGranadeIcon();
 		}
 
 		game.hidePersonalMenu();
-	};
 
+		gameConnection.server.serverBroadcastWeaponSwitched(mainPlayer.getCurrentWeapon(), mainPlayer.getRoom());
+
+	};
 	game.getPlayerPositionInRegardToOpponentPosition = function (startCol, startRow, endCol, endRow) {
 
 		function getRow(startCol, startRow, endCol, endRow) {
@@ -1108,7 +1228,6 @@
 
 		}
 	}
-
 	game.gameSession = {
 		initializeMap: function () {
 			game.drawMapTiles();
@@ -1150,7 +1269,7 @@
 			//drawPlayer();
 			//}
 		},
-		initializePersonalPlayerMenu : function(){
+		initializePersonalPlayerMenu: function () {
 			game.initializePersonalMenuContainerPosition();
 		},
 		playing: function () {

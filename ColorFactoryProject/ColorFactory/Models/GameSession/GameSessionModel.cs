@@ -44,7 +44,7 @@ namespace ColorFactory.Models.GameSession
 
 		private SessionMapTileModel[,] InitializeMap()
 		{
-			int mapSize = Consts.Map.NumberOfTiles;
+			int mapSize = GameSettings.Map.NumberOfTiles;
 
 			SessionMapTileModel[,] map = new SessionMapTileModel[mapSize, mapSize];
 			Random rnd = new Random();
@@ -74,13 +74,13 @@ namespace ColorFactory.Models.GameSession
 
 			Random rnd = new Random();
 
-			int numOfMines = rnd.Next(Consts.Map.minimumNumberOfMines, Consts.Map.maximumNumberOfMines + 1);
+			int numOfMines = rnd.Next(GameSettings.Map.minimumNumberOfMines, GameSettings.Map.maximumNumberOfMines + 1);
 			this.NumberOfMines = numOfMines;
 
 			for (int i = 0; i < numOfMines; i++)
 			{
-				int x = rnd.Next(0, Consts.Map.NumberOfTiles);
-				int y = rnd.Next(0, Consts.Map.NumberOfTiles);
+				int x = rnd.Next(0, GameSettings.Map.NumberOfTiles);
+				int y = rnd.Next(0, GameSettings.Map.NumberOfTiles);
 
 				if (map[x, y].Tile == 2)
 				{
@@ -97,7 +97,7 @@ namespace ColorFactory.Models.GameSession
 
 		private SessionMapTileModel[,] InitializeNumbers(SessionMapTileModel[,] map)
 		{
-			int counter, num, rMinusOne, rPlusOne, kMinusOne, kPlusOne, numOfTiles = Consts.Map.NumberOfTiles;
+			int counter, num, rMinusOne, rPlusOne, kMinusOne, kPlusOne, numOfTiles = GameSettings.Map.NumberOfTiles;
 
 			for (var r = 0; r < numOfTiles; r++)
 			{
@@ -141,8 +141,8 @@ namespace ColorFactory.Models.GameSession
 
 		private PositionModel GetRandomPlayerPosition(MapTileModel[,] map, Random rnd)
 		{
-			int x = rnd.Next(Consts.Map.NumberOfTiles);
-			int y = rnd.Next(Consts.Map.NumberOfTiles);
+			int x = rnd.Next(GameSettings.Map.NumberOfTiles);
+			int y = rnd.Next(GameSettings.Map.NumberOfTiles);
 
 			if (map[x, y].Tile != 2)
 			{

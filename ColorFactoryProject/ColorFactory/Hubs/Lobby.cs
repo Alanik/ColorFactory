@@ -18,7 +18,7 @@ namespace ColorFactory.Hubs
 		#region Public Methods
 		public void ServerBroadcastCreateRoom(string roomName)
 		{
-			PlayerModel player = PlayerManagerModel.Instance.PlayerCollection.Find(p => p.ConnnectionId.ToString() == Context.ConnectionId);
+			PlayerModel player = PlayerManagerModel.Instance.PlayerCollection.Find(p => p.ConnectionId.ToString() == Context.ConnectionId);
 
 			if (player != null)
 			{
@@ -61,7 +61,7 @@ namespace ColorFactory.Hubs
 		public void ServerBroadcastPlayerTakeSeat(string roomName, int seatNumber)
 		{
 			var room = RoomManagerModel.Instance.RoomCollection.Find(p => p.Name == roomName);
-			var player = PlayerManagerModel.Instance.PlayerCollection.Find(p => p.ConnnectionId.ToString() == Context.ConnectionId);
+			var player = PlayerManagerModel.Instance.PlayerCollection.Find(p => p.ConnectionId.ToString() == Context.ConnectionId);
 
 			if (player != null && room != null)
 			{
@@ -88,7 +88,7 @@ namespace ColorFactory.Hubs
 		public void ServerBroadcastPlayerIsReady(string roomName, int seatNumber)
 		{
 			RoomModel room = RoomManagerModel.Instance.RoomCollection.Find(p => p.Name == roomName);
-			PlayerModel player = PlayerManagerModel.Instance.PlayerCollection.Find(p => p.ConnnectionId.ToString() == Context.ConnectionId);
+			PlayerModel player = PlayerManagerModel.Instance.PlayerCollection.Find(p => p.ConnectionId.ToString() == Context.ConnectionId);
 
 			if (player != null && room != null)
 			{
@@ -135,7 +135,7 @@ namespace ColorFactory.Hubs
 
 		public override Task OnDisconnected()
 		{
-			PlayerModel player = PlayerManagerModel.Instance.PlayerCollection.Find(p => p.ConnnectionId.ToString() == Context.ConnectionId);
+			PlayerModel player = PlayerManagerModel.Instance.PlayerCollection.Find(p => p.ConnectionId.ToString() == Context.ConnectionId);
 
 			if (player != null)
 			{

@@ -618,7 +618,7 @@ tr.pager td {
 	display: inline-block;
 }
 
-#specialTilePointsContainer {
+#uncoveredMinesContainer {
 	font-size: 20px;
 	color: rgb(0,200,255);
 	display: inline-block;

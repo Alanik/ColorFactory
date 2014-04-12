@@ -1,5 +1,5 @@
 ﻿<div id="mainContainer">
-<div id="startGameCounter">Game Started</div>
+	<div id="startGameCounter">Game Started</div>
 	<div id="square1" class="borderSquare"></div>
 	<div id="square2" class="borderSquare"></div>
 	<div id="square3" class="borderSquare"></div>
@@ -56,6 +56,10 @@
 
 	<div id="effectsCanvasContainer">
 		<canvas id="effectsCanvas" width="580" height="550" />
+	</div>
+
+	<div id="personalMenuContainer" style="display: none; width: 100px; height: 100px; border:1px solid #00B2FF; background-image:url(/Images/PersonalMenu/menu-transparent.png); position: absolute; z-index: 2;">
+		@Html.Partial("_personalMenu")
 	</div>
 
 	<section class="bottomSection">
@@ -116,7 +120,6 @@
 	lobbyConnection = $.connection.lobby;
 
 
-
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//lobby functions
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -137,7 +140,7 @@
 	};
 
 	lobbyConnection.client.clientReceiveSetRoomToPlayerOnRoomCreated = function (roomName) {
-		mainPlayer.room = roomName
+		mainPlayer.setRoom(roomName);
 	};
 
 	$("#btnEnterLobby").click(function () {
@@ -223,7 +226,7 @@
 		var $theCircle = $(this);
 		var theRoom = $("#lobbyHeaderTitle").text();
 
-		mainPlayer.room = theRoom;
+		mainPlayer.setRoom(theRoom);
 
 		var seatNumber = parseInt($theCircle.parent().attr("seatNumber"));
 		lobbyConnection.server.serverBroadcastPlayerTakeSeat(theRoom, seatNumber);
@@ -354,7 +357,7 @@
 			$txtBox = $("#txtPlayerName");
 			playerName = $txtBox.val();
 			if (playerName !== "") {
-				
+
 				mainPlayer.setName(playerName);
 				$("#playerNameSpan").text(playerName);
 
@@ -436,7 +439,7 @@
 		var ANIMATION_MANAGER = new AnimationManager();
 		mainPlayer = new Player("Images/TileSheet/tileSheetGreenPlayer.png", "/Images/Tilesheet/tileSheetRedPlayerTarget.png");
 
-		var GAME = new Game(SETTINGS, CURSOR, EFFECTS, ANIMATION_MANAGER, MAP, mainPlayer);
+		GAME = new Game(SETTINGS, CURSOR, EFFECTS, ANIMATION_MANAGER, MAP, mainPlayer);
 
 		ANIMATION_MANAGER.game = GAME;
 

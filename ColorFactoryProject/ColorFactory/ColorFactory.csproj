@@ -185,6 +185,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="CustomEventHandlers\OneSecondNotifier.cs" />
     <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -192,7 +193,7 @@
     <Compile Include="Hubs\Game.cs" />
     <Compile Include="Hubs\Lobby.cs" />
     <Compile Include="Models\Account\AccountModels.cs" />
-    <Compile Include="Models\Consts.cs" />
+    <Compile Include="Models\GameSettings.cs" />
     <Compile Include="Models\GameSession\GameSessionManagerModel.cs" />
     <Compile Include="Models\GameSession\GameSessionModel.cs" />
     <Compile Include="Models\Map\SessionMapTileModel.cs" />
@@ -205,6 +206,7 @@
     <Compile Include="Models\GameSession\MineInSessionModel.cs" />
     <Compile Include="Models\GameSession\PlayerInSessionModel.cs" />
     <Compile Include="Models\Map\MapTileModel.cs" />
+    <Compile Include="Models\Weapons\Weapons.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -292,8 +294,11 @@
     <Content Include="Images\Icons\heart-blackandwhite.png" />
     <Content Include="Images\Icons\heart.png" />
     <Content Include="Images\Icons\Military-Grenade-icon-small-white.png" />
+    <Content Include="Images\Icons\Weapons\granade-weapon-icon.png" />
     <Content Include="Images\Icons\Weapons\Military-Grenade-icon-small.png" />
     <Content Include="Images\Lobby\successGray.png" />
+    <Content Include="Images\PersonalMenu\menu-small.png" />
+    <Content Include="Images\PersonalMenu\menu-transparent.png" />
     <Content Include="Images\point.png" />
     <Content Include="Images\Lobby\success.png" />
     <Content Include="Images\Tilesheet\Bullet\bullet.png" />
@@ -370,6 +375,7 @@
     <Content Include="Views\Home\_RoomView.cshtml" />
     <Content Include="Views\Home\_rightSideDisplay.cshtml" />
     <Content Include="Views\Home\_ChatWindow.cshtml" />
+    <Content Include="Views\Home\_personalMenu.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

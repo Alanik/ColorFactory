@@ -30,6 +30,12 @@ var Player = function (tileSheetSrc, targetSrc) {
 	var _aStarResult = [];
 	var _animationCounter = 0;
 	var _name = "";
+	//make sure to have same weapons as in weapons.cs
+	var _weapons = {
+		acorn: "acorn",
+		pineCone: "pineCone"
+	}
+	var _currentWeapon = _weapons.acorn;
 
 	var _health = 100;
 	var _points = 0;
@@ -240,6 +246,17 @@ var Player = function (tileSheetSrc, targetSrc) {
 		_bullet = value;
 	};
 
+	self.getCurrentWeapon = function () {
+		return _currentWeapon;
+	};
+
+	self.setCurrentWeapon = function (value) {
+		_currentWeapon = value;
+	};
+
+	self.getWeapons = function () {
+		return _weapons;
+	};
 }
 
 
