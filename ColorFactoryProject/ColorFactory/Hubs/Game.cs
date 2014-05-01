@@ -370,6 +370,7 @@ namespace ColorFactory.Hubs
 			// 3 = uncovered/destroyed Mine tile
 			// 4 = uncovered/scored Mine tile
 			// 5 = uncovered mine (not scored) uncovered by pineCone explosion
+			// 6 = uncovered tile by pineCone explosion
 
 			int tile = player.PrivateMap[col, row].Tile;
 			int result;
@@ -564,12 +565,12 @@ namespace ColorFactory.Hubs
 			int kMinusOne = col - 1;
 			int kPlusOne = col + 1;
 
-			for (var r = rMinusOne; r <= rPlusOne; r++)
+			for (var k = kMinusOne; k <= kPlusOne; k++)
 			{
-				for (var k = kMinusOne; k <= kPlusOne; k++)
+				for (var r = rMinusOne; r <= rPlusOne; r++)
 				{
 
-					if (r >= 0 && r < GameSettings.Map.NumberOfTiles && k >= 0 && k < GameSettings.Map.NumberOfTiles)
+					if (r >= 0 && r < GameSettings.Map.NumberOfTiles_Row && k >= 0 && k < GameSettings.Map.NumberOfTiles_Column)
 					{
 						if (map[k, r].Tile == 0)
 						{
@@ -587,7 +588,8 @@ namespace ColorFactory.Hubs
 		{
 			List<PositionModel> tiles = new List<PositionModel>();
 
-			int numberOfTiles = GameSettings.Map.NumberOfTiles;
+			int numCol = GameSettings.Map.NumberOfTiles_Column;
+			int numRow = GameSettings.Map.NumberOfTiles_Row;
 			int col = player.CurrentPosition.Column;
 			int row = player.CurrentPosition.Row;
 
@@ -596,12 +598,12 @@ namespace ColorFactory.Hubs
 			int kMinusOne = col - 1;
 			int kPlusOne = col + 1;
 
-			for (var r = rMinusOne; r <= rPlusOne; r++)
+			for (var k = kMinusOne; k <= kPlusOne; k++)
 			{
-				for (var k = kMinusOne; k <= kPlusOne; k++)
+				for (var r = rMinusOne; r <= rPlusOne; r++)
 				{
 					//check if tile is outside of map boundry(ex. row = -1)
-					if (r >= 0 && r < numberOfTiles && k >= 0 && k < numberOfTiles)
+					if (r >= 0 && r < numRow && k >= 0 && k < numCol)
 					{
 
 						var isMine = CheckIfTileIsMine(player.PrivateMap[k, r].Tile);

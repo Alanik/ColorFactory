@@ -54,16 +54,15 @@ namespace ColorFactory.Models.GameSession
 		private MapTileModel[,] CloneMap(MapTileModel[,] map)
 		{
 
-			MapTileModel[,] privateMap = new MapTileModel[GameSettings.Map.NumberOfTiles, GameSettings.Map.NumberOfTiles];
+			MapTileModel[,] privateMap = new MapTileModel[GameSettings.Map.NumberOfTiles_Column, GameSettings.Map.NumberOfTiles_Row];
 
-			for (int i = 0; i < GameSettings.Map.NumberOfTiles; i++)
+			for (int col = 0; col < GameSettings.Map.NumberOfTiles_Column; col++)
 			{
-				for (int j = 0; j < GameSettings.Map.NumberOfTiles; j++)
+				for (int row = 0; row < GameSettings.Map.NumberOfTiles_Row; row++)
 				{
-					MapTileModel sessionTile = map[i, j];
+					MapTileModel sessionTile = map[col, row];
 
-					privateMap[i, j] = new MapTileModel(sessionTile.Tile, sessionTile.Number, sessionTile.Graph);
-
+					privateMap[col, row] = new MapTileModel(sessionTile.Tile, sessionTile.Number, sessionTile.Graph);
 				}
 			}
 

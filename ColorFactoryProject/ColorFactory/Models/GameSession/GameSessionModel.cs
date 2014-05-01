@@ -44,16 +44,17 @@ namespace ColorFactory.Models.GameSession
 
 		private SessionMapTileModel[,] InitializeMap()
 		{
-			int mapSize = GameSettings.Map.NumberOfTiles;
+			int mapSizeCol = GameSettings.Map.NumberOfTiles_Column;
+			int mapSizeRow = GameSettings.Map.NumberOfTiles_Row;
 
-			SessionMapTileModel[,] map = new SessionMapTileModel[mapSize, mapSize];
+			SessionMapTileModel[,] map = new SessionMapTileModel[mapSizeCol, mapSizeRow];
 			Random rnd = new Random();
 
-			for (int i = 0; i < mapSize; i++)
+			for (int col = 0; col < mapSizeCol; col++)
 			{
-				for (int j = 0; j < mapSize; j++)
+				for (int row = 0; row < mapSizeRow; row++)
 				{
-					map[i, j] = new SessionMapTileModel(0, 0, 0, 2);
+					map[col, row] = new SessionMapTileModel(0, 0, 0, 2);
 				}
 			}
 
@@ -74,21 +75,21 @@ namespace ColorFactory.Models.GameSession
 
 			Random rnd = new Random();
 
-			int numOfMines = rnd.Next(GameSettings.Map.minimumNumberOfMines, GameSettings.Map.maximumNumberOfMines + 1);
+			int numOfMines = rnd.Next(GameSettings.Map.MinimumNumberOfMines, GameSettings.Map.MaximumNumberOfMines + 1);
 			this.NumberOfMines = numOfMines;
 
 			for (int i = 0; i < numOfMines; i++)
 			{
-				int x = rnd.Next(0, GameSettings.Map.NumberOfTiles);
-				int y = rnd.Next(0, GameSettings.Map.NumberOfTiles);
+				int rndCol = rnd.Next(0, GameSettings.Map.NumberOfTiles_Column);
+				int rndRow = rnd.Next(0, GameSettings.Map.NumberOfTiles_Row);
 
-				if (map[x, y].Tile == 2)
+				if (map[rndCol, rndRow].Tile == 2)
 				{
 					i--;
 				}
 				else
 				{
-					map[x, y].Tile = 2;
+					map[rndCol, rndRow].Tile = 2;
 				}
 			}
 
@@ -97,40 +98,40 @@ namespace ColorFactory.Models.GameSession
 
 		private SessionMapTileModel[,] InitializeNumbers(SessionMapTileModel[,] map)
 		{
-			int counter, num, rMinusOne, rPlusOne, kMinusOne, kPlusOne, numOfTiles = GameSettings.Map.NumberOfTiles;
+			int counter, num, rMinusOne, rPlusOne, kMinusOne, kPlusOne, numCol = GameSettings.Map.NumberOfTiles_Column, numRow = GameSettings.Map.NumberOfTiles_Row;
 
-			for (var r = 0; r < numOfTiles; r++)
+			for (int col = 0; col < numCol; col++)
 			{
-				for (var k = 0; k < numOfTiles; k++)
+				for (int row = 0; row < numRow; row++)
 				{
 
 					counter = 0;
-					num = map[r, k].Tile;
-					rMinusOne = r - 1;
-					rPlusOne = r + 1;
-					kMinusOne = k - 1;
-					kPlusOne = k + 1;
+					num = map[col, row].Tile;
+					rMinusOne = row - 1;
+					rPlusOne = row + 1;
+					kMinusOne = col - 1;
+					kPlusOne = col + 1;
 
 					if (num != 2)
 					{
 						if (rMinusOne >= 0 && kMinusOne >= 0)
-							CountMinesAroundTile(map[rMinusOne, kMinusOne].Tile, ref counter);
+							CountMinesAroundTile(map[kMinusOne, rMinusOne].Tile, ref counter);
 						if (rMinusOne >= 0)
-							CountMinesAroundTile(map[rMinusOne, k].Tile, ref counter);
-						if (rMinusOne >= 0 && kPlusOne < numOfTiles)
-							CountMinesAroundTile(map[rMinusOne, kPlusOne].Tile, ref counter);
+							CountMinesAroundTile(map[col, rMinusOne].Tile, ref counter);
+						if (rMinusOne >= 0 && kPlusOne < numCol)
+							CountMinesAroundTile(map[kPlusOne, rMinusOne].Tile, ref counter);
 						if (kMinusOne >= 0)
-							CountMinesAroundTile(map[r, kMinusOne].Tile, ref counter);
-						if (kPlusOne < numOfTiles)
-							CountMinesAroundTile(map[r, kPlusOne].Tile, ref counter);
-						if (rPlusOne < numOfTiles && kMinusOne >= 0)
-							CountMinesAroundTile(map[rPlusOne, kMinusOne].Tile, ref counter);
-						if (rPlusOne < numOfTiles)
-							CountMinesAroundTile(map[rPlusOne, k].Tile, ref counter);
-						if (rPlusOne < numOfTiles && kPlusOne < numOfTiles)
-							CountMinesAroundTile(map[rPlusOne, kPlusOne].Tile, ref counter);
+							CountMinesAroundTile(map[kMinusOne, row].Tile, ref counter);
+						if (kPlusOne < numCol)
+							CountMinesAroundTile(map[kPlusOne, row].Tile, ref counter);
+						if (rPlusOne < numRow && kMinusOne >= 0)
+							CountMinesAroundTile(map[kMinusOne, rPlusOne].Tile, ref counter);
+						if (rPlusOne < numRow)
+							CountMinesAroundTile(map[col, rPlusOne].Tile, ref counter);
+						if (rPlusOne < numRow && kPlusOne < numCol)
+							CountMinesAroundTile(map[kPlusOne, rPlusOne].Tile, ref counter);
 
-						map[r, k].Number = counter;
+						map[col, row].Number = counter;
 					}
 
 				}
@@ -141,12 +142,12 @@ namespace ColorFactory.Models.GameSession
 
 		private PositionModel GetRandomPlayerPosition(MapTileModel[,] map, Random rnd)
 		{
-			int x = rnd.Next(GameSettings.Map.NumberOfTiles);
-			int y = rnd.Next(GameSettings.Map.NumberOfTiles);
+			int rndCol = rnd.Next(GameSettings.Map.NumberOfTiles_Column);
+			int rndRow = rnd.Next(GameSettings.Map.NumberOfTiles_Row);
 
-			if (map[x, y].Tile != 2)
+			if (map[rndCol, rndRow].Tile != 2)
 			{
-				return new PositionModel(x, y);
+				return new PositionModel(rndCol, rndRow);
 			}
 			else
 			{

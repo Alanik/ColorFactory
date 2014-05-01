@@ -2,56 +2,57 @@
 
 	this.map = function () {
 
-		var canvasPadding = 5;
-		var canvasPaddingWithoutBorder = 4;
-		var tileRadius = 0;
-		var tileSize = 40;
-		var numberOfTiles_column = 12;
-		var numberOfTiles_row = 12;
-		var minimumNumOfMines = 10;
-		var maximumNumOfMines = 25;
-		var mapCanvasOffsetTop = 50;
-		var uncoveredTileBackground = "rgb(255,255,255)";
-		var mapCanvasWidth = 500;
-		var mapCanvasHeight = 500;
-
+		var _canvasPadding = 5;
+		var _canvasPaddingWithoutBorder = 4;
+		var _tileRadius = 0;
+		var _tileSize = 40;
+		var _numberOfTiles_column = 16;
+		var _numberOfTiles_row = 9;
+		var _mapCanvasOffsetTop = 50;
+		var _uncoveredTileBackground = "rgba(0,0,0,.5)";
+		var _drawUncoveredTileBorder = true;
+		var _uncoveredTileBorderColor = "#010101";
 
 		return {
 			getCanvasPadding: function () {
-				return canvasPadding;
+				return _canvasPadding;
 			},
 			getTileRadius: function () {
-				return tileRadius;
+				return _tileRadius;
 			},
 			getTileSize: function () {
-				return tileSize;
+				return _tileSize;
 			},
 			getNumberOfTiles_Column: function () {
-				return numberOfTiles_column;
+				return _numberOfTiles_column;
 			},
 			getNumberOfTiles_Row: function () {
-				return numberOfTiles_row;
-			},
-			getMinimumNumOfMines: function () {
-				return minimumNumOfMines;
-			},
-			getMaximumNumOfMines: function () {
-				return maximumNumOfMines;
+				return _numberOfTiles_row;
 			},
 			getMapCanvasOffsetTop: function () {
-				return mapCanvasOffsetTop;
+				return _mapCanvasOffsetTop;
 			},
 			getUncoveredTileBackground: function () {
-				return uncoveredTileBackground;
+				return _uncoveredTileBackground;
 			},
 			getCanvasPaddingWithoutBorder: function () {
-				return canvasPaddingWithoutBorder;
+				return _canvasPaddingWithoutBorder;
+			},
+			getDrawUncoveredTileBorder: function () {
+				return _drawUncoveredTileBorder;
+			},
+			getUncoveredTileBorderColor: function () {
+				return _uncoveredTileBorderColor;
 			},
 			getMapCanvasWidth: function () {
-				return mapCanvasWidth;
+				var width = (_numberOfTiles_column * (_tileSize + 1)) + (_canvasPadding * 2) - 2;
+
+				return width;
 			},
 			getMapCanvasHeight: function () {
-				return mapCanvasHeight;
+				var height = (_numberOfTiles_row * (_tileSize + 1)) + (_canvasPadding * 2) - 2;
+
+				return height;
 			}
 		}
 	}();

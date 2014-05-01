@@ -40,6 +40,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <ExcludeGeneratedDebugSymbol>true</ExcludeGeneratedDebugSymbol>
+    <DeployEncryptKey>Encryption password is used only if any deployment setting is marked as secure</DeployEncryptKey>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.AspNet.SignalR.Core">
@@ -193,7 +195,7 @@
     <Compile Include="Hubs\Game.cs" />
     <Compile Include="Hubs\Lobby.cs" />
     <Compile Include="Models\Account\AccountModels.cs" />
-    <Compile Include="Models\GameSettings.cs" />
+    <Compile Include="GameSettings.cs" />
     <Compile Include="Models\GameSession\GameSessionManagerModel.cs" />
     <Compile Include="Models\GameSession\GameSessionModel.cs" />
     <Compile Include="Models\Map\SessionMapTileModel.cs" />
@@ -306,9 +308,9 @@
     <Content Include="Images\Tilesheet\tileSheetGreenPlayer.png" />
     <Content Include="Images\Tilesheet\tileSheetRedPlayer.png" />
     <Content Include="Images\Tilesheet\tileSheetRedPlayerTarget.png" />
-    <Content Include="Scripts\astar.js" />
+    <Content Include="Scripts\AStar\astar.js" />
     <Content Include="Scripts\functions.js" />
-    <Content Include="Scripts\graph.js" />
+    <Content Include="Scripts\AStar\graph.js" />
     <Content Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -316,24 +318,24 @@
     <Content Include="Content\fonts\victor-pixel-webfont.eot" />
     <Content Include="Content\fonts\victor-pixel-webfont.ttf" />
     <Content Include="Content\fonts\victor-pixel-webfont.woff" />
-    <None Include="Scripts\jquery-1.8.3.intellisense.js" />
-    <Content Include="Scripts\jquery-1.8.3.js" />
-    <Content Include="Scripts\jquery-1.8.3.min.js" />
-    <Content Include="Scripts\jquery-ui-1.9.2.js" />
-    <Content Include="Scripts\jquery-ui-1.9.2.min.js" />
-    <Content Include="Scripts\jquery.mobile-1.2.0.js" />
-    <Content Include="Scripts\jquery.mobile-1.2.0.min.js" />
-    <Content Include="Scripts\jquery.signalR-1.0.0-rc1.js" />
-    <Content Include="Scripts\jquery.signalR-1.0.0-rc1.min.js" />
-    <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
-    <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
-    <None Include="Scripts\jquery.validate-vsdoc.js" />
-    <Content Include="Scripts\jquery.validate.js" />
-    <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
-    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\knockout-2.2.0.debug.js" />
-    <Content Include="Scripts\knockout-2.2.0.js" />
+    <None Include="Scripts\Library\jquery-1.8.3.intellisense.js" />
+    <Content Include="Scripts\Library\jquery-1.8.3.js" />
+    <Content Include="Scripts\Library\jquery-1.8.3.min.js" />
+    <Content Include="Scripts\Library\jquery-ui-1.9.2.js" />
+    <Content Include="Scripts\Library\jquery-ui-1.9.2.min.js" />
+    <Content Include="Scripts\Library\jquery.mobile-1.2.0.js" />
+    <Content Include="Scripts\Library\jquery.mobile-1.2.0.min.js" />
+    <Content Include="Scripts\Library\jquery.signalR-1.0.0-rc1.js" />
+    <Content Include="Scripts\Library\jquery.signalR-1.0.0-rc1.min.js" />
+    <Content Include="Scripts\Library\jquery.unobtrusive-ajax.js" />
+    <Content Include="Scripts\Library\jquery.unobtrusive-ajax.min.js" />
+    <None Include="Scripts\Library\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\Library\jquery.validate.js" />
+    <Content Include="Scripts\Library\jquery.validate.min.js" />
+    <Content Include="Scripts\Library\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\Library\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\Library\knockout-2.2.0.debug.js" />
+    <Content Include="Scripts\Library\knockout-2.2.0.js" />
     <Content Include="Scripts\Models\AnimationManager.js" />
     <Content Include="Scripts\Models\Bullet.js" />
     <Content Include="Scripts\Models\Cursor.js" />
@@ -343,7 +345,7 @@
     <Content Include="Scripts\Models\Player.js" />
     <Content Include="Scripts\Models\Settings.js" />
     <Content Include="Scripts\Models\TextAnimation.js" />
-    <Content Include="Scripts\modernizr-2.5.3.js" />
+    <Content Include="Scripts\Library\modernizr-2.5.3.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -373,9 +375,9 @@
     <Content Include="Views\Home\_LobbyView.cshtml" />
     <Content Include="Views\Home\_SetPlayerNameModalBox.cshtml" />
     <Content Include="Views\Home\_RoomView.cshtml" />
-    <Content Include="Views\Home\_rightSideDisplay.cshtml" />
+    <Content Include="Views\Home\_RightSideDisplay.cshtml" />
     <Content Include="Views\Home\_ChatWindow.cshtml" />
-    <Content Include="Views\Home\_personalMenu.cshtml" />
+    <Content Include="Views\Home\_PersonalMenu.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

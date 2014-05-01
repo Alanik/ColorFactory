@@ -112,13 +112,14 @@
 		}
 		gameConnection.client.clientReceiveMineHasBeenUncovered = function (listOfTiles, mines) {
 			var tile;
-			var tiles = game.MAP.tiles;
+			var map = game.MAP;
 			var len = listOfTiles.length;
 
 			for (var i = 0; i < len; i++) {
 
 				tile = listOfTiles[i];
-				tiles[tile.Column][tile.Row] = 4;
+
+				map.setTilesValue(tile.Column, tile.Row, 4);
 			}
 
 			//TODO: temporary
@@ -199,7 +200,7 @@
 
 			game.uncoverTile(mineNumber, col, row, tile);
 
-			var text = new TextAnimation("-" + rndDamage + "boom");
+			var text = new TextAnimation("-" + rndDamage + "boom", 'victors_pixel_fontregular', '50px', '#FF7575');
 			var point = game.player.getUpperLeftCornerPoint();
 			text.setUpperLeftCornerPoint(point.x, point.y);
 
@@ -207,14 +208,14 @@
 		};
 		gameConnection.client.clientReceivePineConeExplodes = function (mineNumber, col, row, tile, rndDamage) {
 			var otherPlayerObj = game.otherPlayers[0], text;
-			
+
 			game.uncoverTile(mineNumber, col, row, tile);
 
 			if (rndDamage < 0) {
-				text = new TextAnimation("boom");
+				text = new TextAnimation("boom", 'victors_pixel_fontregular', '50px', '#FF7575');
 			}
 			else {
-				text = new TextAnimation("-" + rndDamage);
+				text = new TextAnimation("-" + rndDamage, 'victors_pixel_fontregular', '50px', '#FF7575');
 				game.drawOtherPlayer(otherPlayerObj.player, otherPlayerObj.ctx, otherPlayerObj.canvas);
 			}
 
@@ -229,7 +230,7 @@
 			game.player.setUncoveredMines(mines);
 			game.displayUncoveredMines(mines);
 
-			var text = new TextAnimation("+" + healPoints);
+			var text = new TextAnimation("+" + healPoints, 'victors_pixel_fontregular', '50px', '#48AE48');
 			var point = game.player.getUpperLeftCornerPoint();
 			text.setUpperLeftCornerPoint(point.x, point.y);
 
@@ -245,9 +246,9 @@
 			var cursor = game.CURSOR, uncoveredMines;
 			var mainPlayer = game.player;
 			var map = game.MAP;
-			var tiles = map.tiles, graph = map.graph;
 			var settingsMap = game.SETTINGS.map;
 			var mapLength = settingsMap.getNumberOfTiles_Column() - 1;
+			var mapHeight = settingsMap.getNumberOfTiles_Row() - 1;
 
 			var x = cursor.getCursorPositionInCanvas_x(e.pageX),
 				y = cursor.getCursorPositionInCanvas_y(e.pageY);
@@ -255,7 +256,6 @@
 			cursor.setClickedTile(cursor.getColumn(x), cursor.getRow(y));
 
 			var startTile = mainPlayer.getCurrentTile();
-			var endTile = cursor.getClickedTile();
 
 			var clickedTile = cursor.getClickedTile();
 
@@ -264,7 +264,7 @@
 			}
 
 			//clicked outside map boundry
-			if (clickedTile.column < 0 || clickedTile.column > mapLength || clickedTile.row < 0 || clickedTile.row > mapLength) {
+			if (clickedTile.column < 0 || clickedTile.column > mapLength || clickedTile.row < 0 || clickedTile.row > mapHeight) {
 				return;
 			}
 
@@ -277,7 +277,7 @@
 			//Pine Cone
 			if (mainPlayer.getCurrentWeapon() == mainPlayer.getWeapons().pineCone) {
 
-				 uncoveredMines = mainPlayer.getUncoveredMines();
+				uncoveredMines = mainPlayer.getUncoveredMines();
 
 				if (uncoveredMines <= 0) {
 					mainPlayer.setCurrentWeapon(mainPlayer.getWeapons().acorn);
@@ -293,7 +293,7 @@
 				///////////////////////////////////////////////////////////////////////////////////////////////
 				//broadcast to server				  THROW PINE CONE
 				///////////////////////////////////////////////////////////////////////////////////////////////
-				gameConnection.server.serverBroadcastPineConeThrown(endTile.column, endTile.row, mainPlayer.getRoom());
+				gameConnection.server.serverBroadcastPineConeThrown(clickedTile.column, clickedTile.row, mainPlayer.getRoom());
 				///////////////////////////////////////////////////////////////////////////////////////////////
 
 				mainPlayer.setCurrentWeapon(mainPlayer.getWeapons().acorn);
@@ -304,14 +304,14 @@
 
 			//shoot
 			if (game.clickedOnOpponent(x, y)) {
-				var calculatedTiles = game.calculateStraightLine(startTile.column, startTile.row, endTile.column, endTile.row);
+				var calculatedTiles = game.calculateStraightLine(startTile.column, startTile.row, clickedTile.column, clickedTile.row);
 
 				if (game.shootingPathIsClear(calculatedTiles)) {
 
 					///////////////////////////////////////////////////////////////////////////////////////////////
 					//broadcast to server              CHECK IF PLAYER IS ALLOWED TO SHOOT AT THE TARGET
 					///////////////////////////////////////////////////////////////////////////////////////////////
-					gameConnection.server.serverBroadcastPlayerClickedOnOtherPlayer(endTile.column, endTile.row, mainPlayer.getRoom());
+					gameConnection.server.serverBroadcastPlayerClickedOnOtherPlayer(clickedTile.column, clickedTile.row, mainPlayer.getRoom());
 					///////////////////////////////////////////////////////////////////////////////////////////////
 
 					return;
@@ -319,7 +319,7 @@
 				else {
 					return;
 				}
-				
+
 			}
 
 			//move (check if is allowed to move)
@@ -340,10 +340,10 @@
 					resultX = result[i].x;
 					resultY = result[i].y;
 
-					tile = tiles[resultX][resultY];
+					tile = map.getTilesValue(resultX, resultY);
 
 					if (tile === 0 || tile === 2) {
-						graph.nodes[resultX][resultY].type = 0;
+						map.setGraphType(resultX, resultY, 0);
 					}
 				}
 
@@ -355,19 +355,71 @@
 	game.initialize = function () {
 		var mapCtx = ctx;
 
-		initializeCanvasesPosition();
+		initializeCanvases();
+		initializeRightSideDisplay();
 		initializeLobbyAndPlayerNameModalPosition();
 
 		game.drawMapTiles();
 		game.displayAmmunitionPoints(game.player.getAmmunitionPoints());
 
-		function initializeCanvasesPosition() {
+		function initializeCanvases() {
+
+			var mapCanvas = document.getElementById("mapCanvas");
+			if (mapCanvas.getContext) {
+				mapCanvas.width = game.SETTINGS.map.getMapCanvasWidth();
+				mapCanvas.height = game.SETTINGS.map.getMapCanvasHeight();
+			}
+			else {
+				alert("mapCanvas has no context");
+				return;
+			}
+
+			var bulletsCanvas = document.getElementById("bulletsCanvas");
+			if (bulletsCanvas.getContext) {
+				bulletsCanvas.width = game.SETTINGS.map.getMapCanvasWidth();
+				bulletsCanvas.height = game.SETTINGS.map.getMapCanvasHeight();
+			}
+			else {
+				alert("bulletsCanvas has no context");
+				return;
+			}
+
+			var effectsCanvas = document.getElementById("effectsCanvas");
+			if (effectsCanvas.getContext) {
+				effectsCanvas.width = game.SETTINGS.map.getMapCanvasWidth() + 80;
+				effectsCanvas.height = game.SETTINGS.map.getMapCanvasHeight() + 50;
+			}
+			else {
+				alert("effectsCanvas has no context");
+				return;
+			}
+
+			var $mapContainer = $("#mapContainer");
+			$mapContainer.css("width", game.SETTINGS.map.getMapCanvasWidth() + 1);
+			$mapContainer.css("height", game.SETTINGS.map.getMapCanvasHeight() + 1);
+
 			var x = mapContainer.offsetLeft;
 
 			$effectsCanvas.css({ "left": x, "top": 18 })
+			$bulletsCanvasContainer.css("width", game.SETTINGS.map.getMapCanvasWidth());
+			$bulletsCanvasContainer.css("height", game.SETTINGS.map.getMapCanvasHeight());
+
+			$playerCanvasContainer.css("width", game.SETTINGS.map.getMapCanvasWidth());
+			$playerCanvasContainer.css("height", game.SETTINGS.map.getMapCanvasHeight());
+
+			$enemyCanvasContainer.css("width", game.SETTINGS.map.getMapCanvasWidth());
+			$enemyCanvasContainer.css("height", game.SETTINGS.map.getMapCanvasHeight());
+
 			$playerCanvasContainer.css("left", x)
 			$enemyCanvasContainer.css("left", x)
 			$bulletsCanvasContainer.css("left", x);
+		}
+		function initializeRightSideDisplay() {
+
+			var left = parseInt($mapContainer.css("width"), 10) + 10;
+
+			$("#rightSideDisplay").css("left", left + "px");
+
 		}
 		function initializeLobbyAndPlayerNameModalPosition() {
 			var $lobby = $("#lobbyContainer");
@@ -389,40 +441,47 @@
 	game.drawMapTiles = function () {
 		var settingsMap = game.SETTINGS.map;
 		var map = game.MAP;
-		var tiles = map.tiles;
-		var numbers = map.numbers;
 		var mapCtx = ctx;
 
-		var x, y, tile, padding = settingsMap.getCanvasPaddingWithoutBorder(), tileSize = settingsMap.getTileSize(), mineNumber, graphNodeType, tileRadius = settingsMap.getTileRadius(), numRow = settingsMap.getNumberOfTiles_Row(), numCol = settingsMap.getNumberOfTiles_Column();
+		var x, y, tile,
+		padding = settingsMap.getCanvasPaddingWithoutBorder(),
+		tileSize = settingsMap.getTileSize(),
+		mineNumber, graphNodeType,
+		tileRadius = settingsMap.getTileRadius(),
+		numRow = settingsMap.getNumberOfTiles_Row(),
+		numCol = settingsMap.getNumberOfTiles_Column();
 
 		mapCtx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
 
 		for (var i = 0; i < numCol; i++) {
 			for (var j = 0; j < numRow; j++) {
 
-				tile = tiles[i][j];
-				mineNumber = numbers[i][j];
-
+				tile = map.getTilesValue(i, j);
+				
 				x = i * tileSize + i + padding;
 				y = j * tileSize + j + padding;
 
 				if (tile == 0 || tile == 2) {
-					roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(0,0,0,.5)");
+					drawTileWithRadius(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, settingsMap.getDrawUncoveredTileBorder(), settingsMap.getUncoveredTileBackground());
 				}
-				if (tile == 1 || tile == 6) {
+				else if (tile == 1) {
+					mineNumber = map.getNumbersValue(i, j);
 					drawNumbers(i, j, mineNumber);
 				}
-				if (tile == 3) {
-					roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(238,68,68,.8)");
+				else if (tile == 3) {
+					drawTileWithRadius(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, "rgba(238,68,68,.8)");
 				}
-				if (tile == 4) {
-					roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(10,211,122,.8)");
+				else if (tile == 4) {
+					drawTileWithRadius(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, "rgba(10,211,122,.8)");
 				}
-				if (tile == 5) {
-					roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, true, "rgba(238,68,68,.8)");
+				else if (tile == 5) {
+					drawTileWithRadius(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, "rgba(238,68,68,.8)");
 				}
-				if (tile == 6) {
-					roundRect(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, false, "rgba(255,255,255,.4)");
+				else if (tile == 6) {
+					mineNumber = map.getNumbersValue(i, j);
+					drawNumbers(i, j, mineNumber);
+
+					drawTileWithRadius(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, false, "rgba(255,255,255,.4)");
 				}
 			}
 		}
@@ -439,7 +498,7 @@
 			}
 		}
 
-		function roundRect(ctx, x, y, width, height, radius, fill, stroke, fillStyle) {
+		function drawTileWithRadius(ctx, x, y, width, height, radius, stroke, fillStyle) {
 
 			ctx.beginPath();
 			ctx.moveTo(x + radius, y);
@@ -453,15 +512,35 @@
 			ctx.quadraticCurveTo(x, y, x + radius, y);
 			ctx.closePath();
 
+			//var random = Math.floor((Math.random() * 256));
+			ctx.fillStyle = fillStyle;
+			ctx.fill();
+
 			if (stroke) {
-				ctx.strokeStyle = "#010101";
+				ctx.strokeStyle = settingsMap.getUncoveredTileBorderColor();
 				ctx.stroke();
 			}
-			if (fill) {
-				//var random = Math.floor((Math.random() * 256));
-				ctx.fillStyle = fillStyle;
-				ctx.fill();
+
+		}
+
+		function drawTile(ctx, x, y, width, height, stroke, fillStyle) {
+
+			ctx.beginPath();
+			ctx.moveTo(x, y);
+			ctx.lineTo(x + width, y);
+			ctx.lineTo(x + width, y + height);
+			ctx.lineTo(x, y + height);
+			ctx.lineTo(x, y);
+			ctx.closePath();
+
+			ctx.fillStyle = fillStyle;
+			ctx.fill();
+
+			if (stroke) {
+				ctx.strokeStyle = fillStyle;
+				ctx.stroke();
 			}
+
 		}
 
 	}
@@ -484,24 +563,22 @@
 	}
 	game.aStarAlgorithm = function () {
 		var map = game.MAP;
-		var graph = map.graph;
-		var tiles = map.tiles;
 
 		//resetPathColor();
 		var nextTile = game.player.getNextTile();
 		var clickedTile = game.CURSOR.getClickedTile();
 
-		var start = graph.nodes[nextTile.column][nextTile.row];
-		graph.nodes[clickedTile.column][clickedTile.row].type = 1;
-		var end = graph.nodes[clickedTile.column][clickedTile.row];
+		var startNode = map.getGraphNode(nextTile.column, nextTile.row);
+		map.setGraphType(clickedTile.column, clickedTile.row, 1);
+		var endNode = map.getGraphNode(clickedTile.column, clickedTile.row);
 
 		// result now searches diagonal neighbors as well
-		var result = astar.search(graph.nodes, start, end, true);
+		var result = astar.search(map.getGraphNodes(), startNode, endNode, true);
 
 		if (typeof result === "undefined" || result.length === 0) {
 			//if user clicks too fast make sure not to change the already uncovered tile into a wall type for A* algorithm
-			if (tiles[clickedTile.column][clickedTile.row] !== 1)
-				graph.nodes[clickedTile.column][clickedTile.row].type = 0;
+			if (map.getGraphType(clickedTile.column, clickedTile.row) !== 1)
+				map.setGraphType(clickedTile.column, clickedTile.row, 0);
 		}
 
 		//for (var i = 0; i < result.length; i++) {
@@ -544,10 +621,10 @@
 		var tileNum;
 
 		map = game.MAP;
-		tileNum = map.tiles[clickedTile.column][clickedTile.row];
+		tileNum = map.getTilesValue(clickedTile.column, clickedTile.row);
 
 		//clicked on a mine
-		if (tileNum == 3 || tileNum == 4) {
+		if (tileNum == 3 || tileNum == 4 || tileNum == 5) {
 			return false;
 		}
 
@@ -713,8 +790,6 @@
 			return num == 2 ? true : false;
 		}
 		function checkIfTilesAroundParameterTileAreUncovered(col, row) {
-			var tiles = game.MAP.tiles;
-
 			var rMinusOne = row - 1;
 			var rPlusOne = row + 1;
 			var kMinusOne = col - 1;
@@ -724,7 +799,7 @@
 				for (var k = kMinusOne; k <= kPlusOne; k++) {
 
 					if (r >= 0 && r < numberOfTiles && k >= 0 && k < numberOfTiles) {
-						if (tiles[k][r] == 0) {
+						if (map.getTilesValue(k,r) == 0) {
 							return false;
 						}
 					}
@@ -736,7 +811,8 @@
 		}
 
 
-		var numberOfTiles = game.SETTINGS.map.getNumberOfTiles_Column();
+		var numCol = game.SETTINGS.map.getNumberOfTiles_Column();
+		var numRow = game.SETTINGS.map.getNumberOfTiles_Row();
 		var mainPlayer = game.player;
 
 		//TODO: temporary
@@ -750,18 +826,20 @@
 		var kMinusOne = col - 1;
 		var kPlusOne = col + 1;
 
-		var tiles = game.MAP.tiles;
+		var map = game.MAP;
 
-		for (var r = rMinusOne; r <= rPlusOne; r++) {
-			for (var k = kMinusOne; k <= kPlusOne; k++) {
+		for (var k = kMinusOne; k <= kPlusOne; k++) {
+			for (var r = rMinusOne; r <= rPlusOne; r++) {
 				//check if tile is outside of map boundry(ex. row = -1)
-				if (r >= 0 && r < numberOfTiles && k >= 0 && k < numberOfTiles) {
+				if (r >= 0 && r < numRow && k >= 0 && k < numCol) {
 
-					var isMine = checkIfTileIsMine(tiles[k][r]);
+					var isMine = checkIfTileIsMine(map.getTilesValue(k,r));
 					if (isMine) {
 						if (checkIfTilesAroundParameterTileAreUncovered(k, r)) {
 							//The mine is uncovered from all sides here
-							tiles[k][r] = 4;
+
+						
+							map.setTilesValue(k, r, 4);
 						}
 					}
 
@@ -773,12 +851,10 @@
 	};
 	game.playerStepsOnMine = function (position, minePosition) {
 		var map = game.MAP;
-		var tiles = map.tiles;
-		var graph = map.graph;
 		var mainPlayer = game.player;
-
-		tiles[minePosition.Column][minePosition.Row] = 3;
-		graph.nodes[minePosition.Column][minePosition.Row].type = 0;
+		 
+		map.setTilesValue(minePosition.Column, minePosition.Row, 3);
+		map.setGraphType(minePosition.Column, minePosition.Row, 0);
 
 		//var point = game.CURSOR.getTileCornerPoint(game.player.getPreviousTile().column, player.getPreviousTile().row);
 		var point = game.CURSOR.getTileCornerPoint(position.Column, position.Row);
@@ -796,41 +872,37 @@
 		mainPlayer.setAmmunitionPoints(0);
 		game.displayAmmunitionPoints(mainPlayer.getAmmunitionPoints());
 
+		game.drawPlayer();
+
 		game.drawMapTiles();
 	};
 	game.playerStepsOnEmptyTile = function (mineNumber, position) {
 		var map = game.MAP;
-		var tiles = map.tiles;
-		var numbers = map.numbers;
-		var graph = map.graph;
 		var mainPlayer = game.player;
 
 		mainPlayer.addAmmunitionPoints(mineNumber);
 		game.displayAmmunitionPoints(mainPlayer.getAmmunitionPoints());
 
-		tiles[position.Column][position.Row] = 1;
-		numbers[position.Column][position.Row] = mineNumber;
-		graph.nodes[position.Column][position.Row].type = 1;
+		map.setTilesValue(position.Column, position.Row, 1);
+		map.setNumbersValue(position.Column, position.Row, mineNumber);
+		map.setGraphType(position.Column, position.Row, 1);
 
 		game.animateUncoveredMineNumbers();
-		game.checkIfMineIsUncoveredAllAround();	
+		game.checkIfMineIsUncoveredAllAround();
 		game.drawMapTiles();
 	};
 	game.uncoverTile = function (mineNumber, col, row, tile) {
 		var map = game.MAP;
-		var tiles = map.tiles;
-		var numbers = map.numbers;
-		var graph = map.graph;
 		var mainPlayer = game.player;
 
-		tiles[col][row] = tile;
-		numbers[col][row] = mineNumber;
+		map.setTilesValue(col, row, tile);
+		map.setNumbersValue(col, row, mineNumber);
 
 		if (tile == 5) {
-			graph.nodes[col][row].type = 0;
+			map.setGraphType(col, row, 0);
 		}
 		else if (tile == 1) {
-			graph.nodes[col][row].type = 1;
+			map.setGraphType(col, row, 1);
 		}
 
 		game.checkIfMineIsUncoveredAllAround(col, row);
@@ -940,39 +1012,13 @@
 		var currentTile = game.player.getCurrentTile();
 
 		var point = game.CURSOR.getTileCornerPoint(currentTile.column, currentTile.row);
-		var tilePointX = point.x;
-		var tilePointY = point.y;
-		var number = game.MAP.numbers[currentTile.column][currentTile.row];
-		var effects = game.EFFECTS;
+		var number = game.MAP.getNumbersValue(currentTile.column, currentTile.row);
+		var mineNumbersText;
 
-		if (number != 0) {
-			if (effects.getIsAnimationNumbersInProgress()) {
-				clearInterval(effects.getAnimationNumbersTimerInterval());
-			}
-
-			effectsCtx.fillStyle = "rgba(10,211,122,1)";
-			effectsCtx.font = '50px victors_pixel_fontregular';
-
-			effects.setIsAnimationNumbersInProgress(true)
-			effects.setAnimationNumbersTimerInterval(setInterval(showUncoveredMineNumbersAnimation, 100));
-		}
-
-		function showUncoveredMineNumbersAnimation() {
-
-			var offsetY = counter * 2, effects = game.EFFECTS;
-
-			if (counter < 10) {
-				counter++;
-				effectsCtx.clearRect(0, 0, effectsCanvas.width, effectsCanvas.height);
-				effectsCtx.fillText(number, tilePointX + 14, tilePointY + 50 - offsetY);
-			}
-			else {
-				effects.setIsAnimationNumbersInProgress(false);
-				clearInterval(effects.getAnimationNumbersTimerInterval());
-				effectsCtx.clearRect(0, 0, effectsCanvas.width, effectsCanvas.height);
-				return;
-			}
-
+		if (number !== 0) {
+			var mineNumberText = new TextAnimation(number, 'victors_pixel_fontregular', '50px', '#FFCC00', true);
+			mineNumberText.setUpperLeftCornerPoint(point.x + 20, point.y);
+			game.ANIMATION_MANAGER.TextAnimationManager.addTextToAnimationCollection(mineNumberText);
 		}
 	};
 	game.clickedOnOpponent = function (x, y) {
@@ -1037,12 +1083,12 @@
 		return coordinatesArray;
 	};
 	game.shootingPathIsClear = function (tilesArray) {
-		var tile, tiles = game.MAP.tiles;
+		var tile;
 
 		for (var i = 0; i < tilesArray.length; i++) {
 			tile = tilesArray[i];
 
-			if (tiles[tile.x][tile.y] !== 1) {
+			if (game.MAP.getTilesValue(tile.x, tile.y) !== 1) {
 				return false;
 			}
 		}
@@ -1097,7 +1143,6 @@
 				mainPlayer.setCurrentWeapon(weapons.acorn);
 				game.hideSmallGranadeIcon();
 
-				console.log(mainPlayer.getUncoveredMines());
 				if (mainPlayer.getUncoveredMines() > 0) {
 					gameConnection.server.serverBroadcastHealPlayer(mainPlayer.getRoom());
 				}
@@ -1120,7 +1165,7 @@
 		var playerPositionPoint = game.player.getUpperLeftCornerPoint();
 
 		//TODO: get rid of const numbers, use properties
-		$container.css({ "right": (495 - playerPositionPoint.x) + "px", "top": (playerPositionPoint.y + 40) + "px" });
+		$container.css({ "left": (playerPositionPoint.x - 23) + "px", "top": (playerPositionPoint.y + 40) + "px" });
 
 		$container.show();
 
@@ -1134,12 +1179,10 @@
 	};
 	game.initializePersonalMenuContainerPosition = function () {
 		var $container = $("#personalMenuContainer");
-		$container.css("right", "80px");
-
 		var playerPositionPoint = game.player.getUpperLeftCornerPoint();
 
 		//TODO: get rid of const numbers, use properties
-		$container.css({ "right": (495 - playerPositionPoint.x) + "px", "top": (playerPositionPoint.y + 40) + "px" });
+		$container.css({ "left": (playerPositionPoint.x - 23) + "px", "top": (playerPositionPoint.y + 40) + "px" });
 
 		$container.click(function () {
 			game.hidePersonalMenu();
@@ -1234,12 +1277,9 @@
 		},
 		initializePlayer: function (randX, randY) {
 			var map = game.MAP;
-			var tiles = map.tiles;
-			var numbers = map.numbers;
-			var graph = map.graph;
 			var mainPlayer = game.player;
 
-			if (tiles[randX][randY] !== 2) {
+			if (map.getTilesValue(randX, randY) !== 2) {
 
 				mainPlayer.setStartingTile(randX, randY);
 				mainPlayer.setCurrentTile(randX, randY);
@@ -1248,10 +1288,10 @@
 				var point = game.CURSOR.getTileCornerPoint(randX, randY);
 				mainPlayer.setUpperLeftCornerPoint(point.x, point.y);
 
-				mainPlayer.setAmmunitionPoints(numbers[randX][randY]);
+				mainPlayer.setAmmunitionPoints(map.getNumbersValue(randX, randY));
 
-				tiles[randX][randY] = 1;
-				graph.nodes[randX][randY].type = 1;
+				map.setTilesValue(randX, randY, 1);
+				map.setGraphType(randX, randY, 1);
 
 				//set playerCanvas position here //////////////////////////////////////////////////////
 				playerCanvas.setAttribute("style", "left:" + point.x + "px; top:" + point.y + "px;");

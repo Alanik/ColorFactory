@@ -593,9 +593,7 @@ tr.pager td {
 }
 
 #leftSideContainer {
-	margin-right: 28px;
 	width: 400px;
-	float: left;
 	height: 455px;
 	position: relative;
 }
