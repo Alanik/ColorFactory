@@ -4,9 +4,11 @@
 	var _initialize = function () {
 		self.BulletAnimationManager = new self.BulletAnimationManager();
 		self.TextAnimationManager = new self.TextAnimationManager();
+		self.PlayerAnimationManager = new self.PlayerAnimationManager();
 
 		self.BulletAnimationManager.parent = self;
 		self.TextAnimationManager.parent = self;
+		self.PlayerAnimationManager.parent = self;
 	}
 
 	self.game;
@@ -15,10 +17,10 @@
 		var self = this;
 		var _currentlyAnimatedBullets = [];
 		var _animationTimerIntervals = [];
-		var interval;
+		var _interval;
 
 		self.parent = null;
-
+		
 		self.getCurrentlyAnimatedBullets = function () {
 			return _currentlyAnimatedBullets;
 		}
@@ -28,8 +30,8 @@
 
 			if (self.shouldStartAnimationInterval()) {
 				self.clearAnimationTimerIntervals();
-				interval = setInterval(function () { self.drawBullets(_currentlyAnimatedBullets) }, 15);
-				self.setAnimationTimerInterval(interval);
+				_interval = setInterval(function () { self.drawBullets(_currentlyAnimatedBullets) }, 15);
+				self.setAnimationTimerInterval(_interval);
 			}
 		}
 
@@ -148,7 +150,7 @@
 		self.adjustTrajectory = function (bullet) {
 			var opponent = bullet.getTargetOpponent();
 			var startingPoint = bullet.getUpperLeftCornerPoint();
-			var halfSprite = opponent.getSpriteSize() / 2;
+			var halfSprite = opponent.getSpriteSize().x / 2;
 			var endPoint = opponent.getUpperLeftCornerPoint();
 
 			//TODO: refactor this, would be better with dependency injection
@@ -163,11 +165,9 @@
 
 	self.TextAnimationManager = function () {
 		var self = this;
-
 		var _currentlyAnimatedTexts = [];
 		var _animationTimerIntervals = [];
-
-		var interval;
+		var _interval;
 
 		self.parent = null;
 
@@ -181,8 +181,8 @@
 
 			if (self.shouldStartAnimationInterval()) {
 				self.clearAnimationTimerIntervals();
-				interval = setInterval(function () { self.drawTexts(_currentlyAnimatedTexts) }, 100);
-				self.setAnimationTimerInterval(interval);
+				_interval = setInterval(function () { self.drawTexts(_currentlyAnimatedTexts) }, 100);
+				self.setAnimationTimerInterval(_interval);
 			}
 		}
 
@@ -257,7 +257,6 @@
 			var offsetY = counter * 2;
 
 			if (counter < 10) {
-		
 				if (text.getUseAlpha()) {
 					alpha = text.getAlpha() - .1;
 					text.setAlpha(alpha);
@@ -279,6 +278,202 @@
 				text.resetAnimationCounter();
 			}
 		}
+	}
+
+	self.PlayerAnimationManager = function () {
+		var self = this;
+		var _currentlyAnimatedPlayers = [];
+		var _animationTimerIntervals = [];
+		var _interval;
+		var FPS = 35;
+
+		self.addPlayerToAnimationCollection = function (playerObj) {
+			var player = playerObj.player;
+
+			player.setIsAnimationInProgress(true);
+			_currentlyAnimatedPlayers.push(playerObj);
+
+			if (self.shouldStartAnimationInterval()) {
+				self.clearAnimationTimerIntervals();
+				_interval = setInterval(function () { self.drawPlayers(_currentlyAnimatedPlayers) }, FPS);
+				self.setAnimationTimerInterval(_interval);
+			}
+		}
+
+		self.drawPlayers = function (playersObj) {
+			var currentPlayerObj, len;
+
+			if (self.shouldStopAnimationInterval()) {
+				self.clearAnimationTimerIntervals();
+				return;
+			}
+
+			len = playersObj.length;
+
+			for (var i = 0; i < len; i++) {
+				currentPlayerObj = playersObj[i];
+
+				if (!currentPlayerObj.player.getIsAnimationInProgress()) {
+					self.removePlayerFromAnimationCollection(i);
+					len--;
+					i--;
+				}
+				else {
+					self.drawPlayerAnimation(currentPlayerObj);
+				}
+			}
+		};
+
+		self.drawPlayerAnimation = function (playerObj) {
+			var player = playerObj.player;
+			var aStarResult = player.getAStarResult();
+			var playerCanvas = playerObj.canvas;
+			var playerCtx = playerObj.ctx;
+
+			//mainPlayer //////////////////////////////////////////////
+			if (player.getIsMainPlayer()) {
+				if (typeof aStarResult !== "undefined" && aStarResult.length > 0 && player.getCurrentMovementStatus() === player.getMovementStatuses().running) {
+					self.calculate(player);
+				}
+				
+				self.drawPlayer(playerObj);
+			}
+			//OtherPlayer //////////////////////////////////////////////
+			else {
+
+			}
+		};
+
+		self.drawPlayer = function (playerObj) {
+			var player = playerObj.player;
+			var canvasPadding = self.parent.game.SETTINGS.map.getCanvasPadding();
+			var spriteSize = player.getSpriteSize();
+			var tileSheet = player.getCharacter().getSprite().getTileSheet();
+			var ctxSize = player.getContextSize();
+			var playerCtx = playerObj.ctx;
+			var animationCounter = player.getAnimationCounter();
+			var playerCanvas = playerObj.canvas;
+			var offsetX = player.getSpriteOffsetX();
+
+			playerCtx.clearRect(0, 0, playerCanvas.width, playerCanvas.height);
+			playerCtx.drawImage(tileSheet, offsetX * spriteSize.x, spriteSize.y * animationCounter, spriteSize.x, spriteSize.y, 10, -4, spriteSize.x * 1.3, spriteSize.y * 1.3);
+		};
+
+		self.calculate = function (mainPlayer) {
+				var game = self.parent.game;
+				var velocityX = 0, velocityY = 0;
+				var padding = mainPlayer.getPadding();
+				var negativePadding = mainPlayer.getNegativePadding();
+				var pixDist = mainPlayer.getPixelMovementDistance();
+				var playerCornerPoint = mainPlayer.getUpperLeftCornerPoint();
+				var nextAStarTile = mainPlayer.getAStarResult()[mainPlayer.getNextTilePlayerMovesToCounter()];
+				var tilePoint = game.CURSOR.getTileCornerPoint(nextAStarTile.x, nextAStarTile.y);
+
+				var tileYMinusPlayerY = tilePoint.y - playerCornerPoint.y;
+				var tileXMinusPlayerX = tilePoint.x - playerCornerPoint.x;
+
+				if (tileYMinusPlayerY > padding)
+					velocityY = 1;
+				else if (tileYMinusPlayerY < negativePadding)
+					velocityY = -1;
+				else velocityY = 0
+
+				if (tileXMinusPlayerX > padding)
+					velocityX = 1;
+				else if (tileXMinusPlayerX < negativePadding)
+					velocityX = -1;
+				else velocityX = 0;
+
+				self.calculateAndSetSpriteOffsetX(velocityX, velocityY, mainPlayer);
+				mainPlayer.incrementAnimationCounter();
+
+				//player still moving to tile
+				if (Math.abs(tileXMinusPlayerX) >= pixDist || Math.abs(tileYMinusPlayerY) >= pixDist) {
+
+					var newX = pixDist * velocityX + playerCornerPoint.x;
+					var newY = pixDist * velocityY + playerCornerPoint.y;
+
+					mainPlayer.setUpperLeftCornerPoint(newX, newY);
+
+					// move playerCanvas
+					playerCanvas.setAttribute("style", "left:" + newX + "px; top:" + newY + "px;");
+				}
+				else {
+					game.playerIsFullyInTile();
+				}
+
+				if (mainPlayer.getAnimationCounter() >= mainPlayer.getCharacter().getSprite().getNumOfAnimationFrames()) {
+					mainPlayer.resetAnimationCounter();
+				}
+		}
+
+		self.calculateAndSetSpriteOffsetX = function (velocityX, velocityY, mainPlayer) {
+
+			if (velocityX < 0) {
+				switch (velocityY) {
+					case -1:
+						mainPlayer.setSpriteOffsetX(0);
+						return;
+					case 0:
+						mainPlayer.setSpriteOffsetX(1);
+						return;
+					case 1:
+						mainPlayer.setSpriteOffsetX(2);
+						return;
+				}
+			}
+			else if (velocityX == 0) {
+				switch (velocityY) {
+					case -1:
+						mainPlayer.setSpriteOffsetX(7);
+						return;
+					case 0:
+						return;
+					case 1:
+						mainPlayer.setSpriteOffsetX(3);
+						return;
+				}
+			}
+			else if (velocityX > 0) {
+				switch (velocityY) {
+					case -1:
+						mainPlayer.setSpriteOffsetX(6);
+						return;
+					case 0:
+						mainPlayer.setSpriteOffsetX(5);
+						return;
+					case 1:
+						mainPlayer.setSpriteOffsetX(4);
+						return;
+				}
+			}
+		}
+
+		self.setAnimationTimerInterval = function (value) {
+			_animationTimerIntervals.push(value);
+		}
+
+		self.clearAnimationTimerIntervals = function () {
+			var len = _animationTimerIntervals.length;
+
+			for (var i = 0; i < len; i++) {
+				clearInterval(_animationTimerIntervals[i]);
+			}
+			_animationTimerIntervals = [];
+		}
+
+		self.removePlayerFromAnimationCollection = function (index) {
+			_currentlyAnimatedTexts.splice(index, 1);
+		}
+
+		self.shouldStartAnimationInterval = function () {
+			return _currentlyAnimatedPlayers.length === 1 ? true : false;
+		}
+
+		self.shouldStopAnimationInterval = function () {
+			return _currentlyAnimatedPlayers.length === 0 ? true : false;
+		}
+
 	}
 
 	_initialize.apply(this);

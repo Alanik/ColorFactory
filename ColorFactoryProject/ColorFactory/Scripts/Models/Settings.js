@@ -1,11 +1,12 @@
-﻿function Settings() {
+﻿
+function Settings() {
 
 	this.map = function () {
 
 		var _canvasPadding = 5;
 		var _canvasPaddingWithoutBorder = 4;
 		var _tileRadius = 0;
-		var _tileSize = 40;
+		var _tileSize = 50;
 		var _numberOfTiles_column = 16;
 		var _numberOfTiles_row = 9;
 		var _mapCanvasOffsetTop = 50;
