@@ -539,7 +539,7 @@ namespace ColorFactory.Hubs
 			{
 				if (!prevTileOtherPlayerUncovered)
 				{
-					Clients.Client(otherPlayer.Player.ConnectionId).clientReceiveUpdateOtherPlayerPosition_changeAlphaOtherPlayer(playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row, playerInGame.NextPosition.Column, playerInGame.NextPosition.Row, 0, 0);
+					Clients.Client(otherPlayer.Player.ConnectionId).clientReceiveUpdateOtherPlayerPosition_changeAlphaOtherPlayer(playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row, playerInGame.NextPosition.Column, playerInGame.NextPosition.Row, 0, (.1));
 				}
 				else
 				{
@@ -548,7 +548,7 @@ namespace ColorFactory.Hubs
 			}
 			else if (!nextTileOtherPlayerUncovered && prevTileOtherPlayerUncovered)
 			{
-				Clients.Client(otherPlayer.Player.ConnectionId).clientReceiveUpdateOtherPlayerPosition_changeAlphaOtherPlayer(playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row, playerInGame.NextPosition.Column, playerInGame.NextPosition.Row, 0, 1);
+				Clients.Client(otherPlayer.Player.ConnectionId).clientReceiveUpdateOtherPlayerPosition_changeAlphaOtherPlayer(playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row, playerInGame.NextPosition.Column, playerInGame.NextPosition.Row, 0, -.1);
 
 			}
 		}
@@ -667,10 +667,12 @@ namespace ColorFactory.Hubs
 		private bool ShootingPathIsClear(int startColumn, int startRow, int endColumn, int endRow, MapTileModel[,] playerMap, out ArrayList tiles)
 		{
 			tiles = CalculateStraightLine(startColumn, startRow, endColumn, endRow);
-
+			int tileValue;
 			foreach (PositionModel tile in tiles)
 			{
-				if (playerMap[tile.Column, tile.Row].Tile != 1)
+			tileValue = playerMap[tile.Column, tile.Row].Tile;
+
+				if (tileValue != 1 && tileValue != 6)
 				{
 					return false;
 				}

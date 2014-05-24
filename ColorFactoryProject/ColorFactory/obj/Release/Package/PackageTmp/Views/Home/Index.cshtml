@@ -24,12 +24,12 @@
 	</div>
 
 	<div id="playerCanvasContainer">
-		<canvas id="playerCanvas" width="50" height="50" />
+		<canvas id="playerCanvas" width="64" height="64" />
 	</div>
 	<div id="enemyCanvasContainer">
-		<canvas id="enemyCanvas1" width="50" height="50" />
-		<canvas id="enemyCanvas2" width="50" height="50" />
-		<canvas id="enemyCanvas3" width="50" height="50" />
+		<canvas id="enemyCanvas1" width="64" height="64" />
+		<canvas id="enemyCanvas2" width="64" height="64" />
+		<canvas id="enemyCanvas3" width="64" height="64" />
 	</div>
 
 	<div id="bulletsCanvasContainer">
@@ -41,7 +41,7 @@
 	</div>
 
 	<div id="rightSideDisplay">
-		@Html.Partial("_rightSideDisplay")
+		@Html.Partial("_RightSideDisplay")
 	</div>
 
 	<div id="effectsCanvasContainer">
@@ -49,7 +49,7 @@
 	</div>
 
 	<div id="personalMenuContainer" style="display: none; width: 100px; height: 100px; border: 1px solid #00B2FF; background-image: url(/Images/PersonalMenu/menu-transparent.png); position: absolute; z-index: 2;">
-		@Html.Partial("_personalMenu")
+		@Html.Partial("_PersonalMenu")
 	</div>
 
 	<div id="leftSideContainer">
@@ -108,7 +108,6 @@
 	var $bulletsCanvasContainer = $("#bulletsCanvasContainer");
 	var $effectsCanvasContainer = $("#effectsCanvasContainer");
 
-
 	var mainContainer = document.getElementById("mainContainer");
 
 	//HUB START/////////////////////////////////////////////////////////////////////////////////////
@@ -144,7 +143,7 @@
 	};
 
 	lobbyConnection.client.clientReceiveSetRoomToPlayerOnRoomCreated = function (roomName) {
-		mainPlayer.setRoom(roomName);
+		mainPlayerObj.player.setRoom(roomName);
 	};
 
 	$("#btnEnterLobby").click(function () {
@@ -230,7 +229,7 @@
 		var $theCircle = $(this);
 		var theRoom = $("#lobbyHeaderTitle").text();
 
-		mainPlayer.setRoom(theRoom);
+		mainPlayerObj.player.setRoom(theRoom);
 
 		var seatNumber = parseInt($theCircle.parent().attr("seatNumber"));
 		lobbyConnection.server.serverBroadcastPlayerTakeSeat(theRoom, seatNumber);
@@ -290,7 +289,7 @@
 		var $txtBoxChat = $("#txtBoxChat");
 		var msg;
 
-		if (playerName === mainPlayer.getName()) {
+		if (playerName === mainPlayerObj.player.getName()) {
 			msg = '<div style="position:relative;padding:5px 10px;width:380px;background:rgb(15,15,15);border-top:1px solid rgb(43,43,43);">' + '<span style="font-size:12px;color:rgb(163, 255, 0);">' + playerName + '</span>' + " - " + '<span style="font-size:16px;word-wrap: break-word;">' + message + '</span>' + '</div>';
 		}
 		else {
@@ -306,7 +305,7 @@
 			$txtBox = $("#txtBoxChat");
 			txt = $txtBox.val();
 			if (txt !== "") {
-				lobbyConnection.server.serverBroadcastChatMessage(txt, mainPlayer.getName());
+				lobbyConnection.server.serverBroadcastChatMessage(txt, mainPlayerObj.player.getName());
 
 				$txtBox.val("");
 			}
@@ -318,7 +317,7 @@
 		var text = $textBox.val();
 
 		if (text !== "") {
-			lobbyConnection.server.serverBroadcastChatMessage(text, mainPlayer.getName());
+			lobbyConnection.server.serverBroadcastChatMessage(text, mainPlayerObj.player.getName());
 			$textBox.val("");
 		}
 	});
@@ -362,7 +361,7 @@
 			playerName = $txtBox.val();
 			if (playerName !== "") {
 
-				mainPlayer.setName(playerName);
+				mainPlayerObj.player.setName(playerName);
 				$("#playerNameSpan").text(playerName);
 
 				var player = { name: playerName, connectionId: myClientId };
@@ -377,7 +376,7 @@
 	$("#btnEnterPlayerName").click(function () {
 		var playerName = $("#txtPlayerName").val();
 
-		mainPlayer.setName(playerName);
+		mainPlayerObj.player.setName(playerName);
 		$("#playerNameSpan").text(playerName);
 
 		var player = { name: playerName, connectionId: myClientId };
@@ -424,14 +423,18 @@
 		}
 	};
 </script>
-<script src="~/Scripts/Models/Settings.js" type="text/javascript"></script>
-<script src="~/Scripts/Models/Map.js" type="text/javascript"></script>
+
+<script src="~/Scripts/Models/HelperClasses/Settings.js" type="text/javascript"></script>
+<script src="~/Scripts/Models/HelperClasses/Map.js" type="text/javascript"></script>
+<script src="~/Scripts/Models/Character/Sprite.js"></script>
+<script src="~/Scripts/Models/Character/Character.js"></script>
+<script src="~/Scripts/Models/Character/CharacterAnimations.js"></script>
 <script src="~/Scripts/Models/Player.js" type="text/javascript"></script>
-<script src="~/Scripts/Models/Effects.js" type="text/javascript"></script>
-<script src="~/Scripts/Models/Cursor.js" type="text/javascript"></script>
+<script src="~/Scripts/Models/HelperClasses/Effects.js" type="text/javascript"></script>
+<script src="~/Scripts/Models/HelperClasses/Cursor.js" type="text/javascript"></script>
 <script src="~/Scripts/Models/Game.js" type="text/javascript"></script>
 <script src="~/Scripts/Models/Bullet.js"></script>
-<script src="~/Scripts/Models/AnimationManager.js"></script>
+<script src="~/Scripts/Models/HelperClasses/AnimationManager.js"></script>
 <script src="~/Scripts/Models/TextAnimation.js"></script>
 <script type="text/javascript">
 
@@ -441,9 +444,36 @@
 		var EFFECTS = new Effects();
 		var ANIMATION_MANAGER = new AnimationManager();
 		var MAP = new Map(SETTINGS.map);
-		mainPlayer = new Player("Images/TileSheet/tileSheetGreenPlayer.png", "/Images/Tilesheet/tileSheetRedPlayerTarget.png");
 
-		GAME = new Game(SETTINGS, CURSOR, EFFECTS, ANIMATION_MANAGER, MAP, mainPlayer);
+		var animations = new CharacterAnimations();
+
+		var squirrel = new Character("squirrel", "Wiewiórka Mimi", animations.squirrel);
+		var mainPlayer = new Player(squirrel, true, null);
+		mainPlayer.setBullet(new Bullet("Images/tileSheet/Bullet/bullet.png"));
+		mainPlayerObj = { "player": mainPlayer, "ctx": playerCtx, "canvas": playerCanvas };
+
+		var squirrel1 = new Character("squirrel", "Wiewiórka Mimi", animations.squirrel);
+		var squirrel2 = new Character("squirrel", "Wiewiórka Mimi", animations.squirrel);
+		var squirrel3 = new Character("squirrel", "Wiewiórka Mimi", animations.squirrel);
+
+		var player1 = new Player(squirrel1, false, 0);
+		var player2 = new Player(squirrel2, false, 1);
+		var player3 = new Player(squirrel3, false, 2);
+
+		player1.setBullet(new Bullet("Images/tileSheet/Bullet/bullet.png"));
+		player2.setBullet(new Bullet("Images/tileSheet/Bullet/bullet.png"));
+		player3.setBullet(new Bullet("Images/tileSheet/Bullet/bullet.png"));
+
+		var playerObj1 = { "player": player1, "ctx": enemyCtx1, "canvas": enemyCanvas1 };
+		enemyCtx1.globalAlpha = 0;
+		var playerObj2 = { "player": player2, "ctx": enemyCtx2, "canvas": enemyCanvas2 };
+		enemyCtx2.globalAlpha = 0;
+		var playerObj3 = { "player": player3, "ctx": enemyCtx3, "canvas": enemyCanvas3 };
+		enemyCtx3.globalAlpha = 0;
+
+		var otherPlayers = [playerObj1, playerObj2, playerObj3];
+
+		GAME = new Game(SETTINGS, CURSOR, EFFECTS, ANIMATION_MANAGER, MAP, mainPlayerObj, otherPlayers);
 
 		ANIMATION_MANAGER.game = GAME;
 

@@ -1,10 +1,17 @@
-﻿var TextAnimation = function (text) {
+﻿var TextAnimation = function (text, font, size, fillstyle, useAlpha) {
 	var self = this;
 
 	var _text = text;
-	var _font = 'victors_pixel_fontregular';
-	var _size = '50px';
-	var _fillStyle = "#FF7575";
+	var _font = font;
+	var _size = size;
+	var _fillStyle = fillstyle;
+	var _useAlpha = false;
+	var _alpha = 1;
+
+	if (useAlpha) {
+		_useAlpha = useAlpha;
+	}
+
 	var _upperLeftCornerPoint = { "x": 0, "y": 0 };
 	var _animationCounter = 0;
 	var _isAnimationInProgress = false;
@@ -45,9 +52,9 @@
 		_fillStyle = value;
 	};
 
-	self.setUpperLeftCornerPoint = function (xx, yy) {
-		_upperLeftCornerPoint.x = xx;
-		_upperLeftCornerPoint.y = yy;
+	self.setUpperLeftCornerPoint = function (x, y) {
+		_upperLeftCornerPoint.x = x;
+		_upperLeftCornerPoint.y = y;
 	};
 
 	self.getUpperLeftCornerPoint = function () {
@@ -73,5 +80,18 @@
 	self.setIsAnimationInProgress = function (value) {
 		_isAnimationInProgress = value;
 	}
+
+	self.getUseAlpha = function () {
+		return _useAlpha;
+	}
+
+	self.setAlpha = function (value) {
+		 _alpha = value;
+	}
+
+	self.getAlpha = function () {
+		return _alpha;
+	}
+	
 
 }

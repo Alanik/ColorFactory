@@ -1,5 +1,5 @@
 ﻿
-var Player = function (character, isMainPlayer) {
+var Player = function (character, isMainPlayer, index) {
 	var self = this;
 
 	var _isMainPlayer = isMainPlayer;
@@ -11,10 +11,7 @@ var Player = function (character, isMainPlayer) {
 	var _previousTile = { column: 0, row: 0 };
 	var _currentTile = { column: 0, row: 0 };
 	var _nextTile = { column: 0, row: 0 };
-	var _spriteSize = {
-		x: 32,
-		y: 48
-	};
+	var _spriteSize = { x: 32, y: 48 };
 	var _playerContextSize = 50;
 	var _nextTilePlayerMovesToCounter = 0;
 	var _room = "";
@@ -22,23 +19,27 @@ var Player = function (character, isMainPlayer) {
 	var _aStarResult = [];
 	var _animationCounter = 0;
 	var _name = "";
-	var _health = 100;
+	var _health = 200;
 	var _points = 0;
 	var _uncoveredMines = 0;
 	var _dealthDamage = 0;
 	var _isAnimationInProgress = false;
 	var _spriteOffsetX = 0;
+	var _opacity = 1;
+	var _opacityChangeValue = 0;
+	var _currentShootingTargetIndex = null;
+	var _indexInOtherPlayersArray = index;
 
 	var _playerMovementStatuses = {
 		idle: "idle",
-		running : "running"
+		running: "running"
 	}
 
 	var _currentMovementStatus = _playerMovementStatuses.idle;
 
 	var _playerAttackStatuses = {
 		idle: "idle",
-		shooting : "shooting"
+		shooting: "shooting"
 	}
 
 	var _currentAttackStatus = _playerMovementStatuses.idle;
@@ -54,9 +55,9 @@ var Player = function (character, isMainPlayer) {
 
 		switch (_currentMovementStatus) {
 			case _playerMovementStatuses.idle:
-				
+
 				if (_currentAttackStatus === _playerAttackStatuses.idle) {
-					_character.changeAnimation( _character.animations.idle );
+					_character.changeAnimation(_character.animations.idle);
 				}
 				else if (_currentAttackStatus === _playerAttackStatuses.shooting) {
 					_character.changeAnimation(_character.animations.idle);
@@ -77,6 +78,45 @@ var Player = function (character, isMainPlayer) {
 	};
 
 	//public properties
+	self.getIndex = function () {
+		return _indexInOtherPlayersArray;
+	};
+
+	self.getCurrentShootingTargetIndex = function () {
+		return _currentShootingTargetIndex;
+	};
+
+	self.setCurrentShootingTargetIndex = function (value) {
+		_currentShootingTargetIndex = value;
+	};
+
+	self.getOpacityChangeValue = function () {
+		return _opacityChangeValue;
+	};
+
+	self.setOpacityChangeValue = function (value) {
+		_opacityChangeValue = value;
+	};
+
+	self.getOpacity = function () {
+		return _opacity;
+	};
+
+	self.setOpacity = function (value) {
+		if (value > 1) {
+			_opacity = 1;
+			_opacityChangeValue = 0;
+		}
+		else if (value < 0) {
+			_opacity = 0;
+			_opacityChangeValue = 0;
+			_isAnimationInProgress = false;
+		}
+		else {
+			_opacity = value;
+		}		
+	};
+
 	self.getSpriteOffsetX = function () {
 		return _spriteOffsetX;
 	};
