@@ -79,11 +79,8 @@ C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\Microsoft.Web.WebPages.
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\Newtonsoft.Json.dll
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\Owin.dll
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Net.Http.dll
-C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Net.Http.Formatting.dll
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Net.Http.WebRequest.dll
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Web.Helpers.dll
-C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Web.Http.dll
-C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Web.Http.WebHost.dll
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Web.Mvc.dll
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Web.Optimization.dll
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Web.Razor.dll
@@ -100,11 +97,8 @@ C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\Microsoft.Owin.Host.Sys
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\Newtonsoft.Json.xml
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\EntityFramework.xml
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Net.Http.xml
-C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Net.Http.Formatting.xml
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Net.Http.WebRequest.xml
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Web.Helpers.xml
-C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Web.Http.xml
-C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Web.Http.WebHost.xml
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Web.Mvc.xml
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Web.Razor.xml
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Web.WebPages.xml
@@ -122,3 +116,9 @@ C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\DotNetOpenAuth.OpenId.R
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\obj\Release\ColorFactory.csprojResolveAssemblyReference.cache
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\obj\Release\ColorFactory.dll
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\obj\Release\ColorFactory.pdb
+C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Net.Http.Formatting.dll
+C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Web.Http.dll
+C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Web.Http.WebHost.dll
+C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Net.Http.Formatting.xml
+C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Web.Http.xml
+C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\System.Web.Http.WebHost.xml

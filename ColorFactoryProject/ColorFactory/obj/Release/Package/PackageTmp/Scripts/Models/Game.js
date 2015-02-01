@@ -1,23 +1,92 @@
-﻿var Game = function (Settings, Cursor, Effects, AnimationManager, Map, PlrObj, otherPlayers) {
+﻿var Game = function (Settings, Cursor, Effects, AnimationManager, Map, PlrObj) {
 	var game = this;
 
+	/////////////////////////
+	//helper objects
+	/////////////////////////
 	game.SETTINGS = Settings;
 	game.MAP = Map;
 	game.CURSOR = Cursor;
 	game.EFFECTS = Effects;
 	game.ANIMATION_MANAGER = AnimationManager;
 
+	///////////////////////////////////
+	//player and other players objects
+	///////////////////////////////////
 	game.playerObj = PlrObj;
 	game.player = PlrObj.player;
-	game.otherPlayers = otherPlayers;
+	game.otherPlayers = null;
 
 	//TODO: temporary
 	game.WIN_MESSAGE;
 
-	//FLAGS
-	game.flags = {
-		isPersonalMenuVisible: false
-	}
+	/////////////////////////////
+	//player menu
+	/////////////////////////////
+	game.playerMenu = {
+		"isMenuVisible": false,
+		"showMenu": function () {
+			var $container = $("#personalMenuContainer");
+			var playerPositionPoint = game.player.getUpperLeftCornerPoint();
+
+			//TODO: get rid of const numbers, use properties
+			$container.css({ "left": (playerPositionPoint.x - 23) + "px", "top": (playerPositionPoint.y + 40) + "px" });
+
+			$container.show();
+
+			this.isMenuVisible = true;
+		},
+		"hideMenu": function () {
+			$("#personalMenuContainer").hide();
+
+			this.isMenuVisible = false;
+		},
+
+		"buildings": {
+			turret: {
+				isTurretSelected: false,
+				showSmallTurretIcon: function () {
+					$("#smallTurretIcon").show();
+				},
+				hideSmallTurretIcon: function () {
+					$("#smallTurretIcon").hide();
+				},
+				selectTurret: function () {
+					this.showSmallTurretIcon();
+					game.playerMenu.hideMenu();
+
+					this.isTurretSelected = true;
+				}
+			}
+		},
+		"weapons": {
+			pinecomb: {
+				isPinecombSelected: false,
+				showSmallPinecombIcon: function () {
+					$("#smallGranadeIcon").show();
+				},
+				hideSmallPinecombIcon: function () {
+					$("#smallGranadeIcon").hide();
+				},
+				selectPinecomb: function () {
+					var mainPlayer = game.player;
+
+					var weapons = mainPlayer.getWeapons();
+
+					if (mainPlayer.getCurrentWeapon() === weapons.pineCone) {
+						mainPlayer.switchWeapon(weapons.acorn);
+						game.playerMenu.weapons.pinecomb.hideSmallPinecombIcon();
+					}
+					else {
+						mainPlayer.switchWeapon(weapons.pineCone);
+						game.playerMenu.weapons.pinecomb.showSmallPinecombIcon();
+					}
+
+					game.playerMenu.hideMenu();
+				}
+			}
+		}
+	};
 
 	////////////////////////////////////////////////////////////////////////
 	//methods
@@ -28,20 +97,21 @@
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		////SignalR game session start!!! START GAME
 		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		gameConnection.client.clientReceiveStartGame = function (x, y) {
+		gameConnection.client.clientReceiveStartGame = function (x, y, seatNumber) {
 			var gameSession = game.gameSession;
-
 			$("#lobbyContainer").hide();
-
-			gameSession.initializePlayer(x, y);
+			$("#effectsCanvas").show();
+			$("#mapContainer").css("background", "rgb(53,53,53)").show();//#2E2E2E"rgb(197, 206, 198)
+			gameSession.initializePlayer(x, y, seatNumber);
+			gameSession.initializeOtherPlayers(seatNumber);
 			gameSession.initializeMap();
 			gameSession.initializePersonalPlayerMenu();
 			gameSession.playing();
 		};
 
-		gameConnection.client.clientReceiveOtherPlayerPosition = function (randX, randY, index) {
+		gameConnection.client.clientReceiveOtherPlayerPosition = function (randX, randY, seatNumber) {
 			var point = game.CURSOR.getTileCornerPoint(randX, randY);
-			var otherPlayerObj = game.otherPlayers[index];
+			var otherPlayerObj = game.getOtherPlayerBasedOnSeatNumber(seatNumber);
 			var otherPlayer = otherPlayerObj.player;
 			var otherPlayerCtx = otherPlayerObj.ctx;
 			var canvas = otherPlayerObj.canvas;
@@ -58,15 +128,16 @@
 			otherPlayerCtx.globalAlpha = 1;
 
 			if (!otherPlayer.getIsAnimationInProgress()) {
+
 				game.ANIMATION_MANAGER.PlayerAnimationManager.addPlayerToAnimationCollection(otherPlayerObj);
 			}
 
 		}
-		gameConnection.client.clientReceiveUpdateOtherPlayerPosition = function (col, row, otherPlayerIndex) {
-			game.moveOtherPlayer(col, row, game.otherPlayers[otherPlayerIndex]);
+		gameConnection.client.clientReceiveUpdateOtherPlayerPosition = function (col, row, seatNumber) {
+			game.moveOtherPlayer(col, row, game.getOtherPlayerBasedOnSeatNumber(seatNumber));
 		}
-		gameConnection.client.clientReceiveUpdateOtherPlayerPosition_changeAlphaOtherPlayer = function (oldCol, oldRow, col, row, otherPlayerIndex, opacity) {
-			var playerObj = game.otherPlayers[otherPlayerIndex];
+		gameConnection.client.clientReceiveUpdateOtherPlayerPosition_changeAlphaOtherPlayer = function (oldCol, oldRow, col, row, seatNumber, opacity) {
+			var playerObj = game.getOtherPlayerBasedOnSeatNumber(seatNumber);
 			var otherPlayer = playerObj.player;
 
 			otherPlayer.setCurrentTile(oldCol, oldRow);
@@ -113,17 +184,17 @@
 			game.player.setUncoveredMines(mines);
 			game.displayUncoveredMines(mines);
 		}
-		gameConnection.client.clientReceivePlayerShootsOtherPlayer = function (rndDamage, seatNumber, winMessage) {
+		gameConnection.client.clientReceivePlayerShootsOtherPlayer = function (rndDamage, totalAmmo, seatNumber, winMessage) {
 			if (typeof winMessage !== "undefined") {
 				game.WIN_MESSAGE = winMessage;
 			}
 
 			var mainPlayer = game.player;
 			mainPlayer.setCurrentAttackStatus(mainPlayer.getAttackStatuses().shooting);
-			mainPlayer.setCurrentShootingTargetIndex(seatNumber);
+			mainPlayer.setCurrentShootingTargetSeatNumber(seatNumber);
 
 			var halfSize = mainPlayer.getSpriteSize().x / 2;
-			var opponentObj = game.otherPlayers[seatNumber];
+			var opponentObj = game.getOtherPlayerBasedOnSeatNumber(seatNumber);
 			var opponentUpperLeftCornerPoint = opponentObj.player.getUpperLeftCornerPoint();
 			var centerPointX = mainPlayer.getUpperLeftCornerPoint().x + halfSize;
 			var centerPointY = mainPlayer.getUpperLeftCornerPoint().y + halfSize;
@@ -138,18 +209,18 @@
 			game.shootBullet(calculatedPoints, bullet, opponentObj.player, game.ANIMATION_MANAGER.BulletAnimationManager);
 
 			//TODO: temporary
-			mainPlayer.setAmmunitionPoints(mainPlayer.getAmmunitionPoints() - 1);
+			mainPlayer.setAmmunitionPoints(totalAmmo);
 			game.displayAmmunitionPoints(mainPlayer.getAmmunitionPoints());
 			if (mainPlayer.getAmmunitionPoints() == 0) {
 				opponentCharacter.changeAnimation(opponentCharacter.animations.running);
 			}
 		}
-		gameConnection.client.clientReceivePlayerStopsShooting = function (index) {
+		gameConnection.client.clientReceivePlayerStopsShooting = function (seatNumber) {
 			var mainPlayer = game.player;
-			mainPlayer.setCurrentShootingTargetIndex(null);
+			mainPlayer.setCurrentShootingTargetSeatNumber(null);
 			mainPlayer.setCurrentAttackStatus(mainPlayer.getAttackStatuses().idle);
 
-			var opponentObj = game.otherPlayers[index];
+			var opponentObj = game.getOtherPlayerBasedOnSeatNumber(seatNumber);
 			var character = opponentObj.player.getCharacter();
 
 			//TODO: change animations.running
@@ -195,20 +266,22 @@
 
 			game.ANIMATION_MANAGER.TextAnimationManager.addTextToAnimationCollection(text);
 		};
-		gameConnection.client.clientReceivePineConeExplodes = function (mineNumber, col, row, tile, rndDamage) {
-			var otherPlayerObj = game.otherPlayers[0], text;
-
-			game.uncoverTile(mineNumber, col, row, tile);
+		gameConnection.client.clientReceivePineConeExplodes = function (mineNumber, col, row, tile, rndDamage, seatNumber) {
+			var text;
 
 			if (rndDamage < 0) {
 				text = new TextAnimation("boom", 'victors_pixel_fontregular', '50px', '#FF7575');
 			}
 			else {
 				text = new TextAnimation("-" + rndDamage, 'victors_pixel_fontregular', '50px', '#FF7575');
+				var otherPlayerObj = game.getOtherPlayerBasedOnSeatNumber(seatNumber);
+
 				if (!otherPlayerObj.player.getIsAnimationInProgress()) {
 					game.ANIMATION_MANAGER.PlayerAnimationManager.addPlayerToAnimationCollection(otherPlayerObj);
 				}
 			}
+
+			game.uncoverTile(mineNumber, col, row, tile);
 
 			var point = game.CURSOR.getTileCornerPoint(col, row);
 			text.setUpperLeftCornerPoint(point.x, point.y);
@@ -249,8 +322,8 @@
 			var startTile = mainPlayer.getCurrentTile();
 			var clickedTile = cursor.getClickedTile();
 
-			if (game.flags.isPersonalMenuVisible) {
-				game.hidePersonalMenu();
+			if (game.playerMenu.isMenuVisible) {
+				game.playerMenu.hideMenu();
 			}
 
 			//clicked outside map boundry
@@ -267,9 +340,11 @@
 			//Pine Cone
 			if (mainPlayer.getCurrentWeapon() == mainPlayer.getWeapons().pineCone) {
 				uncoveredMines = mainPlayer.getUncoveredMines();
-				if (uncoveredMines <= 0) {
-					mainPlayer.switchWeapon(mainPlayer.getWeapons().acorn);
-					game.hideSmallGranadeIcon();
+
+				mainPlayer.switchWeapon( mainPlayer.getWeapons().acorn );
+				game.playerMenu.weapons.pinecomb.hideSmallPinecombIcon();
+
+				if (uncoveredMines <= 0) {		
 					return;
 				}
 
@@ -282,9 +357,17 @@
 				///////////////////////////////////////////////////////////////////////////////////////////////
 				gameConnection.server.serverBroadcastPineConeThrown(clickedTile.column, clickedTile.row, mainPlayer.getRoom());
 				///////////////////////////////////////////////////////////////////////////////////////////////
-				mainPlayer.switchWeapon(mainPlayer.getWeapons().acorn);
-				game.hideSmallGranadeIcon();
 				return;
+			}
+
+			//Turret
+			if (game.playerMenu.buildings.turret.isTurretSelected) {
+
+				///////////////////////////////////////////////////////////////////////////////////////////////
+				//broadcast to server				  TRY TO PLACE TURRET ON MAP
+				///////////////////////////////////////////////////////////////////////////////////////////////
+				gameConnection.server.serverBroadcastPlaceTurretOnMap(clickedTile.column, clickedTile.row, mainPlayer.getRoom());
+				///////////////////////////////////////////////////////////////////////////////////////////////
 			}
 
 			//shoot
@@ -340,10 +423,10 @@
 		var mapCtx = ctx;
 
 		initializeCanvases();
-		initializeRightSideDisplay();
+		//initializeRightSideDisplay();
 		initializeLobbyAndPlayerNameModalPosition();
 
-		game.drawMapTiles();
+		//game.drawMapTiles();
 		game.displayAmmunitionPoints(game.player.getAmmunitionPoints());
 
 		function initializeCanvases() {
@@ -406,15 +489,12 @@
 
 		}
 		function initializeLobbyAndPlayerNameModalPosition() {
-			var $lobby = $("#lobbyContainer");
 			var $playerNameBox = $("#setPlayerNameModalBox");
 
 			var effectsLeft = $("#effectsCanvas").css("left");
 			var effectsTop = $("#effectsCanvas").css("top");
 
 			var winW = $("#mainContainer").width();
-
-			$lobby.css({ 'left': winW / 2 - $lobby.width() / 2, 'top': 100 });
 			$playerNameBox.css({ 'left': winW / 2 - $playerNameBox.width() / 2, 'top': 100 });
 
 			$playerNameBox.show();
@@ -466,6 +546,9 @@
 					drawNumbers(i, j, mineNumber);
 
 					drawTileWithRadius(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, false, "rgba(255,255,255,.4)");
+				}
+				else if (tile == 7) {
+					drawTileWithRadius(ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, false, "orange");
 				}
 			}
 		}
@@ -625,8 +708,7 @@
 		enemy.setPreviousTile(currTile.column, currTile.row);
 		enemy.setCurrentTile(nextTile.column, nextTile.row);
 		enemy.resetAnimationCounter();
-
-		//enemy.setCurrentMovementStatus(enemy.getMovementStatuses().idle);
+		enemy.setCurrentMovementStatus(enemy.getMovementStatuses().idle);
 	};
 	game.checkIfMineIsUncoveredAllAround = function (col, row) {
 
@@ -761,6 +843,7 @@
 		return false;
 	};
 	game.moveOtherPlayer = function (col, row, playerObj, opacityChangeValue) {
+
 		var otherPlayer = playerObj.player;
 
 		if (typeof opacityChangeValue !== "undefined") {
@@ -774,7 +857,8 @@
 		game.otherPlayerIsFullyInTile(otherPlayer, playerObj.ctx, playerObj.canvas);
 		otherPlayer.setNextTile(col, row);
 
-		if (!game.player.getCurrentShootingTargetIndex() === otherPlayer.getIndexInOtherPlayersArray()) {
+		//TODO: move movementStatuses to a static helper class
+		if (!game.player.getCurrentShootingTargetSeatNumber() === otherPlayer.getSeatNumber()) {
 			otherPlayer.setCurrentMovementStatus(otherPlayer.getMovementStatuses().running);
 		}
 
@@ -938,25 +1022,19 @@
 		window.location.reload();
 	};
 	game.clickedOnSelf = function () {
-		if (game.flags.isPersonalMenuVisible) {
-			game.hidePersonalMenu();
+		var mainPlayer = game.player;
+		var weapons = mainPlayer.getWeapons();
+
+		if (mainPlayer.getCurrentWeapon() === weapons.pineCone) {
+			mainPlayer.switchWeapon(weapons.acorn);
+			game.playerMenu.weapons.pinecomb.hideSmallPinecombIcon();
+
+			if (mainPlayer.getUncoveredMines() > 0) {
+				gameConnection.server.serverBroadcastHealPlayer(mainPlayer.getRoom());
+			}
 		}
 		else {
-
-			var mainPlayer = game.player;
-			var weapons = mainPlayer.getWeapons();
-
-			if (mainPlayer.getCurrentWeapon() === weapons.pineCone) {
-				mainPlayer.switchWeapon(weapons.acorn);
-				game.hideSmallGranadeIcon();
-				if (mainPlayer.getUncoveredMines() > 0) {
-					gameConnection.server.serverBroadcastHealPlayer(mainPlayer.getRoom());
-				}
-
-			}
-			else {
-				game.showPersonalMenu();
-			}
+			game.playerMenu.showMenu();
 		}
 	};
 	game.displayHealthPoints = function (health) {
@@ -965,58 +1043,22 @@
 	game.displayUncoveredMines = function (tiles) {
 		$("#uncoveredMinesContainer").text(tiles);
 	};
-	game.showPersonalMenu = function () {
-		var $container = $("#personalMenuContainer");
 
-		var playerPositionPoint = game.player.getUpperLeftCornerPoint();
+	game.getOtherPlayerBasedOnSeatNumber = function (seatNumber) {
+		var playerObj;
+		var others = game.otherPlayers;
 
-		//TODO: get rid of const numbers, use properties
-		$container.css({ "left": (playerPositionPoint.x - 23) + "px", "top": (playerPositionPoint.y + 40) + "px" });
+		for (var i = 0; i < others.length; i++) {
+			playerObj = others[i];
 
-		$container.show();
-
-		game.flags.isPersonalMenuVisible = true;
-	};
-	game.hidePersonalMenu = function () {
-		var $container = $("#personalMenuContainer");
-		$container.hide();
-
-		game.flags.isPersonalMenuVisible = false;
-	};
-	game.initializePersonalMenuContainerPosition = function () {
-		var $container = $("#personalMenuContainer");
-		var playerPositionPoint = game.player.getUpperLeftCornerPoint();
-
-		//TODO: get rid of const numbers, use properties
-		$container.css({ "left": (playerPositionPoint.x - 23) + "px", "top": (playerPositionPoint.y + 40) + "px" });
-
-		$container.click(function () {
-			game.hidePersonalMenu();
-		});
-	};
-	game.showSmallGranadeIcon = function () {
-		$("#smallGranadeIcon").show();
-	};
-	game.hideSmallGranadeIcon = function () {
-		$("#smallGranadeIcon").hide();
-	};
-	game.granadeIconOnClick = function () {
-		var mainPlayer = game.player;
-
-		var weapons = mainPlayer.getWeapons();
-
-		if (mainPlayer.getCurrentWeapon() === weapons.pineCone) {
-			mainPlayer.switchWeapon(weapons.acorn);
-			game.hideSmallGranadeIcon();
-		}
-		else {
-			mainPlayer.switchWeapon(weapons.pineCone);
-			game.showSmallGranadeIcon();
+			if (playerObj.player.getSeatNumber() === seatNumber) {
+				return playerObj;
+			}
 		}
 
-		game.hidePersonalMenu();
+		alert("player with seat number: " + seatNumber + " does not exist");
+		return null;
 	};
-
 	game.getPlayerPositionInRegardToOpponentPosition = function (startCol, startRow, endCol, endRow) {
 
 		function getRow(startCol, startRow, endCol, endRow) {
@@ -1075,15 +1117,18 @@
 
 		}
 	}
+
 	game.gameSession = {
 		initializeMap: function () {
 			game.drawMapTiles();
 		},
-		initializePlayer: function (randX, randY) {
+		initializePlayer: function (randX, randY, seatNumber) {
 			var map = game.MAP;
 			var mainPlayer = game.player;
 			var attackStatuses = mainPlayer.getAttackStatuses();
 			var movementStatuses = mainPlayer.getMovementStatuses();
+
+			mainPlayer.setSeatNumber(seatNumber);
 
 			if (map.getTilesValue(randX, randY) !== 2) {
 
@@ -1118,7 +1163,53 @@
 			//}
 		},
 		initializePersonalPlayerMenu: function () {
-			game.initializePersonalMenuContainerPosition();
+			var $container = $("#personalMenuContainer");
+			var playerPositionPoint = game.player.getUpperLeftCornerPoint();
+
+			//TODO: get rid of const numbers, use properties
+			$container.css({ "left": (playerPositionPoint.x - 23) + "px", "top": (playerPositionPoint.y + 40) + "px" });
+
+			$container.click(function () {
+				game.playerMenu.hideMenu();
+			});
+		},
+		initializeOtherPlayers: function (seatNumber) {
+			var animations = new CharacterAnimations();
+
+			var boar1 = new Character("boar", "Dzik Antoni", animations.boar);
+			var squirrel2 = new Character("squirrel", "Wiewiórka Mimi", animations.squirrel);
+			var squirrel3 = new Character("squirrel", "Wiewiórka Mimi", animations.squirrel);
+
+			var player1 = new Player(boar1, false);
+			var player2 = new Player(squirrel2, false);
+			var player3 = new Player(squirrel3, false);
+
+			player1.setBullet(new Bullet("Images/tileSheet/Bullet/bullet.png"));
+			player2.setBullet(new Bullet("Images/tileSheet/Bullet/bullet.png"));
+			player3.setBullet(new Bullet("Images/tileSheet/Bullet/bullet.png"));
+
+			var playerObj1 = { "player": player1, "ctx": enemyCtx1, "canvas": enemyCanvas1 };
+			enemyCtx1.globalAlpha = 0;
+			var playerObj2 = { "player": player2, "ctx": enemyCtx2, "canvas": enemyCanvas2 };
+			enemyCtx2.globalAlpha = 0;
+			var playerObj3 = { "player": player3, "ctx": enemyCtx3, "canvas": enemyCanvas3 };
+			enemyCtx3.globalAlpha = 0;
+
+			var otherPlayers = [playerObj1, playerObj2, playerObj3];
+			game.otherPlayers = otherPlayers;
+
+			setSeatNumberToOtherPlayers(seatNumber, game.otherPlayers);
+
+			function setSeatNumberToOtherPlayers(seatNumberOfMainPlayer, otherPlayers) {
+				var index;
+
+				for (var i = 1; i < 5; i++) {
+					if (i !== seatNumberOfMainPlayer) {
+						index = seatNumberOfMainPlayer < i ? i - 2 : i - 1;
+						otherPlayers[index].player.setSeatNumber(i);
+					}
+				}
+			}
 		},
 		playing: function () {
 			game.calculateCursorPosition();

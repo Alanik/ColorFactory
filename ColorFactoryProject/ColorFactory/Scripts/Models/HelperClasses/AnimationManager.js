@@ -6,6 +6,8 @@
 		self.TextAnimationManager = new self.TextAnimationManager();
 		self.PlayerAnimationManager = new self.PlayerAnimationManager();
 
+		self.FPSMeter = new FPSMeter(document.getElementById('FPSMeterContainer'), { graph: 1, position:"static" });
+
 		self.BulletAnimationManager.parent = self;
 		self.TextAnimationManager.parent = self;
 		self.PlayerAnimationManager.parent = self;
@@ -18,6 +20,7 @@
 		var _currentlyAnimatedBullets = [];
 		var _animationTimerIntervals = [];
 		var _interval;
+		var FPS = 15;
 
 		self.parent = null;
 
@@ -30,7 +33,7 @@
 
 			if (self.shouldStartAnimationInterval()) {
 				self.clearAnimationTimerIntervals();
-				_interval = setInterval(function () { self.drawBullets(_currentlyAnimatedBullets) }, 15);
+				_interval = setInterval(function () { self.drawBullets(_currentlyAnimatedBullets) }, FPS);
 				self.setAnimationTimerInterval(_interval);
 			}
 		}
@@ -298,7 +301,6 @@
 				self.clearAnimationTimerIntervals();
 				_interval = setInterval(self.drawPlayers, FPS);
 				self.setAnimationTimerInterval(_interval);
-
 			}
 		};
 
@@ -323,6 +325,8 @@
 					self.animatePlayer(currentPlayerObj);
 				}
 			}
+
+			self.parent.FPSMeter.tick();
 		};
 
 		self.animatePlayer = function (playerObj) {
@@ -333,6 +337,8 @@
 
 			// main player //////////////////////////////////
 			if (player.getIsMainPlayer()) {
+				console.log("calculateMainPlayerPosition");
+
 				if (typeof aStarResult !== "undefined" && aStarResult.length > 0) {
 
 					if (player.getCurrentMovementStatus() === player.getMovementStatuses().running) {
@@ -342,13 +348,14 @@
 			}
 				// other player //////////////////////////////////
 			else {
-				self.calculateOtherPlayerPosition(player, playerCtx, playerCanvas);
+				self.calculateOtherPlayerPosition( player, playerCtx, playerCanvas );
 			}
 
 			self.drawPlayer(playerObj);
 		};
 
 		self.drawPlayer = function (playerObj) {
+
 			var player = playerObj.player;
 			var canvasPadding = self.parent.game.SETTINGS.map.getCanvasPadding();
 			var spriteSize = player.getSpriteSize();
@@ -401,7 +408,6 @@
 
 			//player still moving to tile
 			if (Math.abs(tileXMinusPlayerX) >= pixDist || Math.abs(tileYMinusPlayerY) >= pixDist) {
-
 				var newX = pixDist * velocityX + playerCornerPoint.x;
 				var newY = pixDist * velocityY + playerCornerPoint.y;
 
@@ -459,7 +465,7 @@
 			}
 			else {
 				//at this point other player is fully in tile
-				game.otherPlayerIsFullyInTile(enemy, enemyCtx, canvas);
+				game.otherPlayerIsFullyInTile(enemy);
 			}
 
 			if (enemy.getAnimationCounter() >= enemy.getCharacter().getSprite().getNumOfAnimationFrames()) {

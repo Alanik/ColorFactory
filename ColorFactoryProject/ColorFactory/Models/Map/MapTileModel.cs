@@ -16,9 +16,6 @@ namespace ColorFactory.Models.Map
 			this.Tile = tile;
 			this.Number = number;
 			this.Graph = Graph;
-
 		}
 	}
-
-	
 }

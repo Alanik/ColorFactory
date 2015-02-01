@@ -2,9 +2,11 @@
 	<span id="lobbyHeaderTitle" class="headerTitle">Lobby</span>@*<button class="btnCloseLobby myButton" style="float: right;">close</button>*@
 </header>
 
+<div id="addNewRoom-txtbox-container">
+	<input id="txtRoomName" class="txtNameInput" type="text" placeholder="room name" /><button id="btnCreateRoom" class="myButton" style="margin-left: 10px;" >create new room</button>
+</div>
+
 <div id="lobbyWrapper">
-
-
 	<section style="color: white;">
 		<div id="roomListContainer">
 		<div style="color:rgba(147, 156, 44, 1);">game rooms: </div>
@@ -16,9 +18,7 @@
 <div id="roomWrapper">
 	@Html.Partial("_RoomView")
 </div>
-<div class="addNewRoom-txtbox-container">
-	<input id="txtRoomName" class="txtNameInput" type="text" placeholder="room name" /><button id="btnCreateRoom" class="myButton" style="margin-left: 10px;" >create new room</button>
-</div>
+
 
 @*<div>
 	<input type="checkbox" checked="checked" id="bgSwitchChkBox" /><span id="bgSwitchSpan" style="color: white;">  light map background</span>

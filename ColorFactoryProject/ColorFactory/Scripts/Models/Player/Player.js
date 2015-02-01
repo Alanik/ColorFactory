@@ -29,6 +29,7 @@ var Player = function (character, isMainPlayer) {
 	var _currentShootingTargetSeatNumber = null;
 	var _seatNumber = 0;
 	var _isMainPlayer = isMainPlayer;
+	var _isTargeted = false;
 
 	var _playerMovementStatuses = {
 		idle: "idle",
@@ -51,11 +52,17 @@ var Player = function (character, isMainPlayer) {
 	}
 	var _currentWeapon = _weapons.acorn;
 
-	var _updateAnimation = function () {
+	var _updateAnimation = function ()
+	{
+		//TODO: temporary
+		if ( _isTargeted )
+		{
+			_character.changeAnimation( _character.animations.target );
+			return;
+		}
 
 		switch (_currentMovementStatus) {
 			case _playerMovementStatuses.idle:
-
 				if (_currentAttackStatus === _playerAttackStatuses.idle) {
 					_character.changeAnimation(_character.animations.idle);
 				}
@@ -347,6 +354,14 @@ var Player = function (character, isMainPlayer) {
 
 	self.getIsMainPlayer = function () {
 		return _isMainPlayer;
+	};
+
+	self.getIsTargeted = function (){
+		return _targeted;
+	};
+
+	self.setIsTargeted = function ( value ){
+		_isTargeted = value;
 	};
 }
 

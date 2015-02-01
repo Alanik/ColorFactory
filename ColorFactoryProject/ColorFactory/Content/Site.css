@@ -628,10 +628,9 @@ tr.pager td {
 	position: absolute;
 	width: 70px;
 	left: 825px;
-	height: 498px;
+	height: 515px;
 	z-index: 2;
-	top: 38px;
-	border-bottom-right-radius:40px;
+	top: 22px;
 	background: rgba(0, 0, 0, 0.8);
 }
 
@@ -641,8 +640,10 @@ tr.pager td {
 	left: 5px;
 }
 
-.rightSideDisplayPanels {
-	padding-left: 4px;
+#smallTurretIcon {
+	height:20px;
+	width:20px;
+	background:orange;
 }
 
 #mainContainer {
@@ -738,16 +739,16 @@ tr.pager td {
 	overflow: hidden;
 }
 
+#addNewRoom-txtbox-container {
+margin-bottom:20px;
+}
+
 
 #roomList li {
 	width: 400px;
 	background: rgba(147, 156, 44, 1);;
 	padding: 10px;
 	margin-bottom: 6px;
-	border-radius: 15px;
-	-moz-border-radius: 15px;
-	border-radius: 15px;
-	-moz-border-radius: 15px;
 	display: block;
 }
 
@@ -809,6 +810,8 @@ background:#CDCDCD;
 	border-radius: 11px;
 	border: 2px solid white;
 	-moz-border-radius: 11px;
+	position:relative;
+	top:5px;
 }
 
 .circleFullPlayerNotReady {
@@ -892,41 +895,6 @@ background:#CDCDCD;
 	top: 260px;
 	left: 730px;
 	display: none;
-}
-
-.borderSquare {
-	position: absolute;
-	z-index: 10;
-	width: 20px;
-	height: 20px;
-}
-
-#square1 {
-	border-top: 1px solid rgb(59, 153, 104);
-	border-left: 1px solid rgb(59, 153, 104);
-	left: 427px;
-	top: 67px;
-}
-
-#square2 {
-	border-top: 1px solid rgb(59, 153, 104);
-	border-right: 1px solid rgb(59, 153, 104);
-	left: 908px;
-	top: 67px;
-}
-
-#square3 {
-	border-bottom: 1px solid rgb(59, 153, 104);
-	border-left: 1px solid rgb(59, 153, 104);
-	left: 427px;
-	top: 548px;
-}
-
-#square4 {
-	border-bottom: 1px solid rgb(59, 153, 104);
-	border-right: 1px solid rgb(59, 153, 104);
-	left: 908px;
-	top: 548px;
 }
 
 .websiteFooter {

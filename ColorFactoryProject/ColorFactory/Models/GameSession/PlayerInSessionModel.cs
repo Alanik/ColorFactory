@@ -53,7 +53,6 @@ namespace ColorFactory.Models.GameSession
 
 		private MapTileModel[,] CloneMap(MapTileModel[,] map)
 		{
-
 			MapTileModel[,] privateMap = new MapTileModel[GameSettings.Map.NumberOfTiles_Column, GameSettings.Map.NumberOfTiles_Row];
 
 			for (int col = 0; col < GameSettings.Map.NumberOfTiles_Column; col++)

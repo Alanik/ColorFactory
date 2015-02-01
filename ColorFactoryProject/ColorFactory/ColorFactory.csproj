@@ -69,6 +69,18 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -76,6 +88,14 @@
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.4.0.20710.0\lib\net40\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.20710.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Configuration" />
@@ -89,26 +109,9 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
-    <Reference Include="System.Net.Http">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.4.0.20710.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.WebRequest">
-      <Private>True</Private>
-      <HintPath>..\packages\Microsoft.Net.Http.2.0.20710.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
-    </Reference>
     <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.Helpers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.4.0.20710.0\lib\net40\System.Web.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.20710.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
@@ -199,6 +202,7 @@
     <Compile Include="Models\GameSession\GameSessionManagerModel.cs" />
     <Compile Include="Models\GameSession\GameSessionModel.cs" />
     <Compile Include="Models\Map\SessionMapTileModel.cs" />
+    <Compile Include="Models\Map\TileKind.cs" />
     <Compile Include="Models\Player\PlayerManagerModel.cs" />
     <Compile Include="Models\Player\PlayerModel.cs" />
     <Compile Include="Models\Player\PositionModel.cs" />
@@ -238,6 +242,8 @@
     <Content Include="Images\PersonalMenu\menu-transparent.png" />
     <Content Include="Images\point.png" />
     <Content Include="Images\Lobby\success.png" />
+    <Content Include="Images\TileSheet\Animals\Boar\boar_running.png" />
+    <Content Include="Images\TileSheet\Animals\Boar\boar_target.png" />
     <Content Include="Images\TileSheet\Animals\Squirrel\squirrel_idleTest.png" />
     <Content Include="Images\TileSheet\Animals\Squirrel\squirrel_running.png" />
     <Content Include="Images\TileSheet\Animals\Squirrel\squirrel_target.png" />
@@ -247,7 +253,6 @@
     <Content Include="Images\TileSheet\tileSheetRedPlayer.png" />
     <Content Include="Images\TileSheet\tileSheetRedPlayerTarget.png" />
     <Content Include="Scripts\AStar\astar.js" />
-    <Content Include="Scripts\functions.js" />
     <Content Include="Scripts\AStar\graph.js" />
     <Content Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -257,6 +262,7 @@
     <Content Include="Content\fonts\victor-pixel-webfont.ttf" />
     <Content Include="Content\fonts\victor-pixel-webfont.woff" />
     <None Include="Scripts\Library\jquery-1.8.3.intellisense.js" />
+    <Content Include="Scripts\FPSMeter\fpsmeter.min.js" />
     <Content Include="Scripts\Library\jquery-1.8.3.js" />
     <Content Include="Scripts\Library\jquery-1.8.3.min.js" />
     <Content Include="Scripts\Library\jquery-ui-1.9.2.js" />
@@ -276,17 +282,18 @@
     <Content Include="Scripts\Library\knockout-2.2.0.js" />
     <Content Include="Scripts\Models\HelperClasses\AnimationManager.js" />
     <Content Include="Scripts\Models\Bullet.js" />
-    <Content Include="Scripts\Models\Character\Character.js" />
-    <Content Include="Scripts\Models\Character\CharacterAnimations.js" />
+    <Content Include="Scripts\Models\Player\Character.js" />
+    <Content Include="Scripts\Models\Player\CharacterAnimations.js" />
     <Content Include="Scripts\Models\HelperClasses\Cursor.js" />
     <Content Include="Scripts\Models\HelperClasses\Effects.js" />
     <Content Include="Scripts\Models\Game.js" />
     <Content Include="Scripts\Models\HelperClasses\Map.js" />
-    <Content Include="Scripts\Models\Player.js" />
+    <Content Include="Scripts\Models\Player\Player.js" />
     <Content Include="Scripts\Models\HelperClasses\Settings.js" />
-    <Content Include="Scripts\Models\Character\Sprite.js" />
+    <Content Include="Scripts\Models\Player\Sprite.js" />
     <Content Include="Scripts\Models\TextAnimation.js" />
     <Content Include="Scripts\Library\modernizr-2.5.3.js" />
+    <Content Include="Scripts\Models\Turret\Turret.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

@@ -14,7 +14,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>11/14/2013 19:39:12</publishTime>
     </File>
     <File Include="bin/ColorFactory.dll">
-      <publishTime>05/04/2014 16:28:33</publishTime>
+      <publishTime>01/28/2015 20:57:52</publishTime>
     </File>
     <File Include="bin/DotNetOpenAuth.AspNet.dll">
       <publishTime>11/14/2013 19:39:10</publishTime>
@@ -106,6 +106,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="bin/WebMatrix.WebData.dll">
       <publishTime>11/14/2013 19:39:12</publishTime>
     </File>
+    <File Include="Content/background/friskyWoodsPoster.jpg">
+      <publishTime>05/24/2014 22:11:45</publishTime>
+    </File>
     <File Include="Content/fonts/victor-pixel-webfont.eot">
       <publishTime>04/12/2014 21:55:39</publishTime>
     </File>
@@ -152,7 +155,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>12/04/2013 03:03:53</publishTime>
     </File>
     <File Include="Content/Site.css">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>11/07/2014 19:06:40</publishTime>
     </File>
     <File Include="Content/themes/base/images/ui-bg_flat_0_aaaaaa_40x100.png">
       <publishTime>12/21/2012 18:04:24</publishTime>
@@ -376,14 +379,20 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Images/point.png">
       <publishTime>01/28/2013 00:07:20</publishTime>
     </File>
+    <File Include="Images/Tilesheet/Animals/Boar/boar_running.png">
+      <publishTime>05/27/2014 22:42:13</publishTime>
+    </File>
+    <File Include="Images/Tilesheet/Animals/Boar/boar_target.png">
+      <publishTime>05/27/2014 22:42:03</publishTime>
+    </File>
     <File Include="Images/Tilesheet/Animals/Squirrel/squirrel_idleTest.png">
-      <publishTime>05/02/2014 16:29:07</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Images/Tilesheet/Animals/Squirrel/squirrel_running.png">
-      <publishTime>05/01/2014 15:31:41</publishTime>
+      <publishTime>05/27/2014 22:43:18</publishTime>
     </File>
     <File Include="Images/Tilesheet/Animals/Squirrel/squirrel_target.png">
-      <publishTime>05/03/2014 19:03:35</publishTime>
+      <publishTime>05/27/2014 22:43:08</publishTime>
     </File>
     <File Include="Images/Tilesheet/Bullet/bullet.png">
       <publishTime>04/12/2014 21:55:39</publishTime>
@@ -404,16 +413,19 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/12/2014 21:55:39</publishTime>
     </File>
     <File Include="packages.config">
-      <publishTime>12/03/2013 20:37:13</publishTime>
+      <publishTime>11/11/2014 19:36:30</publishTime>
     </File>
     <File Include="Scripts/astar.js">
       <publishTime>10/31/2012 00:25:24</publishTime>
     </File>
     <File Include="Scripts/AStar/astar.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/AStar/graph.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
+    </File>
+    <File Include="Scripts/FPSMeter/fpsmeter.min.js">
+      <publishTime>05/28/2014 20:52:36</publishTime>
     </File>
     <File Include="Scripts/functions.js">
       <publishTime>04/12/2014 21:55:39</publishTime>
@@ -470,55 +482,55 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>01/28/2013 00:07:21</publishTime>
     </File>
     <File Include="Scripts/Library/jquery-1.8.3.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Library/jquery-1.8.3.min.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Library/jquery-ui-1.9.2.js">
-      <publishTime>05/05/2014 23:08:15</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Library/jquery-ui-1.9.2.min.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Library/jquery.mobile-1.2.0.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Library/jquery.mobile-1.2.0.min.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Library/jquery.signalR-1.0.0-rc1.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Library/jquery.signalR-1.0.0-rc1.min.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Library/jquery.unobtrusive-ajax.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Library/jquery.unobtrusive-ajax.min.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Library/jquery.validate.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Library/jquery.validate.min.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Library/jquery.validate.unobtrusive.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Library/jquery.validate.unobtrusive.min.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Library/knockout-2.2.0.debug.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Library/knockout-2.2.0.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Library/modernizr-2.5.3.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Models/AnimationManager.js">
       <publishTime>04/12/2014 21:55:39</publishTime>
@@ -527,13 +539,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/12/2014 21:55:39</publishTime>
     </File>
     <File Include="Scripts/Models/Character/Character.js">
-      <publishTime>05/03/2014 02:32:11</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Models/Character/CharacterAnimations.js">
-      <publishTime>05/03/2014 19:00:56</publishTime>
+      <publishTime>05/27/2014 22:40:44</publishTime>
     </File>
     <File Include="Scripts/Models/Character/Sprite.js">
-      <publishTime>05/03/2014 01:39:34</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Models/Cursor.js">
       <publishTime>04/12/2014 21:55:39</publishTime>
@@ -542,28 +554,28 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/12/2014 21:55:39</publishTime>
     </File>
     <File Include="Scripts/Models/Game.js">
-      <publishTime>05/05/2014 23:41:52</publishTime>
+      <publishTime>01/28/2015 21:01:21</publishTime>
     </File>
     <File Include="Scripts/Models/HelperClasses/AnimationManager.js">
-      <publishTime>05/05/2014 23:08:16</publishTime>
+      <publishTime>11/07/2014 18:21:23</publishTime>
     </File>
     <File Include="Scripts/Models/HelperClasses/Cursor.js">
-      <publishTime>04/12/2014 21:55:39</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Models/HelperClasses/Effects.js">
-      <publishTime>04/12/2014 21:55:39</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Models/HelperClasses/Map.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>11/11/2014 15:03:06</publishTime>
     </File>
     <File Include="Scripts/Models/HelperClasses/Settings.js">
-      <publishTime>05/04/2014 13:35:18</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Scripts/Models/Map.js">
       <publishTime>04/13/2014 11:15:33</publishTime>
     </File>
     <File Include="Scripts/Models/Player.js">
-      <publishTime>05/05/2014 23:34:32</publishTime>
+      <publishTime>05/27/2014 00:00:46</publishTime>
     </File>
     <File Include="Scripts/Models/Players.js">
       <publishTime>11/25/2013 14:42:50</publishTime>
@@ -572,13 +584,16 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/13/2014 11:46:15</publishTime>
     </File>
     <File Include="Scripts/Models/TextAnimation.js">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
+    </File>
+    <File Include="Scripts/Models/Turret/Turret.js">
+      <publishTime>11/07/2014 18:33:19</publishTime>
     </File>
     <File Include="Scripts/modernizr-2.5.3.js">
       <publishTime>09/23/2012 00:11:15</publishTime>
     </File>
     <File Include="Scripts/_references.js">
-      <publishTime>05/03/2014 11:53:51</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Views/Account/ExternalLoginConfirmation.cshtml">
       <publishTime>09/23/2012 00:11:02</publishTime>
@@ -614,31 +629,31 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/24/2012 01:56:09</publishTime>
     </File>
     <File Include="Views/Home/Index.cshtml">
-      <publishTime>05/05/2014 23:33:56</publishTime>
+      <publishTime>11/07/2014 18:13:04</publishTime>
     </File>
     <File Include="Views/Home/_ChatWindow.cshtml">
       <publishTime>04/12/2014 21:55:39</publishTime>
     </File>
     <File Include="Views/Home/_LobbyView.cshtml">
-      <publishTime>04/12/2014 21:55:39</publishTime>
+      <publishTime>11/07/2014 18:10:55</publishTime>
     </File>
     <File Include="Views/Home/_personalMenu.cshtml">
-      <publishTime>04/12/2014 21:55:39</publishTime>
+      <publishTime>11/07/2014 19:39:00</publishTime>
     </File>
     <File Include="Views/Home/_rightSideDisplay.cshtml">
-      <publishTime>04/12/2014 21:55:39</publishTime>
+      <publishTime>11/07/2014 19:03:53</publishTime>
     </File>
     <File Include="Views/Home/_RoomView.cshtml">
       <publishTime>04/12/2014 21:55:39</publishTime>
     </File>
     <File Include="Views/Home/_SetPlayerNameModalBox.cshtml">
-      <publishTime>04/12/2014 21:55:39</publishTime>
+      <publishTime>05/24/2014 22:11:45</publishTime>
     </File>
     <File Include="Views/Shared/Error.cshtml">
       <publishTime>09/23/2012 00:11:03</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>05/01/2014 13:30:50</publishTime>
+      <publishTime>05/28/2014 20:53:11</publishTime>
     </File>
     <File Include="Views/Shared/_LoginPartial.cshtml">
       <publishTime>09/23/2012 00:11:02</publishTime>
@@ -650,7 +665,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/24/2012 21:11:43</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>04/12/2014 16:02:21</publishTime>
+      <publishTime>01/28/2015 21:33:59</publishTime>
     </File>
   </ItemGroup>
 </Project>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	 @*<meta content='width=460, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />*@
+	@*<meta content='width=460, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />*@
 	<title>HTML5 Multiplayer Game</title>
 	<link href='http://fonts.googleapis.com/css?family=Oxygen:400,300,700&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
 	<link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
@@ -14,21 +14,26 @@
 	<script src="~/signalr/hubs" type="text/javascript"></script>
 	<script src="~/Scripts/AStar/graph.js"></script>
 	<script src="~/Scripts/AStar/astar.js"></script>
+	<script src="~/Scripts/FPSMeter/fpsmeter.min.js"></script>
 
 </head>
 <body>
-	
+
 	<header>
 	</header>
 	<div id="bodyContainer">
+		<div style="background: url('Content/background/friskyWoodsPoster.jpg') center repeat-x; background-size: auto 100%; width: 100%; height: 707px; border-bottom: 1px solid rgb(15,15,15); position: absolute;">
+			<div id="dottedWrapper" style="width: 100%; height: 100%" class="dotted-wrapper"></div>
+		</div>
+		<div style="width: 100%; position: relative; top: 708px; border-top: 1px solid rgb(94, 94, 94);"></div>
 		<section>
 			@RenderBody()
 		</section>
 	</div>
 	<footer class="websiteFooter">
-	<div style="color:rgb(150,150,150);font-size:40px;position:relative;top:30px;text-align:center;">
-	<span>Color Factory</span><span style="font-size:12px;"> @@ </span><a href="https://www.facebook.com/alan.budzinski" style="font-size:14px;">Alan Budzinski</a>
-	</div>
+		<div style="color: rgb(150,150,150); font-size: 40px; position: relative; top: 30px; text-align: center;">
+			<span>Frisky Woods</span><span style="font-size: 12px;"> @@ </span><a href="https://www.facebook.com/alan.budzinski" style="font-size: 14px;">Alan Budzinski</a>
+		</div>
 	</footer>
 </body>
 </html>

@@ -1,63 +1,65 @@
 ﻿<div id="mainContainer">
-	<div id="startGameCounter">Game Started</div>
+	<div id="gameWrapper" style="background: url('Content/background/friskyWoodsPoster.jpg') center; width: 998px; height: 705px; border: 1px solid rgb(15,15,15); position: relative; -webkit-box-shadow: inset 0 0 20px 0 #000; box-shadow: inset 0 0 20px 0 #000;">
 
-@*	<div id="square1" class="borderSquare"></div>
-	<div id="square2" class="borderSquare"></div>
-	<div id="square3" class="borderSquare"></div>
-	<div id="square4" class="borderSquare"></div>*@
+		<section class="topHeader">
+			<div id="FPSMeterContainer" style="border:1px solid red;position:absolute;left:300px;z-index:5;">
+			</div>
+			<div style="text-align: center; padding: 4px; font-size: 20px; color: rgb(204, 255, 0); font-family: victors_pixel_fontregular; background: rgba(0,0,0,.7); width: 200px;">Frisky Woods</div>
+			<div style="text-align: center; padding: 4px; font-size: 11px; color: rgb(206, 255, 103); background: rgba(0,0,0,.7); width: 200px;">HTML5 online multiplayer game</div>
+		</section>
 
-	<section class="topHeader">
-		<div style="display: inline-block; margin-top: 20px; font-size: 16px; color: rgb(204, 255, 0); font-family: victors_pixel_fontregular">Color Factory</div>
-		<div style="display: inline-block; margin-top: 20px; font-size: 11px; color: rgb(206, 255, 103);">powered by: HTML5 + ASP.NET SignalR</div>
-		<div style="display: inline-block; margin-left: 96px; position: relative; top: 20px;">
+		<div style="position: absolute; right: 173px; top: 22px; padding: 2px 10px; background: rgba(0, 0, 0, 0.8);">
 			<div style="display: inline-block; color: gray; padding-right: 6px;">player:</div>
 			<div id="playerNameSpan" style="display: inline-block; font-size: 20px;"></div>
 		</div>
-	</section>
 
-	<div id="lobbyContainer">
-		@Html.Partial("_LobbyView")
-	</div>
+		<div id="startGameCounter">Game Started</div>
 
-	<div id="setPlayerNameModalBox">
-		@Html.Partial("_SetPlayerNameModalBox")
-	</div>
+		<div id="lobbyContainer">
+			@Html.Partial("_LobbyView")
+		</div>
 
-	<div id="playerCanvasContainer">
-		<canvas id="playerCanvas" width="64" height="64" />
-	</div>
-	<div id="enemyCanvasContainer">
-		<canvas id="enemyCanvas1" width="64" height="64" />
-		<canvas id="enemyCanvas2" width="64" height="64" />
-		<canvas id="enemyCanvas3" width="64" height="64" />
-	</div>
+		<div id="setPlayerNameModalBox">
+			@Html.Partial("_SetPlayerNameModalBox")
+		</div>
 
-	<div id="bulletsCanvasContainer">
-		<canvas id="bulletsCanvas" width="500" height="500" />
-	</div>
+		<div id="playerCanvasContainer">
+			<canvas id="playerCanvas" width="64" height="64" />
+		</div>
+		<div id="enemyCanvasContainer">
+			<canvas id="enemyCanvas1" width="64" height="64" />
+			<canvas id="enemyCanvas2" width="64" height="64" />
+			<canvas id="enemyCanvas3" width="64" height="64" />
+		</div>
 
-	<div id="mapContainer">
-		<canvas id="mapCanvas" width="500" height="500" />
-	</div>
+		<div id="bulletsCanvasContainer">
+			<canvas id="bulletsCanvas" width="500" height="500" />
+		</div>
 
-	<div id="rightSideDisplay">
-		@Html.Partial("_RightSideDisplay")
-	</div>
+		<div id="mapContainer">
+			<canvas id="mapCanvas" width="500" height="500" />
+		</div>
 
-	<div id="effectsCanvasContainer">
-		<canvas id="effectsCanvas" width="580" height="550" />
-	</div>
+		<div id="rightSideDisplayContainer">
+			<div id="rightSideDisplay">
+				@Html.Partial("_RightSideDisplay")
+			</div>
+		</div>
 
-	<div id="personalMenuContainer" style="display: none; width: 100px; height: 100px; border: 1px solid #00B2FF; background-image: url(/Images/PersonalMenu/menu-transparent.png); position: absolute; z-index: 2;">
-		@Html.Partial("_PersonalMenu")
+		<div id="effectsCanvasContainer">
+			<canvas id="effectsCanvas" width="580" height="550" />
+		</div>
+
+		<div id="personalMenuContainer" style="display: none; width: 100px; height: 100px; border: 1px solid #00B2FF; background-image: url(/Images/PersonalMenu/menu-transparent.png); position: absolute; z-index: 2;">
+			@Html.Partial("_PersonalMenu")
+		</div>
 	</div>
 
 	<div id="leftSideContainer">
-		<div style="position: absolute; top: 72px; font-size: 16px; color: rgb(78, 175, 124);">
+		<div style="font-size: 16px; color: rgb(78, 175, 124);">
 			chat
 		</div>
 
-		<button id="btnEnterLobby" class="myButton">Lobby</button>
 		<div id="chatWindowContainer">
 			@Html.Partial("_ChatWindow")
 		</div>
@@ -139,21 +141,17 @@
 	});
 
 	lobbyConnection.client.clientReceiveRoomCreated = function (roomName) {
-		$('#roomList').append('<li name="' + roomName + '">' + roomName + '<div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleFullPlayerNotReady"></div></li>');
+		$('#roomList').append('<li name="' + roomName + '"><span>' + roomName + '</span><div class="playerCircle circleEmpty"></div><div class="playerCircle circleFullPlayerNotReady"></div></li>');
 	};
 
 	lobbyConnection.client.clientReceiveSetRoomToPlayerOnRoomCreated = function (roomName) {
 		mainPlayerObj.player.setRoom(roomName);
 	};
 
-	$("#btnEnterLobby").click(function () {
-		lobbyConnection.server.serverBroadcastPlayerEnterLobby();
-	});
-
 	lobbyConnection.client.clientReceivePlayerEnterLobby = function (list) {
 		$('#roomList').empty();
 		$(list).each(function (i, el) {
-			$('#roomList').append('<li name="' + el + '">' + el + '<div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleEmpty"></div><div class="playerCircle circleFullPlayerNotReady"></div></li>');
+			$('#roomList').append('<li name="' + el + '">' + el + '<div class="playerCircle circleEmpty"></div><div class="playerCircle circleFullPlayerNotReady"></div></li>');
 		});
 		$("#lobbyContainer").show();
 	}
@@ -186,6 +184,7 @@
 		$("#lobbyHeaderTitle").text("Lobby");
 		$("#roomWrapper").hide();
 		$("#lobbyWrapper").show();
+		$("#lobbyContainer").find("#addNewRoom-txtbox-container").show();
 	});
 
 	$("#roomList").on("click", "li", function () {
@@ -194,6 +193,7 @@
 		$("#playerListInsideRoom li span").text("").prev().removeClass("circleFullPlayerNotReady").addClass("circleEmpty");
 		$("#lobbyWrapper").hide();
 		$("#roomWrapper").show();
+		$("#lobbyContainer").find("#addNewRoom-txtbox-container").hide();
 		lobbyConnection.server.serverBroadcastPlayerEnterRoom(theRoom);
 	});
 
@@ -220,8 +220,7 @@
 				$li.find('img').attr('src', 'Images/Lobby/successGray.png');
 			}
 
-			$span.text(player.Name);
-
+			$span.text(player.Name);			
 		}
 	};
 
@@ -368,6 +367,7 @@
 
 				lobbyConnection.server.serverBroadcastAddPlayerToPlayerCollection(player);
 
+				$("#dottedWrapper").fadeOut();
 				$("#setPlayerNameModalBox").hide();
 			}
 		}
@@ -383,8 +383,8 @@
 
 		lobbyConnection.server.serverBroadcastAddPlayerToPlayerCollection(player);
 
+		$("#dottedWrapper").fadeOut();
 		$("#setPlayerNameModalBox").hide();
-
 	});
 
 	lobbyConnection.client.clientReceiveOnDisconnect = function (name, count) {
@@ -402,6 +402,8 @@
 		}
 
 		$('#spanPlayersOnline').html(count);
+
+		lobbyConnection.server.serverBroadcastPlayerEnterLobby();
 	};
 
 	lobbyConnection.client.clientReceivePlayerLeaveSeat = function (roomName, seatNumber) {
@@ -446,39 +448,19 @@
 		var MAP = new Map(SETTINGS.map);
 
 		var animations = new CharacterAnimations();
-
 		var squirrel = new Character("squirrel", "Wiewiórka Mimi", animations.squirrel);
-		var mainPlayer = new Player(squirrel, true, null);
+		var mainPlayer = new Player(squirrel, true);
 		mainPlayer.setBullet(new Bullet("Images/tileSheet/Bullet/bullet.png"));
+
+		//TODO: change from global variable to private - currently used in index.cshtml
 		mainPlayerObj = { "player": mainPlayer, "ctx": playerCtx, "canvas": playerCanvas };
 
-		var squirrel1 = new Character("squirrel", "Wiewiórka Mimi", animations.squirrel);
-		var squirrel2 = new Character("squirrel", "Wiewiórka Mimi", animations.squirrel);
-		var squirrel3 = new Character("squirrel", "Wiewiórka Mimi", animations.squirrel);
+		GAME = new Game(SETTINGS, CURSOR, EFFECTS, ANIMATION_MANAGER, MAP, mainPlayerObj);
 
-		var player1 = new Player(squirrel1, false, 0);
-		var player2 = new Player(squirrel2, false, 1);
-		var player3 = new Player(squirrel3, false, 2);
-
-		player1.setBullet(new Bullet("Images/tileSheet/Bullet/bullet.png"));
-		player2.setBullet(new Bullet("Images/tileSheet/Bullet/bullet.png"));
-		player3.setBullet(new Bullet("Images/tileSheet/Bullet/bullet.png"));
-
-		var playerObj1 = { "player": player1, "ctx": enemyCtx1, "canvas": enemyCanvas1 };
-		enemyCtx1.globalAlpha = 0;
-		var playerObj2 = { "player": player2, "ctx": enemyCtx2, "canvas": enemyCanvas2 };
-		enemyCtx2.globalAlpha = 0;
-		var playerObj3 = { "player": player3, "ctx": enemyCtx3, "canvas": enemyCanvas3 };
-		enemyCtx3.globalAlpha = 0;
-
-		var otherPlayers = [playerObj1, playerObj2, playerObj3];
-
-		GAME = new Game(SETTINGS, CURSOR, EFFECTS, ANIMATION_MANAGER, MAP, mainPlayerObj, otherPlayers);
-
+		//TODO: refactor 
 		ANIMATION_MANAGER.game = GAME;
 
 		GAME.initialize();
 		GAME.onGameStart();
-
 	});
 </script>

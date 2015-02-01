@@ -46,13 +46,15 @@
 	};
 
 	//map
-	// 0 = covered tile
-	// 1 = uncovered tile
+	// 0 = covered empty tile
+	// 1 = uncovered empty tile
 	// 2 = covered Mine tile
 	// 3 = uncovered/destroyed Mine tile
 	// 4 = uncovered/scored Mine tile
 	// 5 = uncovered mine (not scored) uncovered by pineCone explosion
 	// 6 = uncovered tile by pineCone explosion
+	// 7 = covered turret
+	// 8 = uncovered turret
 
 
 	self.getTilesValue = function (col, row) {

@@ -6,6 +6,8 @@
 		self.TextAnimationManager = new self.TextAnimationManager();
 		self.PlayerAnimationManager = new self.PlayerAnimationManager();
 
+		self.FPSMeter = new FPSMeter(document.getElementById('FPSMeterContainer'), { graph: 1, position:"static" });
+
 		self.BulletAnimationManager.parent = self;
 		self.TextAnimationManager.parent = self;
 		self.PlayerAnimationManager.parent = self;
@@ -298,7 +300,6 @@
 				self.clearAnimationTimerIntervals();
 				_interval = setInterval(self.drawPlayers, FPS);
 				self.setAnimationTimerInterval(_interval);
-
 			}
 		};
 
@@ -323,6 +324,8 @@
 					self.animatePlayer(currentPlayerObj);
 				}
 			}
+
+			self.parent.FPSMeter.tick();
 		};
 
 		self.animatePlayer = function (playerObj) {
@@ -333,6 +336,8 @@
 
 			// main player //////////////////////////////////
 			if (player.getIsMainPlayer()) {
+				console.log("calculateMainPlayerPosition");
+
 				if (typeof aStarResult !== "undefined" && aStarResult.length > 0) {
 
 					if (player.getCurrentMovementStatus() === player.getMovementStatuses().running) {
@@ -401,7 +406,6 @@
 
 			//player still moving to tile
 			if (Math.abs(tileXMinusPlayerX) >= pixDist || Math.abs(tileYMinusPlayerY) >= pixDist) {
-
 				var newX = pixDist * velocityX + playerCornerPoint.x;
 				var newY = pixDist * velocityY + playerCornerPoint.y;
 
