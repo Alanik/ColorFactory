@@ -31,7 +31,7 @@ namespace ColorFactory.Models.GameSession
 		private PlayerInSessionModel()
 		{
 			Score = 0;
-			AmmoPoints = 100;
+			AmmoPoints = 0;
 			Health = 200;
 			DamageDoneToOthers = 0;
 			UncoveredMines = 0;

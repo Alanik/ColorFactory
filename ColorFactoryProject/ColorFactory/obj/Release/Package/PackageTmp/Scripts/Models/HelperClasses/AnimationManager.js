@@ -20,6 +20,7 @@
 		var _currentlyAnimatedBullets = [];
 		var _animationTimerIntervals = [];
 		var _interval;
+		var FPS = 15;
 
 		self.parent = null;
 
@@ -32,7 +33,7 @@
 
 			if (self.shouldStartAnimationInterval()) {
 				self.clearAnimationTimerIntervals();
-				_interval = setInterval(function () { self.drawBullets(_currentlyAnimatedBullets) }, 15);
+				_interval = setInterval(function () { self.drawBullets(_currentlyAnimatedBullets) }, FPS);
 				self.setAnimationTimerInterval(_interval);
 			}
 		}
@@ -347,13 +348,14 @@
 			}
 				// other player //////////////////////////////////
 			else {
-				self.calculateOtherPlayerPosition(player, playerCtx, playerCanvas);
+				self.calculateOtherPlayerPosition( player, playerCtx, playerCanvas );
 			}
 
 			self.drawPlayer(playerObj);
 		};
 
 		self.drawPlayer = function (playerObj) {
+
 			var player = playerObj.player;
 			var canvasPadding = self.parent.game.SETTINGS.map.getCanvasPadding();
 			var spriteSize = player.getSpriteSize();
@@ -463,7 +465,7 @@
 			}
 			else {
 				//at this point other player is fully in tile
-				game.otherPlayerIsFullyInTile(enemy, enemyCtx, canvas);
+				game.otherPlayerIsFullyInTile(enemy);
 			}
 
 			if (enemy.getAnimationCounter() >= enemy.getCharacter().getSprite().getNumOfAnimationFrames()) {

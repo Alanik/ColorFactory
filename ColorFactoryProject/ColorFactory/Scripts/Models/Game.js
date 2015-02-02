@@ -231,25 +231,17 @@
 			//TODO: temporary
 			mainPlayer.setAmmunitionPoints( totalAmmo );
 			game.displayAmmunitionPoints( mainPlayer.getAmmunitionPoints() );
-
-			//TODO: can ammo points ever be 0? won't the server use clientReceivePlayerStopsShooting if ammo gets to 0?
-			if ( mainPlayer.getAmmunitionPoints() == 0 )
-			{
-				opponentObj.player.setIsTargeted( false );
-				opponentCharacter.changeAnimation( opponentCharacter.animations.running );
-			}
 		}
 		gameConnection.client.clientReceivePlayerStopsShooting = function ( seatNumber )
 		{
 			var mainPlayer = game.player;
 			mainPlayer.setCurrentShootingTargetSeatNumber( null );
+
 			mainPlayer.setCurrentAttackStatus( mainPlayer.getAttackStatuses().idle );
 
 			var opponentObj = game.getOtherPlayerBasedOnSeatNumber( seatNumber );
-			var character = opponentObj.player.getCharacter();
-
 			opponentObj.player.setIsTargeted( false );
-			character.changeAnimation( character.animations.running );
+
 		};
 		gameConnection.client.clientReceivePlayerGetsShotByOtherPlayer = function ( rndDamage, health, startingTile, winMessage )
 		{
@@ -794,7 +786,6 @@
 	};
 	game.otherPlayerIsFullyInTile = function ( enemy, ctx, canvas )
 	{
-
 		var currTile = enemy.getCurrentTile();
 		var nextTile = enemy.getNextTile();
 
@@ -889,7 +880,6 @@
 		map.setTilesValue( minePosition.Column, minePosition.Row, 3 );
 		map.setGraphType( minePosition.Column, minePosition.Row, 0 );
 
-		//var point = game.CURSOR.getTileCornerPoint(game.player.getPreviousTile().column, player.getPreviousTile().row);
 		var point = game.CURSOR.getTileCornerPoint( position.Column, position.Row );
 
 		//moves player to the previous tile location
@@ -957,7 +947,6 @@
 	};
 	game.moveOtherPlayer = function ( col, row, playerObj, opacityChangeValue )
 	{
-
 		var otherPlayer = playerObj.player;
 
 		if ( typeof opacityChangeValue !== "undefined" )
