@@ -14,7 +14,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>11/14/2013 19:39:12</publishTime>
     </File>
     <File Include="bin/ColorFactory.dll">
-      <publishTime>02/01/2015 22:01:59</publishTime>
+      <publishTime>02/20/2016 19:12:38</publishTime>
     </File>
     <File Include="bin/DotNetOpenAuth.AspNet.dll">
       <publishTime>11/14/2013 19:39:10</publishTime>
@@ -155,7 +155,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>12/04/2013 03:03:53</publishTime>
     </File>
     <File Include="Content/Site.css">
-      <publishTime>02/01/2015 22:01:59</publishTime>
+      <publishTime>02/20/2016 19:05:21</publishTime>
     </File>
     <File Include="Content/themes/base/images/ui-bg_flat_0_aaaaaa_40x100.png">
       <publishTime>12/21/2012 18:04:24</publishTime>
@@ -554,10 +554,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/12/2014 21:55:39</publishTime>
     </File>
     <File Include="Scripts/Models/Game.js">
-      <publishTime>02/01/2015 22:01:59</publishTime>
+      <publishTime>02/20/2016 16:15:37</publishTime>
     </File>
     <File Include="Scripts/Models/HelperClasses/AnimationManager.js">
-      <publishTime>02/01/2015 22:01:59</publishTime>
+      <publishTime>02/02/2015 12:46:09</publishTime>
     </File>
     <File Include="Scripts/Models/HelperClasses/Cursor.js">
       <publishTime>05/24/2014 22:11:45</publishTime>
@@ -569,7 +569,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/01/2015 22:01:59</publishTime>
     </File>
     <File Include="Scripts/Models/HelperClasses/Settings.js">
-      <publishTime>05/24/2014 22:11:45</publishTime>
+      <publishTime>02/19/2016 20:57:32</publishTime>
     </File>
     <File Include="Scripts/Models/Map.js">
       <publishTime>04/13/2014 11:15:33</publishTime>
@@ -578,16 +578,16 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>05/27/2014 00:00:46</publishTime>
     </File>
     <File Include="Scripts/Models/Player/Character.js">
-      <publishTime>02/01/2015 22:01:59</publishTime>
+      <publishTime>02/02/2015 12:46:09</publishTime>
     </File>
     <File Include="Scripts/Models/Player/CharacterAnimations.js">
-      <publishTime>02/01/2015 22:01:59</publishTime>
+      <publishTime>02/02/2015 12:46:09</publishTime>
     </File>
     <File Include="Scripts/Models/Player/Player.js">
-      <publishTime>02/01/2015 22:01:59</publishTime>
+      <publishTime>02/02/2015 12:46:09</publishTime>
     </File>
     <File Include="Scripts/Models/Player/Sprite.js">
-      <publishTime>02/01/2015 22:01:59</publishTime>
+      <publishTime>02/02/2015 12:46:09</publishTime>
     </File>
     <File Include="Scripts/Models/Players.js">
       <publishTime>11/25/2013 14:42:50</publishTime>
@@ -641,13 +641,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/24/2012 01:56:09</publishTime>
     </File>
     <File Include="Views/Home/Index.cshtml">
-      <publishTime>02/01/2015 22:01:59</publishTime>
+      <publishTime>02/20/2016 18:53:22</publishTime>
     </File>
     <File Include="Views/Home/_ChatWindow.cshtml">
-      <publishTime>04/12/2014 21:55:39</publishTime>
+      <publishTime>02/20/2016 16:55:53</publishTime>
     </File>
     <File Include="Views/Home/_LobbyView.cshtml">
-      <publishTime>02/01/2015 22:01:59</publishTime>
+      <publishTime>02/20/2016 15:35:14</publishTime>
     </File>
     <File Include="Views/Home/_personalMenu.cshtml">
       <publishTime>02/01/2015 22:01:59</publishTime>
@@ -656,7 +656,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>02/01/2015 22:01:59</publishTime>
     </File>
     <File Include="Views/Home/_RoomView.cshtml">
-      <publishTime>04/12/2014 21:55:39</publishTime>
+      <publishTime>02/20/2016 16:29:33</publishTime>
     </File>
     <File Include="Views/Home/_SetPlayerNameModalBox.cshtml">
       <publishTime>02/01/2015 22:01:59</publishTime>
@@ -665,7 +665,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/23/2012 00:11:03</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>02/01/2015 22:01:59</publishTime>
+      <publishTime>02/20/2016 12:21:03</publishTime>
     </File>
     <File Include="Views/Shared/_LoginPartial.cshtml">
       <publishTime>09/23/2012 00:11:02</publishTime>

@@ -1,28 +1,25 @@
-﻿<header>
-	<span id="lobbyHeaderTitle" class="headerTitle">Lobby</span>@*<button class="btnCloseLobby myButton" style="float: right;">close</button>*@
-</header>
-
-<div id="addNewRoom-txtbox-container">
-	<input id="txtRoomName" class="txtNameInput" type="text" placeholder="room name" /><button id="btnCreateRoom" class="myButton" style="margin-left: 10px;" >create new room</button>
+﻿<div id="playerNameContainer">
+	<span style="padding-right: 6px;">player:</span><span id="playerName"></span>
+</div>
+<span id="lobbyHeaderTitle">Lobby</span>
+<div id="createGameRoomContainer">
+	<input id="txtRoomName" class="txtNameInput" type="text" placeholder="room name" />
+	<button id="btnCreateRoom" class="myButton" style="margin-left: 10px;">create new room</button>
 </div>
 
 <div id="lobbyWrapper">
-	<section style="color: white;">
-		<div id="roomListContainer">
-		<div style="color:rgba(147, 156, 44, 1);">game rooms: </div>
-			<span id="clientIdContainer"></span>
-			<ul id="roomList"></ul>
-		</div>
-	</section>
+	<div id="roomListContainer">
+		<div style="color: black;">game rooms: </div>
+		<span id="clientIdContainer"></span>
+		<ul id="roomList"></ul>
+	</div>
 </div>
 <div id="roomWrapper">
-	@Html.Partial("_RoomView")
+	@Html.Partial( "_RoomView" )
 </div>
 
 
-@*<div>
-	<input type="checkbox" checked="checked" id="bgSwitchChkBox" /><span id="bgSwitchSpan" style="color: white;">  light map background</span>
-</div>*@
+@*<input type="checkbox" checked="checked" id="bgSwitchChkBox" /><span id="bgSwitchSpan" style="color: white;">  light map background</span>*@
 
 
 

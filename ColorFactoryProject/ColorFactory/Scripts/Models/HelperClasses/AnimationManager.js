@@ -337,8 +337,6 @@
 
 			// main player //////////////////////////////////
 			if (player.getIsMainPlayer()) {
-				console.log("calculateMainPlayerPosition");
-
 				if (typeof aStarResult !== "undefined" && aStarResult.length > 0) {
 
 					if (player.getCurrentMovementStatus() === player.getMovementStatuses().running) {

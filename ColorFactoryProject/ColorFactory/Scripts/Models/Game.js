@@ -114,7 +114,9 @@
 			var gameSession = game.gameSession;
 			$( "#lobbyContainer" ).hide();
 			$( "#effectsCanvas" ).show();
-			$( "#mapContainer" ).css( "background", "rgb(53,53,53)" ).show();//#2E2E2E"rgb(197, 206, 198)
+			$( "#treesCanvasContainer" ).show();
+			document.body.scrollTop = document.documentElement.scrollTop = 0;
+			$( "#mapContainer" ).css( "background", "rgb(8, 156, 53)" ).show();//#2E2E2E"rgb(197, 206, 198)
 			gameSession.initializePlayer( x, y, seatNumber );
 			gameSession.initializeOtherPlayers( seatNumber );
 			gameSession.initializeMap();
@@ -170,9 +172,6 @@
 			{
 				case 0: {
 					game.playerStepsOnEmptyTile( mineNum, playerCurrentPosition );
-					break;
-				}
-				case 1: {
 					break;
 				}
 				case 2: {
@@ -475,7 +474,6 @@
 
 		initializeCanvases();
 		//initializeRightSideDisplay();
-		initializeLobbyAndPlayerNameModalPosition();
 
 		//game.drawMapTiles();
 		game.displayAmmunitionPoints( game.player.getAmmunitionPoints() );
@@ -507,6 +505,18 @@
 				return;
 			}
 
+			var treesCanvas = document.getElementById( "treesCanvas" );
+			if ( treesCanvas.getContext )
+			{
+				treesCanvas.width = game.SETTINGS.map.getMapCanvasWidth();
+				treesCanvas.height = game.SETTINGS.map.getMapCanvasHeight();
+			}
+			else
+			{
+				alert( "treesCanvas has no context" );
+				return;
+			}
+
 			var effectsCanvas = document.getElementById( "effectsCanvas" );
 			if ( effectsCanvas.getContext )
 			{
@@ -529,6 +539,9 @@
 			$bulletsCanvasContainer.css( "width", game.SETTINGS.map.getMapCanvasWidth() );
 			$bulletsCanvasContainer.css( "height", game.SETTINGS.map.getMapCanvasHeight() );
 
+			$treesCanvasContainer.css( "width", game.SETTINGS.map.getMapCanvasWidth() );
+			$treesCanvasContainer.css( "height", game.SETTINGS.map.getMapCanvasHeight() );
+
 			$playerCanvasContainer.css( "width", game.SETTINGS.map.getMapCanvasWidth() );
 			$playerCanvasContainer.css( "height", game.SETTINGS.map.getMapCanvasHeight() );
 
@@ -538,6 +551,7 @@
 			$playerCanvasContainer.css( "left", x )
 			$enemyCanvasContainer.css( "left", x )
 			$bulletsCanvasContainer.css( "left", x );
+			$treesCanvasContainer.css( { "left": x, "top": 62 } )
 		}
 		function initializeRightSideDisplay()
 		{
@@ -547,26 +561,14 @@
 			$( "#rightSideDisplay" ).css( "left", left + "px" );
 
 		}
-		function initializeLobbyAndPlayerNameModalPosition()
-		{
-			var $playerNameBox = $( "#setPlayerNameModalBox" );
-
-			var effectsLeft = $( "#effectsCanvas" ).css( "left" );
-			var effectsTop = $( "#effectsCanvas" ).css( "top" );
-
-			var winW = $( "#mainContainer" ).width();
-			$playerNameBox.css( { 'left': winW / 2 - $playerNameBox.width() / 2, 'top': 100 } );
-
-			$playerNameBox.show();
-
-		}
-
 	}
 	game.drawMapTiles = function ()
 	{
 		var settingsMap = game.SETTINGS.map;
 		var map = game.MAP;
 		var mapCtx = ctx;
+
+		var grass = new Image(), tree = new Image();
 
 		var x, y, tile,
 		padding = settingsMap.getCanvasPaddingWithoutBorder(),
@@ -577,12 +579,12 @@
 		numCol = settingsMap.getNumberOfTiles_Column();
 
 		mapCtx.clearRect( 0, 0, mapCanvas.width, mapCanvas.height );
+		treesCtx.clearRect( 0, 0, treesCanvas.width, treesCanvas.height );
 
 		for ( var i = 0; i < numCol; i++ )
 		{
 			for ( var j = 0; j < numRow; j++ )
 			{
-
 				tile = map.getTilesValue( i, j );
 
 				x = i * tileSize + i + padding;
@@ -590,35 +592,39 @@
 
 				if ( tile == 0 || tile == 2 )
 				{
-					drawTileWithRadius( ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, settingsMap.getDrawUncoveredTileBorder(), settingsMap.getUncoveredTileBackground() );
+					drawTileWithRadius( mapCtx, x + 1, y + 1, tileSize, tileSize, tileRadius, settingsMap.getDrawUncoveredTileBorder(), settingsMap.getUncoveredTileBackground() );
 				}
 				else if ( tile == 1 )
-				{
+				{			    
+					grass.src = "/Images/TileSheet/Ground/Grass/grass.png";
+					mapCtx.drawImage( grass, 0, 0, 50, 50, x + 1, y + 1, tileSize, tileSize );
 					mineNumber = map.getNumbersValue( i, j );
 					drawNumbers( i, j, mineNumber );
 				}
 				else if ( tile == 3 )
 				{
-					drawTileWithRadius( ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, "rgba(238,68,68,.8)" );
+					tree.src = "/Images/TileSheet/Ground/Trees/tree-blue.png";
+					treesCtx.drawImage( tree, 0, 0, 70, 70, (x + 1) - 10, (y + 1) - 10, 70, 70 );
 				}
 				else if ( tile == 4 )
 				{
-					drawTileWithRadius( ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, "rgba(10,211,122,.8)" );
+					drawTileWithRadius( mapCtx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, "rgb(10,211,122)" );
 				}
 				else if ( tile == 5 )
 				{
-					drawTileWithRadius( ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, "rgba(238,68,68,.8)" );
+					drawTileWithRadius( mapCtx, x + 1, y + 1, tileSize, tileSize, tileRadius, true, "rgb(238,68,68)" );
 				}
 				else if ( tile == 6 )
 				{
 					mineNumber = map.getNumbersValue( i, j );
 					drawNumbers( i, j, mineNumber );
 
-					drawTileWithRadius( ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, false, "rgba(255,255,255,.4)" );
+					//drawTileWithRadius( mapCtx, x + 1, y + 1, tileSize, tileSize, tileRadius, false, "rgba(255,255,255,.4)" );
+					drawTileWithRadius( mapCtx, x + 1, y + 1, tileSize, tileSize, tileRadius, false, "rgba(200,200,200)" );
 				}
 				else if ( tile == 7 )
 				{
-					drawTileWithRadius( ctx, x + 1, y + 1, tileSize, tileSize, tileRadius, false, "orange" );
+					drawTileWithRadius( mapCtx, x + 1, y + 1, tileSize, tileSize, tileRadius, false, "orange" );
 				}
 			}
 		}
@@ -631,7 +637,7 @@
 
 			if ( numOfMines !== 0 )
 			{
-				mapCtx.fillStyle = "#777";
+				mapCtx.fillStyle = "#f2ffe0";
 				mapCtx.font = '25px victors_pixel_fontregular';
 				mapCtx.fillText( numOfMines, point.x + posX, point.y + posY );
 			}
@@ -666,7 +672,6 @@
 
 		function drawTile( ctx, x, y, width, height, stroke, fillStyle )
 		{
-
 			ctx.beginPath();
 			ctx.moveTo( x, y );
 			ctx.lineTo( x + width, y );
@@ -685,7 +690,6 @@
 			}
 
 		}
-
 	}
 	game.displayAmmunitionPoints = function ( points )
 	{
@@ -760,7 +764,6 @@
 	}
 	game.setPlayerPositionForAStarAlgorithm = function ()
 	{
-
 		/////////////////////////////////////////////////////////////////////////////////////
 		//code responsible for A* algorithm
 		/////////////////////////////////////////////////////////////////////////////////////

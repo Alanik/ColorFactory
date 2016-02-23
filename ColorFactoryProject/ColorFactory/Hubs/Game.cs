@@ -100,12 +100,6 @@ namespace ColorFactory.Hubs
 
 						playerInGame.AmmoPoints += session.Map[playerInGame.CurrentPosition.Column, playerInGame.CurrentPosition.Row].Number;
 
-						//TODO: Alan temporary
-						if (playerInGame.AmmoPoints > 60)
-						{
-							string a = "blah";
-						}
-
 						if (uncoveredTiles.Count > 0)
 						{
 							playerInGame.UncoveredMines += uncoveredTiles.Count;
@@ -444,12 +438,6 @@ namespace ColorFactory.Hubs
 						if (isMainPlayer)
 						{
 							player.AmmoPoints += session.Map[col, row].Number;
-
-							//TODO: Alan temporary
-							if (player.AmmoPoints > 60)
-							{
-								string test = "blah";
-							}
 						}
 
 						break;

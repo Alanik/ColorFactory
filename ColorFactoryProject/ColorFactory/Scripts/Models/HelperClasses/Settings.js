@@ -10,9 +10,9 @@ function Settings() {
 		var _numberOfTiles_column = 16;
 		var _numberOfTiles_row = 9;
 		var _mapCanvasOffsetTop = 50;
-		var _uncoveredTileBackground = "rgba(0,0,0,.5)";
-		var _drawUncoveredTileBorder = false;
-		var _uncoveredTileBorderColor = "#010101";
+		var _uncoveredTileBackground = "rgb(10,10,10)";
+		var _drawUncoveredTileBorder = true;
+		var _uncoveredTileBorderColor = "rgb(10,10,10)";
 
 		return {
 			getCanvasPadding: function () {

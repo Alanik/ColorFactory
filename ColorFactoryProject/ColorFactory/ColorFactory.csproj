@@ -248,6 +248,10 @@
     <Content Include="Images\TileSheet\Animals\Squirrel\squirrel_running.png" />
     <Content Include="Images\TileSheet\Animals\Squirrel\squirrel_target.png" />
     <Content Include="Images\TileSheet\Bullet\bullet.png" />
+    <Content Include="Images\TileSheet\Ground\Grass\grass-1.png" />
+    <Content Include="Images\TileSheet\Ground\Grass\grass.png" />
+    <Content Include="Images\TileSheet\Ground\Trees\tree-blue.png" />
+    <Content Include="Images\TileSheet\Ground\Trees\tree.png" />
     <Content Include="Images\TileSheet\tileSheetGreenPixelPlayer.png" />
     <Content Include="Images\TileSheet\tileSheetGreenPlayer.png" />
     <Content Include="Images\TileSheet\tileSheetRedPlayer.png" />
@@ -321,7 +325,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\Home\_LobbyView.cshtml" />
-    <Content Include="Views\Home\_SetPlayerNameModalBox.cshtml" />
     <Content Include="Views\Home\_RoomView.cshtml" />
     <Content Include="Views\Home\_RightSideDisplay.cshtml" />
     <Content Include="Views\Home\_ChatWindow.cshtml" />

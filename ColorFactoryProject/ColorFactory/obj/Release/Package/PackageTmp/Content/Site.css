@@ -556,7 +556,6 @@ tr.pager td {
 /* game css --------------------------------------- */
 
 #mapContainer {
-	
 	overflow: hidden;
 	height: 500px;
 	width: 500px;
@@ -570,7 +569,6 @@ tr.pager td {
 
 #chatWindowContainer {
 	background: rgb(27, 27, 27);
-	border: 1px solid rgb(59, 153, 104);
 	width: 100%;
 	height: 409px;
 	position: relative;
@@ -626,24 +624,28 @@ tr.pager td {
 
 #rightSideDisplayContainer {
 	position: absolute;
-	width: 70px;
-	left: 825px;
-	height: 515px;
+	width: 173px;
+	right: 0px;
+	height: 470px;
 	z-index: 2;
-	top: 22px;
-	background: rgba(0, 0, 0, 0.8);
+	top: 65px;
+	background: rgba(0, 0, 0, 0.85);
+	display:none;
 }
 
 #rightSideDisplay {
 	position: absolute;
-	top: 224px;
 	left: 5px;
 }
 
 #smallTurretIcon {
-	height:20px;
-	width:20px;
-	background:orange;
+	height: 20px;
+	width: 20px;
+	background: orange;
+}
+
+#btnEnterPlayerName {
+	margin-left: 10px;
 }
 
 #mainContainer {
@@ -665,7 +667,7 @@ tr.pager td {
 	top: 0px;
 	left: 500px;
 	z-index: 2;
-	display:none;
+	display: none;
 }
 
 #playerCanvas {
@@ -696,6 +698,13 @@ tr.pager td {
 	height: 500px;
 }
 
+.fps-meter-container {
+	border: 1px solid rgb(204, 185, 112);
+	position: absolute;
+	right: 0px;
+	z-index: 5;
+}
+
 #enemyCanvasContainer {
 	position: absolute;
 	width: 500px;
@@ -703,34 +712,22 @@ tr.pager td {
 }
 
 #lobbyContainer {
-	width: 785px;
-	background-color: rgba(0, 0, 0, 0.7);
-	padding: 20px;
-	height:428px;
-	border:1px solid rgb(200, 218, 129);
+	background-color: rgba(0, 0, 0, 0.85);
+	height: 642px;
 }
 
 #roomListContainer {
-	border: 1px solid black;
-	margin-bottom: 30px;
-	background-color: rgba(0, 0, 0, 0.66);
+	background-color: rgba(255, 255, 255, 0.8);
 	padding: 10px;
 }
 
-#setPlayerNameModalBox {
-	position: absolute;
-	border: 1px solid rgb(255, 255, 102);
-	background-color: rgb(44,44,44);
-	height: 200px;
+#playerNamePopup {
+	background: rgba(0,0,0,.85);
 	z-index: 4;
 	padding: 20px;
 	color: white;
-	border-radius: 20px;
-	display: none;
-}
-
-#txtPlayerName {
-	margin-top: 10px;
+	width: 100%;
+	text-align: center;
 }
 
 #homePlayersOnlineList {
@@ -739,30 +736,34 @@ tr.pager td {
 	overflow: hidden;
 }
 
-#addNewRoom-txtbox-container {
-margin-bottom:20px;
+#roomName {
+	font-size: 22px;
+}
+
+#createGameRoomContainer {
+	margin-bottom: 20px;
+	margin-right: 20px;
+	text-align: right;
 }
 
 
 #roomList li {
 	width: 400px;
-	background: rgba(147, 156, 44, 1);;
+	background: rgb(126, 128, 106);
 	padding: 10px;
 	margin-bottom: 6px;
 	display: block;
 }
 
 	#roomList Li:hover {
-		/*
-background:#CDCDCD;
-*/
-		background: rgba(199, 214, 20, 1);
+		background: rgb(69, 70, 57);
 		cursor: pointer;
 	}
 
-.headerTitle {
+#lobbyHeaderTitle {
 	font-size: 28px;
 	color: whitesmoke;
+	padding-left: 20px;
 }
 
 .dotted-wrapper {
@@ -810,8 +811,17 @@ background:#CDCDCD;
 	border-radius: 11px;
 	border: 2px solid white;
 	-moz-border-radius: 11px;
-	position:relative;
-	top:5px;
+	position: relative;
+	top: 5px;
+}
+
+#logoContainer {
+	color: rgb(204, 255, 0);
+	font-family: victors_pixel_fontregular;
+	width: 400px;
+	font-size: 24px;
+	line-height: 1;
+	padding-bottom: 20px;
 }
 
 .circleFullPlayerNotReady {
@@ -831,19 +841,15 @@ background:#CDCDCD;
 	display: none;
 }
 
-#lobbyWrapper {
-	display: block;
-}
-
-
 #btnBackToLobby {
+	margin-left: 20px;
 	margin-bottom: 20px;
 }
 
 .roomInfoContainer {
 	border: 1px solid rgb(75, 75, 75);
 	margin-bottom: 10px;
-	background-color: rgba(0, 0, 0, 0.66);
+	background-color: rgba(255, 255, 255, 0.8);
 	padding: 10px;
 }
 
@@ -855,6 +861,10 @@ background:#CDCDCD;
 	-moz-border-radius: 11px;
 	border: 2px solid white;
 	margin-right: 20px;
+}
+
+#chatEnterBtn {
+	margin-left: 10px;
 }
 
 #playerListInsideRoom li {
@@ -879,8 +889,33 @@ background:#CDCDCD;
 	top: 4px;
 }
 
+#playerNameContainer {
+	background: rgba(204, 185, 112, 0.6);
+	padding: 10px;
+	border-top: 2px solid black;
+}
+
 .inline {
 	display: inline-block;
+}
+
+#bodyBackground {
+	background: url('/Content/background/friskyWoodsPoster.jpg') center repeat-x;
+	background-size: auto 100%;
+	width: 100%;
+	height: 707px;
+	border-bottom: 1px solid rgb(15,15,15);
+	position: absolute;
+}
+
+#gameWrapper {
+	background: url('/Content/background/friskyWoodsPoster.jpg') center;
+	width: 998px;
+	height: 705px;
+	border: 1px solid rgb(15,15,15);
+	position: relative;
+	-webkit-box-shadow: inset 0 0 20px 0 #000;
+	box-shadow: inset 0 0 20px 0 #000;
 }
 
 #playerListInsideRoom {
@@ -908,17 +943,6 @@ background:#CDCDCD;
 	width: 300px;
 }
 
-.topHeader {
-	/*background: #5a5a5a;
-	border: 4px solid #e9e9e9;*/
-	height: 68px;
-	position: relative;
-}
-
-#lobbyContainer header {
-	padding-bottom: 20px;
-}
-
 .myButton {
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #eae0c2), color-stop(1, #ccc2a6));
 	background: -moz-linear-gradient(top, #eae0c2 5%, #ccc2a6 100%);
@@ -935,8 +959,10 @@ background:#CDCDCD;
 	font-family: arial;
 	font-size: 14px;
 	font-weight: bold;
-	padding: 12px 16px;
+	padding: 7px 12px;
 	text-decoration: none;
+	position: relative;
+	bottom: 1px;
 }
 
 	.myButton:hover {
