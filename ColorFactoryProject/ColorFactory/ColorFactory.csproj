@@ -252,6 +252,7 @@
     <Content Include="Images\TileSheet\Ground\Grass\grass.png" />
     <Content Include="Images\TileSheet\Ground\Trees\tree-blue.png" />
     <Content Include="Images\TileSheet\Ground\Trees\tree.png" />
+    <Content Include="Images\TileSheet\Ground\Trees\treeDarkGreen.png" />
     <Content Include="Images\TileSheet\tileSheetGreenPixelPlayer.png" />
     <Content Include="Images\TileSheet\tileSheetGreenPlayer.png" />
     <Content Include="Images\TileSheet\tileSheetRedPlayer.png" />

@@ -158,10 +158,14 @@ namespace ColorFactory.Hubs
 					}
 				case TileKind.UncoveredScoredMineTile:
 					{
+						minePosition.Column = playerInGame.CurrentPosition.Column;
+						minePosition.Row = playerInGame.CurrentPosition.Row;
+
 						playerInGame.CurrentPosition.Column = prevCol;
 						playerInGame.CurrentPosition.Row = prevRow;
 						playerInGame.NextPosition.Column = prevCol;
 						playerInGame.NextPosition.Row = prevRow;
+
 						UpdateOtherPlayerPosition( session, playerInGame, otherPlayer, prevCol, prevRow );
 						break;
 					}

@@ -72,6 +72,7 @@
 	self.setNumbersValue = function (col, row, value) {
 		_numbers[col][row] = value;
 	};
+
 };
 
 

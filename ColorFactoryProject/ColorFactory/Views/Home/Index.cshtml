@@ -32,7 +32,8 @@
 		</div>
 
 		<div id="playerCanvasContainer">
-			<canvas id="playerCanvas" width="64" height="64" />
+			<canvas id="playerCanvas" width="64" height="64" ></canvas>
+			<canvas id="playerCanvas_TopHalfPart" width="64" height="32"></canvas>
 		</div>
 		<div id="enemyCanvasContainer">
 			<canvas id="enemyCanvas1" width="64" height="64" />
@@ -92,6 +93,8 @@
 	////////////////////////////////////////////////////////////////////////////
 	//global variables
 	////////////////////////////////////////////////////////////////////////////
+	// TODO: optimize this code here
+
 	var ctx = document.getElementById( "mapCanvas" ).getContext( "2d" );
 	var $mapCanvas = $( "#mapCanvas" );
 
@@ -106,6 +109,9 @@
 
 	var playerCtx = document.getElementById( "playerCanvas" ).getContext( "2d" );
 	var playerCanvas = document.getElementById( "playerCanvas" );
+
+	var playerCanvas_TopHalfPart = document.getElementById( "playerCanvas_TopHalfPart" ); 
+	var playerCanvas_TopHalfPartCtx = document.getElementById( "playerCanvas_TopHalfPart" ).getContext("2d");
 
 	var enemyCtx1 = document.getElementById( "enemyCanvas1" ).getContext( "2d" );
 	var enemyCanvas1 = document.getElementById( "enemyCanvas1" );
@@ -125,6 +131,7 @@
 	var $bulletsCanvasContainer = $( "#bulletsCanvasContainer" );
 	var $effectsCanvasContainer = $( "#effectsCanvasContainer" );
 	var $treesCanvasContainer = $("#treesCanvasContainer");
+	var $lobbyContainer = $( "#lobbyContainer" );
 
 	var mainContainer = document.getElementById( "mainContainer" );
 
@@ -508,7 +515,9 @@
 		mainPlayer.setBullet( new Bullet( "Images/tileSheet/Bullet/bullet.png" ) );
 
 		//TODO: change from global variable to private - currently used in index.cshtml
-		mainPlayerObj = { "player": mainPlayer, "ctx": playerCtx, "canvas": playerCanvas };
+		mainPlayerObj = { "player": mainPlayer, "ctx": playerCtx, "canvas": playerCanvas
+		, "playerCanvas_TopHalfPart": playerCanvas_TopHalfPart, "playerCanvas_TopHalfPartCtx": playerCanvas_TopHalfPartCtx
+		};
 
 		GAME = new Game( SETTINGS, CURSOR, EFFECTS, ANIMATION_MANAGER, MAP, mainPlayerObj );
 

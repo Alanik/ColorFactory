@@ -1,6 +1,5 @@
 ﻿
 function Settings() {
-
 	this.map = function () {
 
 		var _canvasPadding = 5;
@@ -56,6 +55,5 @@ function Settings() {
 				return height;
 			}
 		}
-	}();
-	
+	}();	
 }
