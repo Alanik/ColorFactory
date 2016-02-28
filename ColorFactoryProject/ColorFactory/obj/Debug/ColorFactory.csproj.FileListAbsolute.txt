@@ -178,6 +178,5 @@ C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\DotNetOpenAuth.OAuth.Co
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\DotNetOpenAuth.OAuth.xml
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\DotNetOpenAuth.OpenId.xml
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\bin\DotNetOpenAuth.OpenId.RelyingParty.xml
-C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\obj\Debug\ColorFactory.csprojResolveAssemblyReference.cache
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\obj\Debug\ColorFactory.dll
 C:\Git\ColorFactory\ColorFactoryProject\ColorFactory\obj\Debug\ColorFactory.pdb
