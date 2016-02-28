@@ -666,7 +666,7 @@ tr.pager td {
 	position: absolute;
 	top: 0px;
 	left: 500px;
-	z-index: 2;
+	z-index: 3;
 	display: none;
 }
 
@@ -676,7 +676,7 @@ tr.pager td {
 
 #playerCanvas_TopHalfPart {
 	position:absolute;
-	z-index:10;
+	z-index:1;
 }
 
 #enemyCanvas1 {

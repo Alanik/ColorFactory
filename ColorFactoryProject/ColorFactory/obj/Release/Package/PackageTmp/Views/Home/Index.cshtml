@@ -32,7 +32,8 @@
 		</div>
 
 		<div id="playerCanvasContainer">
-			<canvas id="playerCanvas" width="64" height="64" />
+			<canvas id="playerCanvas" width="64" height="64" ></canvas>
+			<canvas id="playerCanvas_TopHalfPart" width="64" height="32"></canvas>
 		</div>
 		<div id="enemyCanvasContainer">
 			<canvas id="enemyCanvas1" width="64" height="64" />
@@ -41,11 +42,15 @@
 		</div>
 
 		<div id="bulletsCanvasContainer">
-			<canvas id="bulletsCanvas" width="500" height="500" />
+			<canvas id="bulletsCanvas" />
 		</div>
 
 		<div id="mapContainer">
-			<canvas id="mapCanvas" width="500" height="500" />
+			<canvas id="mapCanvas" />
+		</div>
+
+		<div id="treesCanvasContainer" style="display:none;">
+			<canvas id="treesCanvas" />
 		</div>
 
 		<div id="rightSideDisplayContainer">
@@ -55,7 +60,7 @@
 		</div>
 
 		<div id="effectsCanvasContainer">
-			<canvas id="effectsCanvas" width="580" height="550" />
+			<canvas id="effectsCanvas" />
 		</div>
 
 		<div id="personalMenuContainer" style="display: none; width: 100px; height: 100px; border: 1px solid #00B2FF; background-image: url(/Images/PersonalMenu/menu-transparent.png); position: absolute; z-index: 2;">
@@ -88,17 +93,25 @@
 	////////////////////////////////////////////////////////////////////////////
 	//global variables
 	////////////////////////////////////////////////////////////////////////////
+	// TODO: optimize this code here
+
 	var ctx = document.getElementById( "mapCanvas" ).getContext( "2d" );
 	var $mapCanvas = $( "#mapCanvas" );
 
 	var effectsCtx = document.getElementById( "effectsCanvas" ).getContext( "2d" );
 	var $effectsCanvas = $( "#effectsCanvas" );
 
+	var treesCtx = document.getElementById( "treesCanvas" ).getContext( "2d" );
+	var $tressCanvas = $( "#treesCanvas" );
+
 	var bulletsCtx = document.getElementById( "bulletsCanvas" ).getContext( "2d" );
 	var bulletsCanvas = document.getElementById( "bulletsCanvas" );
 
 	var playerCtx = document.getElementById( "playerCanvas" ).getContext( "2d" );
 	var playerCanvas = document.getElementById( "playerCanvas" );
+
+	var playerCanvas_TopHalfPart = document.getElementById( "playerCanvas_TopHalfPart" ); 
+	var playerCanvas_TopHalfPartCtx = document.getElementById( "playerCanvas_TopHalfPart" ).getContext("2d");
 
 	var enemyCtx1 = document.getElementById( "enemyCanvas1" ).getContext( "2d" );
 	var enemyCanvas1 = document.getElementById( "enemyCanvas1" );
@@ -117,6 +130,8 @@
 	var $enemyCanvasContainer = $( "#enemyCanvasContainer" );
 	var $bulletsCanvasContainer = $( "#bulletsCanvasContainer" );
 	var $effectsCanvasContainer = $( "#effectsCanvasContainer" );
+	var $treesCanvasContainer = $("#treesCanvasContainer");
+	var $lobbyContainer = $( "#lobbyContainer" );
 
 	var mainContainer = document.getElementById( "mainContainer" );
 
@@ -138,20 +153,6 @@
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	//lobby functions
 	////////////////////////////////////////////////////////////////////////////////////////////////
-
-	$( "#bgSwitchChkBox" ).click( function ()
-	{
-
-		if ( $( "#bgSwitchChkBox" ).is( ':checked' ) )
-		{
-			$( "#mapContainer" ).css( "background", "rgb(197, 206, 198)" );
-		}
-		else
-		{
-			$( "#mapContainer" ).css( "background", "none" );
-		}
-
-	} );
 
 	lobbyConnection.client.clientReceiveRoomCreated = function ( roomName )
 	{
@@ -514,7 +515,9 @@
 		mainPlayer.setBullet( new Bullet( "Images/tileSheet/Bullet/bullet.png" ) );
 
 		//TODO: change from global variable to private - currently used in index.cshtml
-		mainPlayerObj = { "player": mainPlayer, "ctx": playerCtx, "canvas": playerCanvas };
+		mainPlayerObj = { "player": mainPlayer, "ctx": playerCtx, "canvas": playerCanvas
+		, "playerCanvas_TopHalfPart": playerCanvas_TopHalfPart, "playerCanvas_TopHalfPartCtx": playerCanvas_TopHalfPartCtx
+		};
 
 		GAME = new Game( SETTINGS, CURSOR, EFFECTS, ANIMATION_MANAGER, MAP, mainPlayerObj );
 

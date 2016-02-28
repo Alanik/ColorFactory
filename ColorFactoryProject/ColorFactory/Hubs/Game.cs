@@ -322,6 +322,19 @@ namespace ColorFactory.Hubs
 
 				otherPlayer.Health -= rndDamage;
 
+				if (otherPlayer.Health <= 0)
+				{
+					game.EndGame = true;
+
+					PositionModel uncoveredBulletTile = GetUncoveredBulletTile( tiles, game.Map, playerInGame.UncoveredBulletTile, opponent.Player.seatNumber - 1 );
+
+					Clients.Client( playerInGame.Player.ConnectionId ).clientReceivePlayerShootsOtherPlayer( rndDamage, playerInGame.AmmoPoints, opponent.Player.seatNumber, string.Format( "Player {0} has won the game by destroying player {1}. Hail to the king! Congratz {0}.", playerInGame.Player.Name, opponent.Player.Name ) );
+					Clients.Client( opponent.Player.ConnectionId ).clientReceivePlayerGetsShotByOtherPlayer( rndDamage, opponent.Health, uncoveredBulletTile, string.Format( "Player {0} has won the game by destroying player {1}. Hail to the king! Congratz {0}.", playerInGame.Player.Name, opponent.Player.Name ) );
+
+					playerInGame.IsShooting = false;
+					RemoveShootingHandler( playerInGame.ShootingQuarterSecondCounter, playerInGame.playerShootingHandler );
+				}
+
 				//TODO: change so it works for not only 2 ppl playing
 				Clients.Client( playerInGame.Player.ConnectionId ).clientReceivePineConeExplodes( mineNumber, col, row, tileforPlayer, rndDamage, otherPlayer.Player.seatNumber );
 				Clients.Client( otherPlayer.Player.ConnectionId ).clientReceivePlayerGetsHitByPineCone( mineNumber, col, row, tileforOtherPlayer, rndDamage, otherPlayer.Health );

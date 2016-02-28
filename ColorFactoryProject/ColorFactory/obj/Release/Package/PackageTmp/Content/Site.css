@@ -674,6 +674,11 @@ tr.pager td {
 	position: absolute;
 }
 
+#playerCanvas_TopHalfPart {
+	position:absolute;
+	z-index:10;
+}
+
 #enemyCanvas1 {
 	position: absolute;
 }
@@ -693,6 +698,12 @@ tr.pager td {
 }
 
 #bulletsCanvasContainer {
+	position: absolute;
+	width: 500px;
+	height: 500px;
+}
+
+#treesCanvasContainer {
 	position: absolute;
 	width: 500px;
 	height: 500px;
