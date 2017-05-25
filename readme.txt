@@ -6,5 +6,5 @@ technologies: Html5 + asp.net mvc4 + signalr
 
 version alpha
 
-http://cf.soundja.com/
+www.friskywoods.azurewebsites.net
 
